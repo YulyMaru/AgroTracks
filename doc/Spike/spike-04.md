@@ -8,7 +8,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Media-Alta
-- **Timebox estimado:** 2 días hábiles (16 horas hombre)
+- **Timebox estimado:** 2 días hábiles.
 
 ## 1. Objetivo
 
@@ -180,7 +180,7 @@ El Spike se considerará **RECHAZADO** si:
 
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
-- **Cliente móvil**: React Native / Flutter (el que use AgroTrack).
+- **Cliente móvil**: React Native + TypeScript.
 - **Componentes**:
   - `EmptyState`: recibe `iconName`, `title`, `description`, `actionLabel`, `onAction`.
   - `ErrorState`: recibe `errorTitle`, `errorDescription`, `onRetry`.

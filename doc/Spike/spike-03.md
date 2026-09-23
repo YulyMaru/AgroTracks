@@ -8,7 +8,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 3 días hábiles (24 horas hombre)
+- **Timebox estimado:** 3 días hábiles.
 
 ## 1. Objetivo
 
@@ -172,7 +172,7 @@ El Spike se considerará **RECHAZADO** si:
 
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
-- **Cliente móvil**: React Native / Flutter (el que use AgroTrack). Se utilizarán componentes funcionales con estado local.
+- **Cliente móvil**: React Native + TypeScript. Se utilizarán componentes funcionales con estado local.
 - **Lógica de cálculo**: Función pura `calculateEconomicResult(transactions)` que recibe un arreglo de transacciones y devuelve `{ totalIncome, totalExpense, netResult }`.
 - **Datos de prueba**: Archivo JSON estático con movimientos, cargado localmente para las pruebas offline.
 - **Servidor (mock)**: Endpoint simple que devuelve el mismo JSON o que aplica la misma función de cálculo.

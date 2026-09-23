@@ -9,7 +9,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 5 días hábiles (40 horas hombre)
+- **Timebox estimado:** 5 días hábiles.
 
 ## 1. Objetivo
 
@@ -229,8 +229,8 @@ El Spike se considerará **RECHAZADO** si:
 
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
-- **Cliente móvil**: React Native / Flutter (el que use AgroTrack).
-- **Base de datos local**: SQLite (con librería `react-native-sqlite-storage` o `sqflite` en Flutter).
+- **Cliente móvil**: React Native + TypeScript
+- **Base de datos local**: SQLite (con librería `react-native-sqlite-storage`).
 - **Modelo de datos**: Tabla `pending_operations` con columnas: `localId` (UUID), `operation_type` (text), `payload` (JSON), `status` (text: PENDING, SYNCED, ERROR), `created_at` (timestamp), `retry_count` (int), `last_attempt` (timestamp).
 - **Validación**: Esquema JSON de validación (ADR-002) cargado localmente.
 - **Sincronización mock**: Un servicio que simula el envío al backend (log en consola) y cambia el estado de los registros a `SYNCED`.

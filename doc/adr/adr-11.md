@@ -192,7 +192,7 @@
 
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se implementará un `AuthService` con almacenamiento seguro, un middleware de navegación que verifique el token, y un interceptor HTTP que maneje el refresco silencioso. Se medirá la tasa de bloqueo de accesos no autorizados y la persistencia de sesión.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las navegaciones a pantallas protegidas pasarán por el middleware.
-    - **¿Qué tipos de integraciones están involucradas?**: Integración con el servicio de autenticación del backend (login, refresh token), con el almacenamiento seguro (`SecureStore` / `Keychain` / `Keystore`), con el sistema de navegación (React Navigation o Flutter Router según el stack de AgroTrack) y con el repositorio local (para verificar autenticación antes de acceder a SQLite).
+    - **¿Qué tipos de integraciones están involucradas?**: Integración con el servicio de autenticación del backend (login, refresh token), con el almacenamiento seguro (`SecureStore` / `Keychain` / `Keystore`), con el sistema de navegación React Native + TypeScript y con el repositorio local (para verificar autenticación antes de acceder a SQLite).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: No esperar a implementar la seguridad. Hacerla desde el día 1 es más fácil que añadirla después. Definir claramente qué rutas son públicas (ej. login, registro, recuperación de contraseña) y cuáles son protegidas (el resto). Incluir un manejo de errores de autenticación global en el cliente (ej. interceptor HTTP) para detectar respuestas 401 y cerrar sesión automáticamente. Realizar pruebas de penetración básicas para validar que no hay fugas de información.
 
   - **Anécdotas**:
@@ -222,7 +222,6 @@
       - Almacenamiento seguro: usar `SecureStore` (React Native) o `flutter_secure_storage`.
     - **Middleware de navegación**:
       - En React Navigation: usar un `useEffect` en el componente raíz o un `NavigationContainer` con `onStateChange` para verificar autenticación antes de cada cambio de ruta.
-      - En Flutter: usar `NavigatorObserver` o `RouterDelegate` con guards.
       - Definir una lista de rutas públicas (login, registro, recuperación) y protegidas (todas las demás).
     - **Manejo de expiración**:
       - En el interceptor de HTTP (axios/fetch), capturar respuestas 401 (token expirado) y automáticamente intentar refrescar el token.

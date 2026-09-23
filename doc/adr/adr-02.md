@@ -16,7 +16,7 @@
     - **Mantenibilidad**: las reglas deben ser fáciles de modificar, probar y extender cuando cambian los requisitos de negocio.
     - **Rendimiento**: la validación en cliente no debe degradar la experiencia; la validación en servidor debe ser eficiente y escalable.
     - **Costo de implementación**: la solución debe ser viable para el alcance actual de AgroTrack, evitando infraestructura innecesaria.
-    - **Escenario de calidad relacionado**: ESC-CAL-US-05 (validación de formularios).
+    - **Escenario de calidad relacionado**: ESC-CAL-US-03 (validación de formularios).
 
 - **Candidatos a considerar**:
 
@@ -181,7 +181,7 @@
 
     - **¿Cómo se desempeña el ganador?**: En la implementación inicial se creará un repositorio de reglas de validación (posiblemente como un paquete npm compartido entre el backend y el frontend móvil). El cliente consumirá estas reglas para validar campos en tiempo real. El servidor aplicará las mismas reglas en los endpoints correspondientes. Se espera que los usuarios reciban retroalimentación inmediata al salir de cada campo, y que los mensajes de error sean específicos y comprensibles. Pendiente de ejecución de los spikes.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de los envíos de formularios utilizará la validación centralizada, ya que es un requisito transversal.
-    - **¿Qué tipos de integraciones están involucradas?**: Repositorio central de reglas (paquete compartido o API), frontend móvil (React Native / Flutter), backend (Spring Boot / Node.js), motor de sincronización offline (ADR-001) y sistema de internacionalización de mensajes (si aplica).
+    - **¿Qué tipos de integraciones están involucradas?**: Repositorio central de reglas (paquete compartido o API), frontend móvil React Native + TypeScript, backend Spring Boot, motor de sincronización offline (ADR-001) y sistema de internacionalización de mensajes (si aplica).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Comenzar con un esquema de validación simple y compartido, y no intentar construir un motor de reglas complejo desde el principio. Asegurarse de que los mensajes de error sean claros y accionables. Implementar pruebas spike que verifiquen que las reglas en cliente y servidor son idénticas. Si el número de reglas crece, considerar el uso de un lenguaje de definición de reglas más expresivo (ej. JSON Schema con extensiones).
 
   - **Anécdotas**:
@@ -212,7 +212,3 @@
     - Registro de errores de validación para monitorear problemas comunes y mejorar los mensajes.
 
     Se descarta la validación únicamente en el servidor por su mala usabilidad y dependencia de la red, y la validación con reglas duplicadas por su alto riesgo de divergencia y mantenimiento. La centralización es la que mejor se adapta a las necesidades de AgroTrack y su contexto de conectividad intermitente.
-
-
-
-    Node.js

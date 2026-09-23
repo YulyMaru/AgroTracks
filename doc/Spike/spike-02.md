@@ -8,11 +8,11 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 3 días hábiles (24 horas hombre)
+- **Timebox estimado:** 3 días hábiles.
 
 ## 1. Objetivo
 
-Validar técnicamente que AgroTrack puede aplicar las mismas reglas de validación en el dispositivo móvil (sin conexión) y en el servidor, garantizando que el usuario reciba retroalimentación inmediata al llenar un formulario y que el backend no acepte datos inválidos, cumpliendo con el escenario ESC-CAL-US-XX (validación de formularios).
+Validar técnicamente que AgroTrack puede aplicar las mismas reglas de validación en el dispositivo móvil (sin conexión) y en el servidor, garantizando que el usuario reciba retroalimentación inmediata al llenar un formulario y que el backend no acepte datos inválidos, cumpliendo con el escenario ESC-CAL-US-03 (validación de formularios).
 
 El Spike busca comprobar que la estrategia seleccionada en el ADR-002, basada en un repositorio único de reglas (ej. JSON Schema) compartido entre cliente y servidor, es viable antes de implementar la funcionalidad en todos los formularios de la aplicación.
 
@@ -170,8 +170,8 @@ El Spike se considerará **RECHAZADO** si:
 
 Para la ejecución de este Spike, se utilizará el siguiente stack mínimo:
 
-- **Cliente móvil**: React Native (o Flutter) con la librería `ajv` (JSON Schema validator).
-- **Servidor**: Node.js con Express (o Spring Boot) utilizando la misma librería `ajv` (en Node) o `json-schema-validator` en Java.
+- **Cliente móvil**: React Native con la librería `ajv` (JSON Schema validator).
+- **Servidor**:Spring Boot utilizando la misma librería `ajv` (en Node) o `json-schema-validator` en Java.
 - **Almacenamiento del esquema**: Archivo `validation-schema.json` alojado en el repositorio central, copiado manualmente durante el build a las carpetas `assets/` del móvil y `resources/` del backend.
 - **Estado del formulario**: `useState` (React) o `setState` gestionando un objeto con los valores y un objeto con los errores.
 

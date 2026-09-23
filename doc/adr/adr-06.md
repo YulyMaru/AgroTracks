@@ -30,7 +30,7 @@
 
 - **Investigación y análisis de cada candidato**:
 
-  - **Resumen**: Se investigaron patrones de aplicaciones offline-first, el uso de monitores de conectividad (React Native o Flutter, según el stack de AgroTrack), y la experiencia de proyectos de campo que operan con red intermitente. Se identificó que la persistencia y la detección automática de red son los dos puntos críticos.
+  - **Resumen**: Se investigaron patrones de aplicaciones offline-first, el uso de monitores de conectividad React Native + TypeScript, y la experiencia de proyectos de campo que operan con red intermitente. Se identificó que la persistencia y la detección automática de red son los dos puntos críticos.
 
   - **1. Consulta siempre remota**:
 

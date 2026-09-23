@@ -8,7 +8,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 5 días hábiles (40 horas hombre)
+- **Timebox estimado:** 5 días hábiles.
 
 ## 1. Objetivo
 

@@ -9,7 +9,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Media
-- **Timebox estimado:** 2 días hábiles (16 horas hombre)
+- **Timebox estimado:** 2 días hábiles 
 
 ## 1. Objetivo
 
@@ -176,7 +176,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Cliente móvil**: React Native o Flutter (según el stack de AgroTrack).
+- **Cliente móvil**: React Native + TypeScript.
 - **Componentes**:
   - `Button`: con `minWidth: 48`, `minHeight: 48` (Android) y `minWidth: 44`, `minHeight: 44` (iOS), usando `StyleSheet` o `styled-components`.
   - `ValueWithUnit`: componente funcional que recibe `concept`, `value`, `unit` y renderiza `<Text>{concept}: ${formatCurrency(value)} ${unit}</Text>`.

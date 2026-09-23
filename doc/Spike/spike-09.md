@@ -9,7 +9,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 4 días hábiles (32 horas hombre)
+- **Timebox estimado:** 4 días hábiles 
 
 ## 1. Objetivo
 
@@ -203,7 +203,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Caché**: Redis (o caché en memoria con `Caffeine` para el spike).
 - **Datos de prueba**: script de generación de 10,000 transacciones, 500 fincas, 2,000 lotes.
 - **Medición**: `EXPLAIN ANALYZE`, logs de tiempo, métricas de hit ratio.
-- **Cliente**: React Native o Flutter (según el stack de AgroTrack) para validar paginación e indicadores de carga.
+- **Cliente**: React Native + TypeScript para validar paginación e indicadores de carga.
 
 ## 10. Riesgos y mitigación
 

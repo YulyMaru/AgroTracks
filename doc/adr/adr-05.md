@@ -214,3 +214,4 @@
     - Un mecanismo de purga o archivo de registros sincronizados para evitar que la base local crezca indefinidamente.
 
     Se descarta bloquear el registro offline por su contradicción con el objetivo principal de AgroTrack, y el almacenamiento temporal por su falta de garantía de persistencia. El registro offline-first completo es la opción que convierte a AgroTrack en una herramienta verdaderamente útil en el contexto rural.
+

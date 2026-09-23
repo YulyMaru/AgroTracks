@@ -9,7 +9,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 3 días hábiles (24 horas hombre)
+- **Timebox estimado:** 3 días hábiles.
 
 ## 1. Objetivo
 
@@ -201,9 +201,9 @@ El Spike se considerará **RECHAZADO** si:
 
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
-- **Cliente móvil**: React Native o Flutter (el que use AgroTrack).
+- **Cliente móvil**: React Native + TypeScript
 - **Base de datos local**: SQLite (con `react-native-sqlite-storage` o `sqflite`).
-- **Monitor de conectividad**: `@react-native-community/netinfo` (React Native) o `connectivity_plus` (Flutter).
+- **Monitor de conectividad**: `@react-native-community/netinfo` (React Native).
 - **Sincronización mock**: Un servicio que simula el envío al backend (log en consola) y cambia el estado de los registros a `SYNCED`.
 - **UI de prueba**: Lista de gastos con indicador de estado de conexión.
 - **Medición**: `console.time` / `console.timeEnd` o herramientas de perfilado del framework.

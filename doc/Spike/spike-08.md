@@ -9,7 +9,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 2 días hábiles (16 horas hombre)
+- **Timebox estimado:** 2 días hábiles 
 
 ## 1. Objetivo
 
@@ -198,7 +198,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Cliente móvil**: React Native o Flutter (según el stack de AgroTrack).
+- **Cliente móvil**: React Native + TypeScript.
 - **Lógica de validación**: Función pura `validateAnalysis(type, transactions)` que retorna `{ isComplete, missingData }`.
 - **Reglas de integridad**: Archivo JSON de configuración `integrity-rules.json` con la lista de tipos de datos requeridos para cada análisis.
 - **UI de prueba**: Pantalla simple con banner, lista de faltantes, y tarjeta de resultado parcial.

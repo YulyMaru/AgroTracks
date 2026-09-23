@@ -9,7 +9,7 @@
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
-- **Timebox estimado:** 2 días hábiles (16 horas hombre)
+- **Timebox estimado:** 2 días hábiles 
 
 ## 1. Objetivo
 
@@ -65,7 +65,6 @@ El Spike incluirá:
   - `getToken()` → recupera token del almacenamiento seguro.
 - **Middleware de navegación**:
   - En React Navigation: `useEffect` en el punto de entrada que verifica autenticación y redirige a login si no está autenticado.
-  - En Flutter: `NavigatorObserver` o `RouterDelegate`.
 - **Pantalla de login** (mock) y pantalla de resumen (protegida).
 - **Interceptor HTTP** (mock) que detecta 401 y dispara el refresco.
 - **Repositorio local mock** que verifica autenticación antes de cualquier consulta.
@@ -219,9 +218,9 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Cliente móvil**: React Native o Flutter (según el stack de AgroTrack).
-- **Almacenamiento seguro**: `SecureStore` (React Native) o `flutter_secure_storage`.
-- **Manejo de navegación**: React Navigation o Flutter Router (según el stack de AgroTrack).
+- **Cliente móvil**: React Native + TypeScript.
+- **Almacenamiento seguro**: `SecureStore` (React Native).
+- **Manejo de navegación**: React Navigation.
 - **HTTP Interceptor**: `axios` con interceptors para manejar 401 y refresh token.
 - **Mock de autenticación**: Servicio mock que simula login, refresh y validación de token.
 - **Middleware**: `useEffect` en el punto de entrada que verifica autenticación y condiciona el `NavigationContainer` (en React Navigation).
