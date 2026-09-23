@@ -133,9 +133,9 @@
 | Consultar historial de producción | HU-06 | ≤ 5 segundos | El historial debe cargarse dentro del tiempo establecido aun con un volumen elevado de registros. |
 | Consultar historial de gastos | HU-09 | ≤ 5 segundos | Los gastos históricos deben mostrarse dentro del tiempo establecido independientemente del volumen de información. |
 | Consultar historial de ventas | HU-07 | ≤ 5 segundos | Las ventas históricas deben mostrarse dentro del tiempo establecido para el periodo solicitado. |
-| Consultar múltiples fincas | HU-28 | ≤ 5 segundos | El sistema debe mostrar las fincas y su información principal sin una degradación perceptible del rendimiento. |
-| Consultar una finca con múltiples lotes y cultivos | HU-04 HU-28 | ≤ 5 segundos | La estructura de la finca debe mostrarse dentro del tiempo establecido. |
-| Generar resumen económico | HU-14 | ≤ 6 segundos | El sistema debe calcular y mostrar ingresos, gastos y resultado del periodo seleccionado dentro del tiempo establecido. |
+| Consultar múltiples fincas | HU-28 | ≤ 3 segundos | El sistema debe mostrar las fincas y su información principal sin una degradación perceptible del rendimiento. |
+| Consultar una finca con múltiples lotes y cultivos | HU-04 HU-28 | ≤ 3 segundos | La estructura de la finca debe mostrarse dentro del tiempo establecido. |
+| Generar resumen económico | HU-14 | ≤ 5 segundos | El sistema debe calcular y mostrar ingresos, gastos y resultado del periodo seleccionado dentro del tiempo establecido. |
 | Comparar cultivos | HU-17 | ≤ 6 segundos | El sistema debe generar la comparación de los cultivos seleccionados dentro del tiempo establecido. |
 | Consultar evolución de resultados | HU-20 | ≤ 6 segundos | El sistema debe procesar la información histórica y mostrar su evolución dentro del tiempo establecido. |
 | Consultar distribución de gastos | HU-38 | ≤ 5 segundos | El sistema debe agrupar y presentar los gastos por categoría dentro del tiempo establecido. |
