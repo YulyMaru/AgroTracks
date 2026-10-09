@@ -129,7 +129,7 @@
 
       - **Detalles**:
         - **Backend (Flyway)**:
-          - Cada migración se define en un archivo numerado (`V1__init.sql`, `V2__add_notes.sql`, etc.).
+          - Cada migración se define en un archivo numerado (`V1__inicial.sql`, `V2__agregar_notas.sql`, etc.).
           - Flyway aplica las migraciones en orden y registra el historial en `flyway_schema_history`.
           - Cada migración se ejecuta dentro de una transacción (en PostgreSQL, DDL es transaccional).
           - Si una migración falla, Flyway detiene el arranque y deja la base en el último estado consistente.
@@ -208,7 +208,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -234,9 +234,9 @@
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-016 se confirmó que Flyway se integra con Spring Boot con solo añadir la dependencia y configurar la URL de la base.
+    - En el diseño del SPIKE-016 se planteó como hipótesis que Flyway se integra con Spring Boot con solo añadir la dependencia y configurar la URL de la base.
     - Durante el análisis se concluyó que intentar migrar SQLite manualmente habría sido inviable en el móvil; `PRAGMA user_version` es simple y efectivo.
-    - En el diseño del SPIKE-013 se confirmó que las migraciones en SQLite deben ejecutarse dentro de una transacción para evitar estados inconsistentes.
+    - En el diseño del SPIKE-013 se planteó como hipótesis que las migraciones en SQLite deben ejecutarse dentro de una transacción para evitar estados inconsistentes.
 
 - **Recomendación**:
 

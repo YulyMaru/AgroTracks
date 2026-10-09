@@ -180,7 +180,7 @@
 
     - SPIKE-023 — Validará que los componentes cumplen tamaños táctiles ≥ 48x48 dp, contraste ≥ 4.5:1 y respetan `fontScale` sin romper el layout — Propuesto.
     - SPIKE-010 — Validará los tamaños táctiles del sistema de diseño — Propuesto.
-    - SPIKE-003 — Validará que las tarjetas de resultados económicos son legibles y con contraste suficiente — Propuesto.
+    - SPIKE-003 — Validará que las tarjetas de resultados económicos son comprendidas por los usuarios; su contraste se mide en SPIKE-023 — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -194,11 +194,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-023 (tamaños, contraste y fuente), SPIKE-010 (tamaños táctiles) y SPIKE-003 (legibilidad de tarjetas).
+    Mediante SPIKE-023 (tamaños, contraste y fuente), SPIKE-010 (tamaños táctiles) y SPIKE-003 (comprensión de tarjetas).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -213,7 +213,7 @@
 
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que el 100 % de los controles cumplan 48x48 dp, que el contraste sea suficiente y que el layout no se rompa con fuentes grandes.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de la interfaz de usuario.
-    - **¿Qué tipos de integraciones están involucradas?**: Sistema de diseño (ADR-010), componentes base (`Button`, `Input`, `Card`, `ListItem`), Layout Inspector, WebAIM Contrast Checker y React Native.
+    - **¿Qué tipos de integraciones están involucradas?**: Sistema de diseño (ADR-010), componentes base (`Boton`, `CampoTexto`, `Tarjeta`, `ElementoLista`), Layout Inspector, WebAIM Contrast Checker y React Native.
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el sistema de diseño desde el día 1 con tamaños y paleta verificada. Verificar contraste antes de aprobar nuevos colores. Probar con `fontScale` al 200 % en cada release. No añadir componentes sin respetar los estándares.
 
   - **Anécdotas**:
@@ -247,7 +247,7 @@
       - Layout con `flex` y `ScrollView` para adaptarse a fuentes grandes.
       - Probar con `fontScale` al 100 %, 150 % y 200 %.
     - **Sistema de diseño**:
-      - Componentes base (`Button`, `IconButton`, `Input`, `Card`, `ListItem`) con tamaños y colores accesibles por defecto.
+      - Componentes base (`Boton`, `BotonIcono`, `CampoTexto`, `Tarjeta`, `ElementoLista`) con tamaños y colores accesibles por defecto.
       - Paleta de colores con contraste verificado.
       - Tipografía legible.
     - **Pruebas**:

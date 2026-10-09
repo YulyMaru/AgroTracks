@@ -18,6 +18,7 @@
     - **Mantenibilidad**: la lógica de cálculo debe estar separada de la capa de presentación.
     - **Costo de implementación**: la solución debe ser viable con el stack actual (aplicación móvil + backend PostgreSQL).
     - **Escenario de calidad relacionado**: ESC-CAL-US-06.
+    - **Funcionalidades significativas relacionadas**: HU-14 (consultar resumen de resultados) y HU-42 (consultar rentabilidad o resultado relativo).
 
 - **Candidatos a considerar**:
 
@@ -160,7 +161,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 

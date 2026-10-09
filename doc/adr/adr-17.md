@@ -42,11 +42,11 @@
 
       - **Detalles**:
         - Los spikes 001 a 016 están diseñados en React Native; migrar a otro stack implicaría reescribirlos.
-        - El equipo ya tiene experiencia en JavaScript/TypeScript, lo que reduce la curva de aprendizaje.
+.
         - El ecosistema offline-first es maduro:
-          - `react-native-sqlite-storage` o `react-native-quick-sqlite` para SQLite (ADR-005, ADR-013).
+          - `@op-engineering/op-sqlite` para SQLite, con soporte de SQLCipher (ADR-005, ADR-013, ADR-022).
           - `@react-native-community/netinfo` para detección de conectividad (ADR-006).
-          - `react-native-secure-storage` o `expo-secure-store` para almacenamiento seguro (ADR-011).
+          - `react-native-secure-storage` para almacenamiento seguro (ADR-011).
           - `react-native-uuid` para generación de UUID (ADR-007).
           - `axios` para HTTP (ADR-015).
           - `@react-navigation/native` para navegación (ADR-011).
@@ -64,7 +64,7 @@
         - **Licencias**: React Native y sus librerías son open source.
         - **Capacitación**: el equipo ya conoce React y TypeScript.
         - **Operación**: distribución vía Google Play; Firebase App Distribution para pruebas.
-        - **Medición**: Firebase Crashlytics, Firebase Analytics, Flipper.
+        - **Medición**: Firebase Crashlytics, Firebase Analytics, React Native DevTools.
 
     - **Análisis FODA**:
 
@@ -227,7 +227,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -249,18 +249,18 @@
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que React Native + TypeScript con SQLite, NetInfo, SecureStore, Axios y React Navigation cubra todos los requisitos funcionales y no funcionales del frontend móvil.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de la interfaz de usuario.
     - **¿Qué tipos de integraciones están involucradas?**: React Navigation (navegación), Axios (HTTP), SQLite (base local), NetInfo (conectividad), SecureStore (almacenamiento seguro), react-native-uuid (UUID), react-native-vector-icons (iconos) y Firebase Crashlytics (monitoreo).
-    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el stack completo desde el día 1 y no cambiarlo. Usar TypeScript estricto. Configurar ESLint y Prettier. Usar `react-native-quick-sqlite` en lugar de `react-native-sqlite-storage` si el rendimiento es crítico. Aprovechar Firebase App Distribution para pruebas tempranas.
+    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el stack completo desde el día 1 y no cambiarlo. Usar TypeScript estricto. Configurar ESLint y Prettier. Elegir desde el inicio una librería de SQLite compatible con SQLCipher (`@op-engineering/op-sqlite`) para no migrar al cifrar la base (ADR-022). Aprovechar Firebase App Distribution para pruebas tempranas.
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-013 se confirmó que SQLite en React Native soporta transacciones ACID y consultas con 10,000 registros sin problemas.
+    - En el diseño del SPIKE-013 se planteó como hipótesis que SQLite en React Native soporta transacciones ACID y consultas con 10,000 registros sin problemas.
     - Durante el análisis se concluyó que migrar a Flutter habría implicado reescribir todos los spikes, con un costo de semanas que no se justificaba.
 
 - **Recomendación**:
 
   - **Resumen**:
 
-    Se recomienda implementar **React Native con TypeScript** y las siguientes librerías: **React Navigation, Axios, react-native-quick-sqlite (o react-native-sqlite-storage), @react-native-community/netinfo, react-native-secure-storage (o expo-secure-store), react-native-uuid y react-native-vector-icons**, cumpliendo con los escenarios ESC-CAL-US-01, ESC-CAL-US-03, ESC-CAL-US-06, ESC-CAL-US-13, ESC-CAL-DP-01, ESC-CAL-DP-02, ESC-CAL-DP-06, ESC-CAL-DP-03, ESC-CAL-ACC-02, ESC-CAL-ACC-06, ESC-CAL-POR-01 y ESC-CAL-SEG-01.
+    Se recomienda implementar **React Native con TypeScript** y las siguientes librerías: **React Navigation, Axios, @op-engineering/op-sqlite (con SQLCipher), @react-native-community/netinfo, react-native-secure-storage, react-native-uuid y react-native-vector-icons**, cumpliendo con los escenarios ESC-CAL-US-01, ESC-CAL-US-03, ESC-CAL-US-06, ESC-CAL-US-13, ESC-CAL-DP-01, ESC-CAL-DP-02, ESC-CAL-DP-06, ESC-CAL-DP-03, ESC-CAL-ACC-02, ESC-CAL-ACC-06, ESC-CAL-POR-01 y ESC-CAL-SEG-01.
 
   - **Detalles**:
 
@@ -271,9 +271,10 @@
     - **Framework**: React Native con TypeScript estricto.
     - **Navegación**: `@react-navigation/native` con `native-stack` y `bottom-tabs`.
     - **HTTP**: Axios con interceptores para JWT y refresco (ADR-011).
-    - **Base de datos local**: `react-native-quick-sqlite` (preferido por rendimiento) o `react-native-sqlite-storage`.
+    - **Base de datos local**: `@op-engineering/op-sqlite` con SQLCipher (ADR-022).
     - **Conectividad**: `@react-native-community/netinfo`.
-    - **Almacenamiento seguro**: `react-native-secure-storage` o `expo-secure-store`.
+    - **Almacenamiento seguro**: `react-native-secure-storage` (en los demás ADR se le llama SecureStore).
+    - **Notificaciones**: `@notifee/react-native` y `@react-native-firebase/messaging` (ADR-028).
     - **UUID**: `react-native-uuid`.
     - **Iconos**: `react-native-vector-icons`.
     - **Estado**: `useState`, `useReducer`, `useContext` (ADR-014); evaluar Zustand si crece.
@@ -282,6 +283,6 @@
     - **Monitoreo**: Firebase Crashlytics y Firebase Analytics.
     - **Pruebas**: Jest, React Native Testing Library, Detox (E2E).
     - **Distribución**: Google Play; Firebase App Distribution para pruebas.
-    - **Estructura**: carpetas por dominio (fincas, cultivos, transacciones, sincronización, auth) y por capa (componentes, hooks, servicios, repositorios).
+    - **Estructura**: carpetas por dominio (fincas, cultivos, transacciones, sincronización, autenticación) y por capa (componentes, hooks, servicios, repositorios).
 
     Se descarta Flutter por cambio de stack y menor madurez del ecosistema offline-first en el contexto del equipo, y Android nativo por falta de portabilidad a iOS y mayor curva de aprendizaje. React Native + TypeScript es la opción que garantiza portabilidad, usabilidad y velocidad de desarrollo en AgroTrack.

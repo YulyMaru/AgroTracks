@@ -26,8 +26,8 @@
   - **Enumerar todos los candidatos y opciones relacionadas**:
 
     1. **Parámetros hardcodeados en el frontend**: las categorías, unidades y tipos están definidos en el código de la app; cambiarlos requiere una nueva versión.
-    2. **Parámetros en tabla de base de datos sin API de catálogo**: los parámetros existen en tablas de PostgreSQL, pero el frontend los consume mediante endpoints específicos por tipo (ej. `GET /api/v1/expense-categories`).
-    3. **Catálogo centralizado de parámetros con API única y caché local**: un único endpoint `GET /api/v1/parameters` devuelve todos los parámetros activos; el frontend los cachea en SQLite y los usa offline.
+    2. **Parámetros en tabla de base de datos sin API de catálogo**: los parámetros existen en tablas de PostgreSQL, pero el frontend los consume mediante endpoints específicos por tipo (ej. `GET /api/v1/categorias-gasto`).
+    3. **Catálogo centralizado de parámetros con API única y caché local**: un único endpoint `GET /api/v1/parametros` devuelve todos los parámetros activos; el frontend los cachea en SQLite y los usa offline.
 
 - **Investigación y análisis de cada candidato**:
 
@@ -75,7 +75,7 @@
       - **Resumen**: Cumple parcialmente. Los parámetros están en el backend, pero el frontend debe consultarlos con múltiples endpoints.
 
       - **Detalles**:
-        - Cada tipo de parámetro tiene su propio endpoint (`/expense-categories`, `/units`, `/crop-types`, etc.).
+        - Cada tipo de parámetro tiene su propio endpoint (`/categorias-gasto`, `/unidades`, `/tipos-cultivo`, etc.).
         - El frontend debe hacer múltiples llamadas para obtener todos los parámetros.
         - Mayor tráfico y latencia.
         - Sin caché unificada.
@@ -110,21 +110,21 @@
       - **Resumen**: Cumple plenamente con todos los criterios.
 
       - **Detalles**:
-        - **Backend**: tabla `parameters` con `id`, `type`, `code`, `label`, `sortOrder`, `active`, `createdAt`, `updatedAt`.
-        - **API**: `GET /api/v1/parameters?since=...` devuelve todos los parámetros activos (o solo los modificados desde una fecha).
+        - **Backend**: tabla `parametros` con `id`, `tipo`, `codigo`, `etiqueta`, `orden`, `activo`, `creado_en`, `actualizado_en`.
+        - **API**: `GET /api/v1/parametros?desde=...` devuelve todos los parámetros activos (o solo los modificados desde una fecha).
         - **Frontend**: cachea los parámetros en SQLite; los usa offline; se actualiza al recuperar conexión.
         - **Consistencia**: backend y frontend usan los mismos códigos y etiquetas.
         - **Actualización sin recompilar**: añadir una categoría en backend no requiere actualizar la app.
-        - **Trazabilidad**: la tabla `parameters` tiene `createdAt` y `updatedAt`.
+        - **Trazabilidad**: la tabla `parametros` tiene `creado_en` y `actualizado_en`.
         - **Rendimiento**: una sola llamada trae todos los parámetros.
         - **Offline**: el frontend funciona sin conexión con los parámetros cacheados.
         - **Tipos de parámetros**:
-          - `EXPENSE_CATEGORY`: Abonos y semillas, Mano de obra, Transporte, Otros.
-          - `INCOME_CATEGORY`: Venta de café, Venta de plátano, Otros ingresos.
-          - `UNIT`: kg, tonelada, arroba, bulto, ha, m², L, unidad.
-          - `CROP_TYPE`: Café, Plátano, Maíz, Frijol, Yuca, etc.
-          - `ACTIVITY_TYPE`: Siembra, Riego, Fertilización, Cosecha, etc.
-          - `RESOURCE_TYPE`: Fertilizante, Semilla, Agua, etc.
+          - `CATEGORIA_GASTO`: Abonos y semillas, Mano de obra, Transporte, Otros.
+          - `CATEGORIA_INGRESO`: Venta de café, Venta de plátano, Otros ingresos.
+          - `UNIDAD`: kg, tonelada, arroba, bulto, ha, m², L, unidad.
+          - `TIPO_CULTIVO`: Café, Plátano, Maíz, Frijol, Yuca, etc.
+          - `TIPO_ACTIVIDAD`: Siembra, Riego, Fertilización, Cosecha, etc.
+          - `TIPO_RECURSO`: Fertilizante, Semilla, Agua, etc.
 
     - **Análisis de costos**:
 
@@ -168,9 +168,9 @@
   - **¿Quién da la opinión?**:
 
     - SPIKE-029 — Validará que el catálogo centralizado funciona con caché local y sincronización — Propuesto.
-    - SPIKE-005 — Validará que el registro offline usa los parámetros cacheados — Propuesto.
-    - SPIKE-006 — Validará que la consulta offline usa los parámetros cacheados — Propuesto.
-    - SPIKE-019 — Validará que la tabla `parameters` se versiona con migraciones — Propuesto.
+    - SPIKE-005 — Validará el registro offline que consume los parámetros cacheados; el uso del catálogo se valida en SPIKE-029 — Propuesto.
+    - SPIKE-006 — Validará la consulta offline que consume los parámetros cacheados; el uso del catálogo se valida en SPIKE-029 — Propuesto.
+    - SPIKE-019 — Validará las migraciones versionadas con las que se crea la tabla `parametros`; la tabla en sí se valida en SPIKE-029 — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -186,11 +186,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-029 (catálogo centralizado), SPIKE-005 (registro offline), SPIKE-006 (consulta offline) y SPIKE-019 (migraciones).
+    Mediante SPIKE-029 (catálogo centralizado, caché local y tabla `parametros`), con apoyo de SPIKE-005 (registro offline), SPIKE-006 (consulta offline) y SPIKE-019 (migraciones).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -207,8 +207,8 @@
 
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que el catálogo centralizado funcione correctamente, que el frontend cachee los parámetros en SQLite y que las actualizaciones se propaguen al recuperar conexión.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de los parámetros no sensibles.
-    - **¿Qué tipos de integraciones están involucradas?**: PostgreSQL (tabla `parameters`), Spring Boot (API REST), SQLite (caché local), motor de sincronización (ADR-001), repositorio local (ADR-006) y el CRUD de parámetros en el backend.
-    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir los tipos de parámetros desde el día 1. Usar códigos estables (ej. `EXPENSE_CATEGORY_FERTILIZER`) en lugar de IDs numéricos. Incluir `updatedAt` para sincronización incremental. Permitir desactivar parámetros sin eliminarlos. Cachear en SQLite desde la primera versión.
+    - **¿Qué tipos de integraciones están involucradas?**: PostgreSQL (tabla `parametros`), Spring Boot (API REST), SQLite (caché local), motor de sincronización (ADR-001), repositorio local (ADR-006) y el CRUD de parámetros en el backend.
+    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir los tipos de parámetros desde el día 1. Usar códigos estables (ej. `CATEGORIA_GASTO_FERTILIZANTE`) en lugar de IDs numéricos. Incluir `actualizado_en` para sincronización incremental. Permitir desactivar parámetros sin eliminarlos. Cachear en SQLite desde la primera versión.
 
   - **Anécdotas**:
 
@@ -219,7 +219,7 @@
 
   - **Resumen**:
 
-    Se recomienda implementar un **catálogo centralizado de parámetros no sensibles** con API única (`GET /api/v1/parameters`) y caché local en SQLite, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-02, ESC-CAL-DP-06, ESC-CAL-US-01, ESC-CAL-ACC-06 y ESC-CAL-CF-03.
+    Se recomienda implementar un **catálogo centralizado de parámetros no sensibles** con API única (`GET /api/v1/parametros`) y caché local en SQLite, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-02, ESC-CAL-DP-06, ESC-CAL-US-01, ESC-CAL-ACC-06 y ESC-CAL-CF-03.
 
   - **Detalles**:
 
@@ -228,27 +228,27 @@
     La implementación deberá considerar como mínimo:
 
     - **Backend (Spring Boot)**:
-      - Tabla `parameters` con columnas: `id` (UUID), `type` (texto), `code` (texto único), `label` (texto), `description` (texto opcional), `sort_order` (int), `active` (boolean), `created_at`, `updated_at`.
-      - Restricción única en `(type, code)`.
-      - Índice en `(type, active)`.
-      - Endpoint `GET /api/v1/parameters` que devuelve todos los parámetros activos.
-      - Parámetro opcional `?since=timestamp` para sincronización incremental.
+      - Tabla `parametros` con columnas: `id` (UUID), `tipo` (texto), `codigo` (texto único), `etiqueta` (texto), `descripcion` (texto opcional), `orden` (int), `activo` (boolean), `creado_en`, `actualizado_en`.
+      - Restricción única en `(tipo, codigo)`.
+      - Índice en `(tipo, activo)`.
+      - Endpoint `GET /api/v1/parametros` que devuelve todos los parámetros activos.
+      - Parámetro opcional `?desde=fechaHora` para sincronización incremental.
       - Endpoints de administración (futuro) para CRUD de parámetros.
       - Migración Flyway que inserta los parámetros iniciales.
     - **Tipos de parámetros**:
-      - `EXPENSE_CATEGORY`: categorías de gastos.
-      - `INCOME_CATEGORY`: categorías de ingresos.
-      - `UNIT`: unidades de medida (kg, tonelada, arroba, bulto, ha, m², L, unidad).
-      - `CROP_TYPE`: tipos de cultivo.
-      - `ACTIVITY_TYPE`: tipos de actividad productiva.
-      - `RESOURCE_TYPE`: tipos de recurso.
+      - `CATEGORIA_GASTO`: categorías de gastos.
+      - `CATEGORIA_INGRESO`: categorías de ingresos.
+      - `UNIDAD`: unidades de medida (kg, tonelada, arroba, bulto, ha, m², L, unidad).
+      - `TIPO_CULTIVO`: tipos de cultivo.
+      - `TIPO_ACTIVIDAD`: tipos de actividad productiva.
+      - `TIPO_RECURSO`: tipos de recurso.
     - **Frontend (React Native)**:
-      - Tabla `parameters` en SQLite con las mismas columnas.
+      - Tabla `parametros` en SQLite con las mismas columnas.
       - Sincronización al arrancar la app y al recuperar conexión.
       - Uso offline desde la caché.
-      - Función `getParametersByType(type)` que lee de SQLite.
+      - Función `obtenerParametrosPorTipo(tipo)` que lee de SQLite.
     - **Sincronización**:
-      - Al arrancar, el frontend consulta `GET /api/v1/parameters?since=lastSync`.
+      - Al arrancar, el frontend consulta `GET /api/v1/parametros?desde=ultimaSincronizacion`.
       - Actualiza la caché local con los cambios.
       - Si no hay conexión, usa la caché existente.
     - **Consistencia**:

@@ -166,7 +166,7 @@
 
     - Aplicación móvil B2C para campesinos, con uso principal en zonas rurales con conectividad limitada o nula.
     - Primera versión funcional con criterios de calidad para producción.
-    - Arquitectura monolítica inicial.
+    - Monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 

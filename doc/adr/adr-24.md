@@ -10,15 +10,16 @@
 
   - **Detalles**:
 
-    - **Consistencia**: todos los errores del backend deben devolver una estructura única (`code`, `message`, `details`, `timestamp`, `traceId`).
+    - **Consistencia**: todos los errores del backend deben devolver una estructura única (`codigo`, `mensaje`, `detalles`, `fechaHora`, `idTraza`).
     - **Claridad**: los mensajes de error deben estar en español colombiano, ser accionables y evitar tecnicismos (ESC-CAL-US-03).
     - **Recuperación automática**: los errores transitorios (500, 503, timeout, red) deben reintentarse con backoff exponencial (ADR-001).
-    - **Conservación de datos**: los registros no confirmados deben permanecer en `PENDING` hasta recibir confirmación del servidor (ESC-CAL-CF-05).
+    - **Conservación de datos**: los registros no confirmados deben permanecer en `PENDIENTE` hasta recibir confirmación del servidor (ESC-CAL-CF-05).
     - **Idempotencia**: los reintentos no deben generar duplicados (ESC-CAL-INT-03, ADR-007).
     - **Autenticación**: los errores 401 deben disparar refresco silencioso o redirección a login (ESC-CAL-SEG-01, ADR-011).
-    - **Trazabilidad**: cada error debe incluir un `traceId` para rastrearlo en logs (ADR-021).
+    - **Trazabilidad**: cada error debe incluir un `idTraza` para rastrearlo en logs (ADR-021).
     - **Costo de implementación**: viable con el stack actual (Spring Boot + React Native).
     - **Escenarios de calidad relacionados**: ESC-CAL-CF-05, ESC-CAL-INT-03, ESC-CAL-SEG-01, ESC-CAL-US-03, ESC-CAL-DP-01.
+    - **Funcionalidades significativas relacionadas**: HU-44 (evitar pérdida de información durante la sincronización).
 
 - **Candidatos a considerar**:
 
@@ -84,17 +85,17 @@
       - **Resumen**: Cumple plenamente con todos los criterios.
 
       - **Detalles**:
-        - Backend con `@ControllerAdvice` que captura todas las excepciones y devuelve una estructura única: `{ code, message, details, timestamp, traceId }`.
-        - Códigos de error estandarizados: `VALIDATION_ERROR`, `AUTH_REQUIRED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `IDEMPOTENT_HIT`, `INTERNAL_ERROR`, `SERVICE_UNAVAILABLE`.
-        - Frontend con interceptor de Axios que interpreta cada `code` y `status` y decide:
+        - Backend con `@ControllerAdvice` que captura todas las excepciones y devuelve una estructura única: `{ codigo, mensaje, detalles, fechaHora, idTraza }`.
+        - Códigos de error estandarizados: `ERROR_VALIDACION`, `AUTENTICACION_REQUERIDA`, `ACCESO_DENEGADO`, `NO_ENCONTRADO`, `CONFLICTO`, `OPERACION_YA_REGISTRADA`, `ERROR_INTERNO`, `SERVICIO_NO_DISPONIBLE`.
+        - Frontend con interceptor de Axios que interpreta cada `codigo` y el estado HTTP y decide:
           - 400/422 → mostrar mensaje de validación (ADR-002).
           - 401 → refrescar token (ADR-011); si falla, redirigir a login.
           - 404 → mostrar estado vacío (ADR-004).
           - 409 → tratar como idempotencia (registro ya procesado).
           - 500/503/timeout/red → reintentar con backoff exponencial (ADR-001).
-        - Conservación de registros en `PENDING` hasta confirmación (ADR-007).
+        - Conservación de registros en `PENDIENTE` hasta confirmación (ADR-007).
         - Mensajes claros y accionables en español.
-        - `traceId` propagado en cada error.
+        - `idTraza` propagado en cada error.
 
     - **Análisis de costos**:
 
@@ -114,7 +115,7 @@
         - Mensajes claros.
         - Recuperación automática.
         - Conservación de datos.
-        - Trazabilidad con `traceId`.
+        - Trazabilidad con `idTraza`.
       - **Debilidades**:
         - Requiere disciplina del equipo.
         - Configuración inicial de `@ControllerAdvice`.
@@ -128,8 +129,8 @@
     - **Opiniones y comentarios internos**:
 
       - "La estructura única es clave para que el frontend sepa qué hacer."
-      - "El `traceId` nos permite rastrear cada error de extremo a extremo."
-      - "La idempotencia con `localId` evita duplicados en los reintentos."
+      - "El `idTraza` nos permite rastrear cada error de extremo a extremo."
+      - "La idempotencia con `idLocal` evita duplicados en los reintentos."
 
   - **3. Manejo distribuido con circuit breaker y sagas**:
 
@@ -185,7 +186,7 @@
     - SPIKE-001 — Validará retry y backoff en sincronización — Propuesto.
     - SPIKE-007 — Validará idempotencia y conservación ante interrupción — Propuesto.
     - SPIKE-011 — Validará refresco de token ante 401 — Propuesto.
-    - SPIKE-021 — Validará que el `traceId` se propaga en errores — Propuesto.
+    - SPIKE-021 — Validará que el `idTraza` se propaga en errores — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -200,11 +201,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-024 (manejo centralizado), SPIKE-001 (retry y backoff), SPIKE-007 (idempotencia), SPIKE-011 (refresco de token) y SPIKE-021 (traceId).
+    Mediante SPIKE-024 (manejo centralizado), SPIKE-001 (retry y backoff), SPIKE-007 (idempotencia), SPIKE-011 (refresco de token) y SPIKE-021 (idTraza).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -214,21 +215,21 @@
     - Facilita la recuperación automática (reintentos, refresco de token).
     - Conserva los datos ante interrupciones.
     - Evita duplicados con idempotencia.
-    - Proporciona trazabilidad con `traceId`.
+    - Proporciona trazabilidad con `idTraza`.
     - Es viable con el stack actual sin complejidad adicional.
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que el 100 % de los errores tenga estructura única, que el frontend interprete correctamente cada `code`, que los datos se conserven ante interrupciones y que los reintentos no generen duplicados.
+    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que el 100 % de los errores tenga estructura única, que el frontend interprete correctamente cada `codigo`, que los datos se conserven ante interrupciones y que los reintentos no generen duplicados.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las operaciones (errores y éxitos).
-    - **¿Qué tipos de integraciones están involucradas?**: Spring Boot (`@ControllerAdvice`), Axios (interceptor), SQLite local (tabla `pending_operations`), motor de sincronización (ADR-001), idempotencia (ADR-007), refresco de token (ADR-011) y monitoreo (ADR-021).
-    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Estandarizar la estructura de error desde el día 1. Documentar los códigos de error y sus estrategias. Incluir `traceId` en todas las respuestas. Tratar `IDEMPOTENT_HIT` como éxito. Probar cada tipo de error en los tres dispositivos.
+    - **¿Qué tipos de integraciones están involucradas?**: Spring Boot (`@ControllerAdvice`), Axios (interceptor), SQLite local (tabla `operaciones_pendientes`), motor de sincronización (ADR-001), idempotencia (ADR-007), refresco de token (ADR-011) y monitoreo (ADR-021).
+    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Estandarizar la estructura de error desde el día 1. Documentar los códigos de error y sus estrategias. Incluir `idTraza` en todas las respuestas. Tratar `OPERACION_YA_REGISTRADA` como éxito. Probar cada tipo de error en los tres dispositivos.
 
   - **Anécdotas**:
 
     - En el diseño del SPIKE-001 se identificó que sin una estructura única de error, el frontend no podía distinguir entre un error transitorio y uno permanente.
-    - En el diseño del SPIKE-011 se confirmó que el refresco de token debe ser atómico para evitar múltiples solicitudes simultáneas.
-    - En el diseño del SPIKE-007 se confirmó que tratar `IDEMPOTENT_HIT` como éxito evita confusión en el frontend.
+    - En el diseño del SPIKE-011 se planteó como hipótesis que el refresco de token debe ser atómico para evitar múltiples solicitudes simultáneas.
+    - En el diseño del SPIKE-007 se planteó como hipótesis que tratar `OPERACION_YA_REGISTRADA` como éxito evita confusión en el frontend.
 
 - **Recomendación**:
 
@@ -244,39 +245,39 @@
 
     - **Backend (Spring Boot)**:
       - `@ControllerAdvice` global que captura excepciones.
-      - Estructura de error única: `{ code, message, details, timestamp, traceId }`.
+      - Estructura de error única: `{ codigo, mensaje, detalles, fechaHora, idTraza }`.
       - Códigos estandarizados:
-        - `VALIDATION_ERROR` (400/422).
-        - `AUTH_REQUIRED` (401).
-        - `FORBIDDEN` (403).
-        - `NOT_FOUND` (404).
-        - `CONFLICT` (409).
-        - `IDEMPOTENT_HIT` (409, tratado como éxito).
-        - `INTERNAL_ERROR` (500).
-        - `SERVICE_UNAVAILABLE` (503).
+        - `ERROR_VALIDACION` (400/422).
+        - `AUTENTICACION_REQUERIDA` (401).
+        - `ACCESO_DENEGADO` (403).
+        - `NO_ENCONTRADO` (404).
+        - `CONFLICTO` (409).
+        - `OPERACION_YA_REGISTRADA` (409, tratado como éxito).
+        - `ERROR_INTERNO` (500).
+        - `SERVICIO_NO_DISPONIBLE` (503).
       - Mensajes en español colombiano, claros y accionables.
-      - `traceId` propagado en cada respuesta de error.
+      - `idTraza` propagado en cada respuesta de error.
     - **Frontend (React Native)**:
-      - Interceptor de Axios que captura errores y decide según `code` y `status`:
+      - Interceptor de Axios que captura errores y decide según `codigo` y el estado HTTP:
         - 400/422 → mostrar mensaje de validación (ADR-002).
         - 401 → refrescar token (ADR-011); si falla, redirigir a login.
         - 403 → mostrar mensaje de permiso.
         - 404 → mostrar estado vacío (ADR-004).
-        - 409 (`IDEMPOTENT_HIT`) → tratar como éxito.
+        - 409 (`OPERACION_YA_REGISTRADA`) → tratar como éxito.
         - 500/503/timeout/red → reintentar con backoff exponencial (ADR-001).
-      - Conservar registros en `PENDING` hasta recibir confirmación (ADR-007).
+      - Conservar registros en `PENDIENTE` hasta recibir confirmación (ADR-007).
       - Mostrar mensajes claros y accionables.
     - **Trazabilidad**:
-      - Generar `traceId` en el frontend y enviarlo en el header `X-Trace-Id`.
-      - Registrar `traceId` en logs del backend (ADR-021).
-      - Incluir `traceId` en cada respuesta de error.
+      - Generar `idTraza` en el frontend y enviarlo en el header `X-Trace-Id`.
+      - Registrar `idTraza` en logs del backend (ADR-021).
+      - Incluir `idTraza` en cada respuesta de error.
     - **Pruebas**:
       - Simular errores 400, 401, 403, 404, 409, 500, 503 y timeout.
       - Verificar que cada uno se maneja correctamente.
       - Verificar que los datos no se pierden ante interrupciones.
       - Verificar que los reintentos no generan duplicados.
       - Verificar que los mensajes son claros y accionables.
-      - Verificar que `traceId` aparece en logs y respuestas.
+      - Verificar que `idTraza` aparece en logs y respuestas.
     - **Documentación**:
       - Catálogo de códigos de error y sus estrategias.
       - Guía de mensajes para el equipo.

@@ -29,7 +29,7 @@
 
     1. **SQL relacional (PostgreSQL en backend + SQLite en móvil)**: modelo relacional con integridad referencial, transacciones ACID, migraciones versionadas y consultas agregadas nativas.
     2. **NoSQL documental (MongoDB en backend + Realm en móvil)**: documentos JSON sin esquema fijo, sin integridad referencial fuerte, agregaciones mediante pipeline.
-    3. **Híbrido (PostgreSQL + Redis para caché)**: SQL como fuente de verdad y Redis solo para caché de resúmenes y sesiones.
+    3. **Híbrido (PostgreSQL + Redis para caché)**: SQL como fuente de verdad y Redis solo para caché de resúmenes económicos.
 
 - **Investigación y análisis de cada candidato**:
 
@@ -142,17 +142,17 @@
 
       - **Detalles**:
         - PostgreSQL sigue siendo la fuente de verdad.
-        - Redis se usa exclusivamente para caché de resúmenes económicos (ADR-009) y, opcionalmente, para sesiones.
+        - Redis se usa exclusivamente para caché de resúmenes económicos (ADR-009).
         - La invalidación de caché se realiza al modificar transacciones.
         - No introduce duplicidad de fuentes de verdad.
         - Reduce la carga del backend en consultas recurrentes (mes actual, mes anterior).
 
     - **Análisis de costos**:
 
-      - **Resumen**: Costo adicional bajo (Redis open source o servicio gestionado económico) con retorno en rendimiento.
+      - **Resumen**: Costo adicional bajo (Redis open source, como contenedor en el servidor propio) con retorno en rendimiento.
 
       - **Ejemplos**:
-        - **Licencias**: Redis open source; servicio gestionado opcional.
+        - **Licencias**: Redis open source, ejecutado como contenedor en el servidor propio (ADR-031).
         - **Capacitación**: el equipo debe aprender invalidación y TTL.
         - **Operación**: monitoreo de hit ratio y memoria.
         - **Medición**: hit ratio, tiempos con y sin caché.
@@ -174,7 +174,7 @@
     - **Opiniones y comentarios internos**:
 
       - "Redis no es una base de datos para AgroTrack; es una capa de aceleración."
-      - "Empezar con caché en memoria (Caffeine) en el spike y migrar a Redis si el tráfico lo justifica."
+      - "Usar Redis desde el spike para validar la misma caché que irá a producción."
 
 - **Opiniones y comentarios externos**:
 
@@ -184,7 +184,7 @@
 
     - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple ≤ 3 s y ≤ 5 s con 10,000 transacciones — Propuesto.
     - SPIKE-013 — Validará que SQLite local replica fielmente el esquema remoto y soporta transacciones ACID — Propuesto.
-    - SPIKE-007 — Validará que la idempotencia y la consistencia se mantienen con claves únicas en PostgreSQL — Propuesto.
+    - SPIKE-007 — Validará que la idempotencia con `idLocal` y la consistencia se mantienen ante reintentos e interrupciones — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -199,11 +199,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-009 (rendimiento de PostgreSQL), SPIKE-013 (SQLite local y réplica de esquema) y SPIKE-007 (idempotencia con claves únicas).
+    Mediante SPIKE-009 (rendimiento de PostgreSQL), SPIKE-013 (SQLite local y réplica de esquema) y SPIKE-007 (idempotencia con `idLocal`).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -220,7 +220,7 @@
 
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución de los spikes. Se espera que PostgreSQL con índices compuestos cumpla los umbrales de ESC-CAL-RN-02, ESC-CAL-RN-04 y ESC-CAL-ESC-01, y que SQLite local soporte consultas offline ≤ 2 s para 100 registros.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las operaciones de persistencia (backend y local).
-    - **¿Qué tipos de integraciones están involucradas?**: PostgreSQL (backend), SQLite (móvil), Flyway (migraciones backend), migraciones SQLite (móvil), Redis (caché opcional), motor de sincronización (ADR-001) y repositorio local (ADR-006).
+    - **¿Qué tipos de integraciones están involucradas?**: PostgreSQL (backend), SQLite (móvil), Flyway (migraciones backend), migraciones SQLite (móvil), Redis (caché de resúmenes), motor de sincronización (ADR-001) y repositorio local (ADR-006).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el esquema relacional completo desde el inicio, incluyendo claves únicas para idempotencia y campos de auditoría. Usar migraciones versionadas desde el día 1. No introducir NoSQL sin una razón de peso. Mantener Redis como caché, nunca como fuente de verdad.
 
   - **Anécdotas**:
@@ -232,7 +232,7 @@
 
   - **Resumen**:
 
-    Se recomienda implementar **PostgreSQL 15+ como base de datos del backend** y **SQLite como base de datos local del cliente móvil**, con **Redis (o caché en memoria) exclusivamente para caché de resúmenes económicos**, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-02, ESC-CAL-DP-06, ESC-CAL-CF-03, ESC-CAL-CF-04, ESC-CAL-CF-05, ESC-CAL-RN-04 y ESC-CAL-ESC-01.
+    Se recomienda implementar **PostgreSQL 15+ como base de datos del backend** y **SQLite como base de datos local del cliente móvil**, con **Redis exclusivamente para caché de resúmenes económicos**, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-02, ESC-CAL-DP-06, ESC-CAL-CF-03, ESC-CAL-CF-04, ESC-CAL-CF-05, ESC-CAL-RN-04 y ESC-CAL-ESC-01.
 
   - **Detalles**:
 
@@ -243,22 +243,22 @@
     - **Backend**:
       - PostgreSQL 15+ como fuente de verdad.
       - Flyway para migraciones versionadas.
-      - Índices compuestos `(user_id, fecha, tipo)` en transacciones.
-      - Índices en `farms(user_id)`, `lots(farm_id)`, `crops(lot_id)`.
-      - Restricciones únicas para idempotencia (`local_id` único por operación).
+      - Índices compuestos `(id_usuario, fecha, tipo)` en transacciones.
+      - Índices en `fincas(id_usuario)`, `lotes(id_finca)`, `cultivos(id_lote)`.
+      - Restricciones únicas para idempotencia (`id_local` único por operación).
       - Transacciones ACID en operaciones de sincronización.
     - **Cliente móvil**:
       - SQLite como almacenamiento local persistente.
       - Migraciones locales versionadas.
-      - Tabla `pending_operations` con `localId`, `operationType`, `payload`, `status`, `retryCount`, `lastAttemptAt`.
-      - Índices en `status` y `created_at` para consultas rápidas de la cola.
+      - Tabla `operaciones_pendientes` con `id_local`, `tipo_operacion`, `contenido`, `estado`, `reintentos`, `ultimo_intento_en`.
+      - Índices en `estado` y `creado_en` para consultas rápidas de la cola.
       - Transacciones al insertar y actualizar para evitar corrupción.
     - **Caché**:
-      - Redis (o Caffeine en fases iniciales) para resúmenes económicos.
+      - Redis para resúmenes económicos, mediante Spring Cache (ADR-016).
       - TTL de 5 minutos e invalidación al modificar transacciones.
       - Nunca como fuente de verdad.
     - **Pruebas**:
       - Pruebas de integridad referencial.
       - Pruebas de transacciones ACID ante fallos.
       - Pruebas de rendimiento con volumen máximo (10,000 transacciones).
-      - Pruebas de idempotencia con `localId`.
+      - Pruebas de idempotencia con `idLocal`.

@@ -182,7 +182,7 @@
 
     - SPIKE-030 — Validará que GitHub Secrets y variables de entorno del servidor gestionan los secretos sin exponerlos — Propuesto.
     - SPIKE-025 — Validará que el pipeline lee los secretos de GitHub Secrets sin exponerlos en logs — Propuesto.
-    - SPIKE-011 — Validará que la clave JWT se gestiona correctamente — Propuesto.
+    - SPIKE-011 — Validará la autenticación con JWT cuya clave de firma se gestiona como secreto; la gestión de la clave se valida en SPIKE-030 — Propuesto.
     - SPIKE-027 — Validará que el API Token de Cloudflare se gestiona en GitHub Secrets — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
@@ -200,11 +200,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-030 (gestión de secretos), SPIKE-025 (integración con CI/CD), SPIKE-011 (clave JWT) y SPIKE-027 (API Token de Cloudflare).
+    Mediante SPIKE-030 (gestión de secretos), SPIKE-025 (integración con CI/CD), SPIKE-011 (autenticación JWT) y SPIKE-027 (API Token de Cloudflare).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -250,16 +250,18 @@
     - **Variables de entorno del servidor (backend en producción)**:
       - Inyectar los secretos como variables de entorno al arrancar la aplicación.
       - Usar un archivo `.env` **no versionado** en el servidor (incluido en `.gitignore`).
+      - El mismo archivo `.env` alimenta los contenedores definidos en `docker-compose` (ADR-031).
       - Configurar Spring Boot para leer las variables de entorno.
       - Documentar el procedimiento de despliegue con las variables.
     - **Secretos a gestionar**:
       - `DB_PASSWORD`: contraseña de PostgreSQL.
       - `JWT_SECRET`: clave para firmar tokens JWT.
       - `JWT_REFRESH_SECRET`: clave para refresh tokens.
-      - `FIREBASE_SERVER_KEY`: clave del servidor de Firebase Cloud Messaging.
+      - `FIREBASE_SERVICE_ACCOUNT`: credencial (JSON) de la cuenta de servicio que usa Firebase Admin SDK para enviar notificaciones push (ADR-028).
       - `CLOUDFLARE_API_TOKEN`: token de API de Cloudflare.
-      - `SMTP_PASSWORD`: contraseña de email (si aplica).
-      - `GRAFANA_PASSWORD`: contraseña de Grafana (si aplica).
+      - `DEPLOY_SSH_KEY`: clave SSH con la que GitHub Actions despliega en el servidor (ADR-031).
+      - `GRAFANA_PASSWORD`: contraseña de administrador de Grafana (ADR-021).
+      - `REDIS_PASSWORD`: contraseña de Redis (ADR-013).
     - **Rotación**:
       - Documentar el procedimiento de rotación por secreto.
       - Rotar secretos periódicamente (ej. cada 6 meses).

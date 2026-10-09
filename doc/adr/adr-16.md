@@ -235,7 +235,7 @@
 
     - SPIKE-016 — Validará que Spring Boot 3 con PostgreSQL, Flyway, Spring Security y JWT cubre todos los requisitos del backend — Propuesto.
     - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple los tiempos definidos — Propuesto.
-    - SPIKE-011 — Validará que Spring Security + JWT protege los endpoints correctamente — Propuesto.
+    - SPIKE-011 — Validará en la app móvil el manejo de sesión con JWT (401, refresco y redirección) contra un backend simulado; la protección de endpoints con Spring Security se valida en SPIKE-016 — Propuesto.
     - SPIKE-015 — Validará que los endpoints REST se documentan con OpenAPI — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
@@ -252,11 +252,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-016 (stack completo), SPIKE-009 (rendimiento de PostgreSQL), SPIKE-011 (seguridad JWT) y SPIKE-015 (REST y OpenAPI).
+    Mediante SPIKE-016 (stack completo), SPIKE-009 (rendimiento de PostgreSQL), SPIKE-011 (manejo de sesión JWT en la app) y SPIKE-015 (REST y OpenAPI).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -279,7 +279,7 @@
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-015 se comprobó que Spring Boot con SpringDoc genera OpenAPI sin esfuerzo adicional, lo que facilita la integración con el equipo móvil.
+    - En el diseño del SPIKE-015 se planteó como hipótesis que Spring Boot con SpringDoc genera OpenAPI sin esfuerzo adicional, lo que facilita la integración con el equipo móvil.
     - Durante el análisis se concluyó que intentar replicar las transacciones ACID de Spring en Node.js habría requerido más código y cuidado, aumentando el riesgo de errores en sincronización.
 
 - **Recomendación**:
@@ -300,10 +300,10 @@
     - **Migraciones**: Flyway para versionar el esquema.
     - **Seguridad**: Spring Security + JWT con access token y refresh token.
     - **Documentación**: SpringDoc OpenAPI (Swagger UI).
-    - **Caché**: Spring Cache + Redis (o Caffeine en fases iniciales).
-    - **Validación**: Jakarta Validation (Bean Validation) para validar DTOs.
-    - **Manejo de errores**: `@ControllerAdvice` con respuestas estructuradas (`code`, `message`, `details`).
-    - **Idempotencia**: verificación de `localId` en endpoints de sincronización.
+    - **Caché**: Spring Cache + Redis.
+    - **Validación**: reglas de formularios con el esquema JSON compartido (ADR-002) mediante `json-schema-validator`; Jakarta Validation (Bean Validation) solo para la estructura de los DTO.
+    - **Manejo de errores**: `@ControllerAdvice` con respuestas estructuradas (`codigo`, `mensaje`, `detalles`).
+    - **Idempotencia**: verificación de `idLocal` en endpoints de sincronización.
     - **Monitoreo**: Spring Boot Actuator + Micrometer.
     - **Pruebas**: JUnit 5, Mockito, Spring Boot Test y Testcontainers.
     - **Estructura modular**: paquetes por dominio (fincas, cultivos, transacciones, sincronización, usuarios) dentro de un monolito modular (ADR-018).

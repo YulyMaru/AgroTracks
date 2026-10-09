@@ -17,6 +17,7 @@
     - **Mantenibilidad**: las reglas de integridad (qué datos son mínimos para cada análisis) deben ser fáciles de configurar y actualizar.
     - **Costo de implementación**: la solución debe ser viable con el stack actual y no requerir infraestructura adicional.
     - **Escenario de calidad relacionado**: ESC-CAL-CF-08.
+    - **Funcionalidades significativas relacionadas**: HU-14 (consultar resumen de resultados), HU-17 (comparar resultados de cultivos), HU-21 (consultar producción frente a resultados económicos) y HU-42 (consultar rentabilidad o resultado relativo).
 
 - **Candidatos a considerar**:
 
@@ -149,7 +150,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -174,7 +175,7 @@
 
     - En el diseño del SPIKE-008 se aprendió que un campesino puede confiar en un resultado incompleto si no se le advierte.
     - También se identificó que el resultado parcial debe mostrarse con un estilo visual diferenciado (fondo amarillo, borde naranja) para que el usuario no lo confunda con un resultado completo.
-    - Se observó que listar explícitamente los datos faltantes ("Faltan gastos de transporte") es más efectivo que un mensaje genérico.
+    - Se anticipa, pendiente de validar en el SPIKE-008, que listar explícitamente los datos faltantes ("Faltan gastos de transporte") es más efectivo que un mensaje genérico.
 
 - **Recomendación**:
 

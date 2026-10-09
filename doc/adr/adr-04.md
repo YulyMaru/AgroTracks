@@ -133,7 +133,7 @@
 
     - **Opiniones y comentarios internos**:
       - "Es el patrón que usan las aplicaciones modernas para guiar al usuario en lugar de dejarlo en un callejón sin salida".
-      - "Podemos tener un componente `EmptyState` que reciba `title`, `description`, `iconName` y `actionButton`".
+      - "Podemos tener un componente `EstadoVacio` que reciba `titulo`, `descripcion`, `nombreIcono` y `botonAccion`".
       - "Es crucial que el mensaje sea en lenguaje coloquial, no técnico. Decir 'Gastos' en lugar de 'Transacciones debitadas'".
 
 - **Opiniones y comentarios externos**:
@@ -156,7 +156,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -173,16 +173,16 @@
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Se implementará un componente `EmptyState` en el módulo de componentes compartidos. Se usará en todas las pantallas de listado (gastos, ingresos, seguimientos, resultados, etc.). Cada pantalla definirá su propio mensaje y acción sugerida. Pendiente de ejecución de los spikes.
+    - **¿Cómo se desempeña el ganador?**: Se implementará un componente `EstadoVacio` en el módulo de componentes compartidos. Se usará en todas las pantallas de listado (gastos, ingresos, seguimientos, resultados, etc.). Cada pantalla definirá su propio mensaje y acción sugerida. Pendiente de ejecución de los spikes.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las consultas sin resultados utilizarán este componente.
-    - **¿Qué tipos de integraciones están involucradas?**: Integración con el sistema de navegación (para las acciones sugeridas), con el módulo de estado de las pantallas (`loading`, `success`, `empty`, `error`), con el repositorio local (ADR-006) para determinar si hay datos, y con el sistema de internacionalización si aplica.
+    - **¿Qué tipos de integraciones están involucradas?**: Integración con el sistema de navegación (para las acciones sugeridas), con el módulo de estado de las pantallas (`cargando`, `exito`, `vacio`, `error`), con el repositorio local (ADR-006) para determinar si hay datos, y con el sistema de internacionalización si aplica.
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: No subestimar el poder de las ilustraciones; un buen ícono o ilustración puede hacer que el estado vacío sea casi agradable. Definir un set de mensajes estandarizados por módulo desde el principio para evitar inconsistencias. Probar los mensajes con usuarios reales; a veces lo que parece obvio para el equipo no lo es para el campesino.
 
   - **Anécdotas**:
 
     - En el diseño del SPIKE-004 se aprendió que un buen icono (lupa, calendario vacío) suaviza la experiencia.
     - También se identificó que los mensajes deben estar en lenguaje coloquial; "No hay transacciones debitadas" no se entiende, "No hay gastos" sí.
-    - Se observó que cuando la acción sugerida no está clara (ej. solo un texto sin botón), el usuario no interactúa con ella.
+    - Se anticipa, pendiente de validar en el SPIKE-004, que cuando la acción sugerida no está clara (ej. solo un texto sin botón), el usuario no interactúa con ella.
 
 - **Recomendación**:
 
@@ -196,8 +196,8 @@
 
     La implementación deberá considerar como mínimo:
 
-    - Un componente reutilizable `EmptyState` que acepte parámetros: `icon` (nombre del ícono o ilustración), `title` (título del mensaje), `description` (descripción contextual), `actionLabel` (texto del botón) y `onAction` (función a ejecutar).
-    - Un componente separado `ErrorState` para errores de conexión o servidor, con un mensaje diferente y una acción de "Reintentar".
+    - Un componente reutilizable `EstadoVacio` que acepte parámetros: `icono` (nombre del ícono o ilustración), `titulo` (título del mensaje), `descripcion` (descripción contextual), `etiquetaAccion` (texto del botón) y `alAccionar` (función a ejecutar).
+    - Un componente separado `EstadoError` para errores de conexión o servidor, con un mensaje diferente y una acción de "Reintentar".
     - Definición de mensajes específicos por módulo (ej. Gastos: "No hay gastos en este período"; Ingresos: "Aún no has registrado ingresos"; Resultados: "No hay movimientos para mostrar").
     - Acciones sugeridas alineadas con el contexto (ej. "Registrar gasto", "Seleccionar otro mes", "Agregar cultivo").
     - Un diseño visual consistente (color neutro, icono amigable, tipografía clara) que no confunda con una pantalla de error.

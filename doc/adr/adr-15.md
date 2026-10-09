@@ -287,7 +287,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -314,7 +314,7 @@
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-001 se comprobó que un POST idempotente con `localId` es suficiente para garantizar que N reintentos generen 1 solo registro. No se necesita nada más complejo.
+    - En el diseño del SPIKE-001 se planteó como hipótesis que un POST idempotente con `idLocal` es suficiente para garantizar que N reintentos generen 1 solo registro. Si se confirma, no se necesitará nada más complejo.
     - Durante el análisis se concluyó que intentar mantener una conexión WebSocket en zonas rurales sería un error: la conexión se caería constantemente y el usuario vería errores.
 
 - **Recomendación**:
@@ -332,8 +332,8 @@
     - **Diseño de endpoints**:
       - Prefijo de versión: `/api/v1/...`.
       - Recursos REST para fincas, lotes, cultivos, transacciones, usuarios y sincronización.
-      - Endpoints idempotentes para sincronización (`POST /api/v1/sync/transactions`).
-      - Paginación con query params (`?page=1&size=20`).
+      - Endpoints idempotentes para sincronización (`POST /api/v1/sincronizacion/transacciones`).
+      - Paginación con query params (`?pagina=1&limite=20`).
       - Filtros por fecha, tipo, finca, lote y cultivo.
     - **Seguridad**:
       - Autenticación JWT en el header `Authorization: Bearer <token>`.
@@ -344,9 +344,9 @@
       - Contratos claros para el equipo móvil.
     - **Manejo de errores**:
       - Códigos de estado HTTP estándar (200, 201, 400, 401, 403, 404, 409, 500, 503).
-      - Cuerpo de error estructurado con `code`, `message` y `details`.
+      - Cuerpo de error estructurado con `codigo`, `mensaje` y `detalles`.
     - **Idempotencia**:
-      - Los endpoints de sincronización verifican `localId` y devuelven la misma respuesta en reintentos (ADR-007).
+      - Los endpoints de sincronización verifican `idLocal` y devuelven la misma respuesta en reintentos (ADR-007).
     - **Caché**:
       - Uso de ETag y Cache-Control para consultas de datos maestros.
       - Redis para caché de resúmenes económicos (ADR-009, ADR-013).

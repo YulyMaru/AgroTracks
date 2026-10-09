@@ -114,7 +114,7 @@
         - El middleware verifica la existencia y validez del token de forma sincrónica y centralizada.
         - Si el token es válido, permite la navegación.
         - Si no es válido o no existe, redirige inmediatamente a la pantalla de login.
-        - El token se almacena de forma segura usando `SecureStore` (React Native) o `flutter_secure_storage`.
+        - El token se almacena de forma segura usando SecureStore (`react-native-secure-storage`, ADR-017).
         - Se implementa un mecanismo de "refresco de token" silencioso (usando un refresh token) para evitar redirigir al usuario al login cada vez que el access token expira. Si el refresh falla, se cierra la sesión.
         - Todas las solicitudes al backend incluyen el token y el servidor lo valida (doble capa de seguridad).
         - El repositorio local (SQLite) solo es accesible si el usuario está autenticado (se verifica el token antes de inicializar el repositorio o en cada consulta).
@@ -174,7 +174,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -190,7 +190,7 @@
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se implementará un `AuthService` con almacenamiento seguro, un middleware de navegación que verifique el token, y un interceptor HTTP que maneje el refresco silencioso. Se medirá la tasa de bloqueo de accesos no autorizados y la persistencia de sesión.
+    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se implementará un `AutenticacionService` con almacenamiento seguro, un middleware de navegación que verifique el token, y un interceptor HTTP que maneje el refresco silencioso. Se medirá la tasa de bloqueo de accesos no autorizados y la persistencia de sesión.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las navegaciones a pantallas protegidas pasarán por el middleware.
     - **¿Qué tipos de integraciones están involucradas?**: Integración con el servicio de autenticación del backend (login, refresh token), con el almacenamiento seguro (`SecureStore` / `Keychain` / `Keystore`), con el sistema de navegación React Native + TypeScript y con el repositorio local (para verificar autenticación antes de acceder a SQLite).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: No esperar a implementar la seguridad. Hacerla desde el día 1 es más fácil que añadirla después. Definir claramente qué rutas son públicas (ej. login, registro, recuperación de contraseña) y cuáles son protegidas (el resto). Incluir un manejo de errores de autenticación global en el cliente (ej. interceptor HTTP) para detectar respuestas 401 y cerrar sesión automáticamente. Realizar pruebas de penetración básicas para validar que no hay fugas de información.
@@ -199,7 +199,7 @@
 
     - En el diseño del SPIKE-011 se aprendió que un usuario puede ver el título de una pantalla protegida sin token; eso confunde y debe bloquearse.
     - También se identificó que un token almacenado en `AsyncStorage` es vulnerable en dispositivos rooteados; al migrar a `SecureStore`, el riesgo se mitiga.
-    - Se observó que el refresco silencioso mejora drásticamente la experiencia del usuario, evitando que tenga que iniciar sesión varias veces al día.
+    - Se anticipa, pendiente de validar en el SPIKE-011, que el refresco silencioso mejora drásticamente la experiencia del usuario, evitando que tenga que iniciar sesión varias veces al día.
 
 - **Recomendación**:
 
@@ -213,25 +213,30 @@
 
     La implementación deberá considerar como mínimo:
 
-    - **Servicio de autenticación (`AuthService`)**:
-      - `login(credentials)`: autentica contra el backend y almacena el token.
-      - `logout()`: elimina el token y limpia el estado.
-      - `isAuthenticated()`: verifica si el token existe y es válido (localmente).
-      - `refreshToken()`: intenta obtener un nuevo access token usando el refresh token.
-      - `getToken()`: obtiene el token almacenado.
-      - Almacenamiento seguro: usar `SecureStore` (React Native) o `flutter_secure_storage`.
+    - **Servicio de autenticación (`AutenticacionService`)**:
+      - `iniciarSesion(credenciales)`: autentica contra el backend y almacena el token.
+      - `cerrarSesion()`: elimina el token y limpia el estado.
+      - `estaAutenticado()`: verifica si el token existe y es válido (localmente).
+      - `renovarToken()`: intenta obtener un nuevo access token usando el refresh token.
+      - `obtenerToken()`: obtiene el token almacenado.
+      - Almacenamiento seguro: usar SecureStore (`react-native-secure-storage`, ADR-017).
     - **Middleware de navegación**:
       - En React Navigation: usar un `useEffect` en el componente raíz o un `NavigationContainer` con `onStateChange` para verificar autenticación antes de cada cambio de ruta.
       - Definir una lista de rutas públicas (login, registro, recuperación) y protegidas (todas las demás).
     - **Manejo de expiración**:
-      - En el interceptor de HTTP (axios/fetch), capturar respuestas 401 (token expirado) y automáticamente intentar refrescar el token.
+      - En el interceptor de HTTP (Axios, ADR-017), capturar respuestas 401 (token expirado) y automáticamente intentar refrescar el token.
       - Si el refresco es exitoso, reenviar la solicitud original.
       - Si el refresco falla, cerrar sesión y redirigir al login.
     - **Capa de repositorio local**:
       - El repositorio local (SQLite) debe verificar la autenticación antes de ejecutar cualquier consulta.
-      - Asociar todos los datos locales al `userId` del usuario autenticado.
+      - Asociar todos los datos locales al `idUsuario` del usuario autenticado.
+    - **Seguridad en el backend (componente C10 del modelo C4)**:
+      - Spring Security valida el JWT en cada solicitud y responde 401 cuando falta o está vencido (ADR-016).
+      - Cada operación se autoriza contra el `idUsuario` del token, de modo que un usuario solo accede a su propia información.
+      - Duración inicial propuesta, a confirmar en el SPIKE-011: access token de 15 minutos y refresh token de 30 días, con rotación en cada refresco.
+      - Las claves de firma se gestionan como secretos (ADR-030).
     - **Pruebas**:
-      - Pruebas unitarias del `AuthService`.
+      - Pruebas unitarias del `AutenticacionService`.
       - Pruebas de integración de los flujos: login exitoso, login fallido, expiración de token, refresco exitoso, refresco fallido.
       - Pruebas de UI: navegación bloqueada sin token, redirección a login, persistencia de sesión al cerrar y abrir la app.
 

@@ -206,7 +206,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -234,7 +234,7 @@
   - **Anécdotas**:
 
     - En el diseño del SPIKE-001 se identificó que probar la sincronización offline requiere simular pérdida y recuperación de conexión, lo cual solo es viable con automatización.
-    - En el diseño del SPIKE-012 se confirmó que las pruebas en 3 dispositivos físicos propios detectan bugs que no aparecen en emuladores, sin necesidad de servicios de pago.
+    - En el diseño del SPIKE-012 se planteó como hipótesis que las pruebas en 3 dispositivos físicos propios detectan bugs que no aparecen en emuladores, sin necesidad de servicios de pago.
 
 - **Recomendación**:
 
@@ -258,7 +258,7 @@
       - **Unitarias**: Jest + React Native Testing Library para dominio, hooks y componentes.
       - **Integración**: Jest con repositorios mockeados y SQLite en memoria.
       - **E2E**: Detox o Maestro para flujos críticos (login, registro offline, sincronización, resumen).
-      - **Rendimiento**: React DevTools Profiler y Flipper para medir renderizado.
+      - **Rendimiento**: React DevTools Profiler y React Native DevTools para medir renderizado.
       - **Accesibilidad**: validación de tamaños táctiles, contraste y `fontScale`.
     - **Transversal**:
       - **Usabilidad**: pruebas con al menos 3 usuarios reales por funcionalidad crítica.

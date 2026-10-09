@@ -19,6 +19,7 @@
     - **Experiencia de usuario**: el flujo de registro sin conexión debe ser idéntico al flujo con conexión, excepto por el mensaje de confirmación de almacenamiento local.
     - **Costo de implementación**: la solución debe ser viable con el stack actual y aprovechar el motor de sincronización offline definido en el ADR-001.
     - **Escenario de calidad relacionado**: ESC-CAL-DP-01.
+    - **Funcionalidades significativas relacionadas**: HU-22 (registrar información sin conexión).
 
 - **Candidatos a considerar**:
 
@@ -162,7 +163,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -188,7 +189,7 @@
 
     - En el diseño del SPIKE-005 se aprendió que el mensaje "Guardado localmente" tranquiliza al usuario; sin él, duda si se guardó.
     - También se identificó que un indicador visual (reloj, bandera) ayuda al usuario a entender que el registro está pendiente sin necesidad de explicaciones técnicas.
-    - Se observó que el usuario puede confundir "pendiente de sincronización" con "error"; conviene usar un lenguaje positivo.
+    - Se anticipa, pendiente de validar en el SPIKE-005, que el usuario puede confundir "pendiente de sincronización" con "error"; conviene usar un lenguaje positivo.
 
 - **Recomendación**:
 
@@ -203,8 +204,8 @@
     La implementación deberá considerar como mínimo:
 
     - Una base de datos local (SQLite, Realm o similar) para almacenar los registros offline.
-    - Una tabla `pending_operations` con los campos: `localId` (UUID), `operationType` (GASTO, INGRESO), `payload` (JSON), `createdAt` (timestamp), `status` (PENDING, SYNCED, ERROR), `retryCount` y `lastAttemptAt`.
-    - Asignación de un `localId` único a cada registro offline.
+    - Una tabla `operaciones_pendientes` con los campos: `id_local` (UUID), `tipo_operacion` (GASTO, INGRESO), `contenido` (JSON), `creado_en` (timestamp), `estado` (PENDIENTE, SINCRONIZADO, ERROR), `reintentos` y `ultimo_intento_en`.
+    - Asignación de un `idLocal` único a cada registro offline.
     - Validación de formulario sin conexión utilizando las reglas centralizadas (ADR-002).
     - Mensaje de confirmación claro al usuario: "¡Guardado localmente! Se sincronizará automáticamente cuando tengas conexión".
     - Indicador visual (ícono de reloj, bandera o punto naranja) junto a los registros pendientes en las listas.

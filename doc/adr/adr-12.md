@@ -190,7 +190,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -217,7 +217,7 @@
   - **Anécdotas**:
 
     - Durante el análisis se concluyó que Firebase Test Lab habría consumido el presupuesto de pruebas en menos de una semana de uso intensivo.
-    - Se observó que las herramientas autoalojadas requieren configuración de servidores, Docker y Appium, lo cual desvía al equipo del desarrollo de la app.
+    - Al revisar su documentación se encontró que las herramientas autoalojadas requieren configuración de servidores, Docker y Appium, lo cual desvía al equipo del desarrollo de la app.
 
 - **Recomendación**:
 

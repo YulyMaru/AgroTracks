@@ -17,6 +17,7 @@
     - **Mantenibilidad**: las optimizaciones (índices, caché) deben ser fáciles de administrar y monitorear.
     - **Costo de implementación**: la solución debe ser viable con el stack actual (PostgreSQL, app móvil, API REST) y no requerir cambios drásticos en la infraestructura.
     - **Escenarios de calidad relacionados**: ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-ESC-01.
+    - **Funcionalidades significativas relacionadas**: HU-14 (consultar resumen de resultados), HU-17 (comparar resultados de cultivos) y HU-38 (consultar distribución de gastos).
 
 - **Candidatos a considerar**:
 
@@ -25,7 +26,7 @@
   - **Enumerar todos los candidatos y opciones relacionadas**:
 
     1. **Consultas sin optimización (SQL básico)**: se ejecutan consultas SQL sin índices, sin paginación, y con agregaciones calculadas en el cliente.
-    2. **Optimización básica (índices y paginación)**: se crean índices en campos de fecha y `userId`, y se implementa paginación en listados (ej. 20 registros por página).
+    2. **Optimización básica (índices y paginación)**: se crean índices en campos de fecha y `id_usuario`, y se implementa paginación en listados (ej. 20 registros por página).
     3. **Optimización avanzada (índices + agregaciones en servidor + caché)**: se crean índices, las agregaciones (sumas de ingresos/gastos) se calculan en el servidor mediante consultas optimizadas, se usa paginación, y se cachean resultados de resúmenes para periodos recurrentes.
 
 - **Investigación y análisis de cada candidato**:
@@ -69,7 +70,7 @@
       - **Resumen**: Cumple parcialmente con los tiempos iniciales, pero puede fallar con volúmenes muy grandes o agregaciones complejas.
 
       - **Detalles**:
-        - Los índices en `fecha`, `userId`, y `tipo` (ingreso/gasto) aceleran las consultas filtradas significativamente.
+        - Los índices en `fecha`, `id_usuario`, y `tipo` (ingreso/gasto) aceleran las consultas filtradas significativamente.
         - La paginación reduce la cantidad de datos transferidos en listados, mejorando el tiempo de carga inicial.
         - Sin embargo, las agregaciones (sumas) aún pueden ser lentas si se calculan en el cliente o si la consulta SQL no está optimizada con índices adecuados para el `GROUP BY`.
         - Para resúmenes de períodos largos, la consulta puede seguir siendo pesada.
@@ -99,7 +100,7 @@
       - **Resumen**: Cumple plenamente con todos los criterios de tiempo y escalabilidad.
 
       - **Detalles**:
-        - Se crean índices compuestos (ej. `(userId, fecha, tipo)`) para optimizar las consultas de resúmenes con `GROUP BY` y filtros.
+        - Se crean índices compuestos (ej. `(id_usuario, fecha, tipo)`) para optimizar las consultas de resúmenes con `GROUP BY` y filtros.
         - Las agregaciones (SUM de ingresos y gastos) se calculan en el servidor con consultas SQL eficientes (ej. `SELECT tipo, SUM(monto) ... GROUP BY tipo`), evitando transferir todos los registros al cliente.
         - Los resultados de resúmenes para períodos comunes (mes actual, mes anterior) se cachean en el servidor con una TTL de 5 minutos o invalidación al modificar datos.
         - En el cliente, se muestra un indicador de carga mientras se realiza la consulta, y se usa caché local (SQLite) para consultas offline (ADR-006).
@@ -109,7 +110,7 @@
     - **Análisis de costos**:
       - **Resumen**: Costo de implementación medio-alto, pero el mayor retorno en rendimiento y satisfacción del usuario.
       - **Ejemplos**:
-        - **Licencias**: caché en memoria sin costo adicional (o Redis open source).
+        - **Licencias**: Redis es open source; se ejecuta como contenedor en el servidor del backend (ADR-031), sin costo de licencia.
         - **Capacitación**: el equipo debe aprender a configurar caché e invalidación, y a optimizar consultas SQL.
         - **Operación**: requiere monitoreo de la caché (hit ratio, memoria usada) y de los tiempos de respuesta.
         - **Medición**: se pueden medir tiempos con y sin caché, y el porcentaje de consultas servidas desde caché.
@@ -124,7 +125,7 @@
         - Requiere monitoreo continuo para asegurar que la caché no quede desactualizada.
       - **Oportunidades**:
         - La caché puede reutilizarse para otros módulos (ej. reportes de producción, estadísticas).
-        - Se puede usar Redis para mayor robustez y distribución si la aplicación crece.
+        - Redis (ADR-013) permite compartir la caché entre instancias si la aplicación crece.
       - **Amenazas**:
         - La caché puede quedar desactualizada si no se invalida correctamente al modificar datos.
         - Si el TTL es demasiado largo, los usuarios verán datos antiguos; si es muy corto, la caché no será efectiva.
@@ -132,7 +133,7 @@
     - **Opiniones y comentarios internos**:
       - "La caché de resúmenes es clave. Un campesino consulta el resumen del mes varias veces, no necesita recalcularse cada vez".
       - "Los índices compuestos en PostgreSQL son fáciles de añadir y mejoran drásticamente el rendimiento de las agregaciones".
-      - "Podemos empezar con caché en memoria y migrar a Redis si el tráfico lo requiere".
+      - "Usamos Redis desde el inicio para no cambiar de caché más adelante".
 
 - **Opiniones y comentarios externos**:
 
@@ -155,7 +156,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -167,13 +168,13 @@
     - Es la única que garantiza los tiempos definidos (≤ 3 s y ≤ 5 s) con el volumen máximo.
     - La caché reduce drásticamente la carga del servidor y mejora la experiencia del usuario en consultas repetidas.
     - Los índices y agregaciones en servidor son prácticas estándar y bien soportadas por PostgreSQL.
-    - Es escalable y mantenible a largo plazo, y puede evolucionar a Redis o a otras soluciones si el crecimiento lo requiere.
+    - Es escalable y mantenible a largo plazo, y se apoya en Redis (ADR-013), que permite crecer sin cambiar de solución.
 
   - **¿Qué está pasando desde entonces?**:
 
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se implementarán índices en PostgreSQL, un servicio de caché para resúmenes económicos, paginación en todos los listados, y se realizarán pruebas de carga con el volumen máximo definido.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las consultas de fincas/lotes/cultivos y de resúmenes económicos utilizarán estas optimizaciones.
-    - **¿Qué tipos de integraciones están involucradas?**: Integración con PostgreSQL (índices, consultas optimizadas), con caché (Redis o memoria), con la app móvil (paginación, indicadores de carga) y con el sistema de monitoreo (tiempos de respuesta y hit ratio de caché).
+    - **¿Qué tipos de integraciones están involucradas?**: Integración con PostgreSQL (índices, consultas optimizadas), con caché (Redis mediante Spring Cache), con la app móvil (paginación, indicadores de carga) y con el sistema de monitoreo (tiempos de respuesta y hit ratio de caché).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el volumen máximo de datos desde el principio para dimensionar adecuadamente los índices y la caché. Monitorear los tiempos de respuesta desde el día 1 para detectar degradaciones tempranas. Considerar la posibilidad de archivar datos antiguos (ej. después de 2 años) en una tabla de histórico para mantener el rendimiento si el volumen supera las expectativas. Asegurarse de que la invalidación de caché sea atómica y consistente con las transacciones de base de datos.
 
   - **Anécdotas**:
@@ -196,6 +197,7 @@
     - **Implementación de paginación** en todas las consultas de listado, con un límite de 20 a 50 registros por página.
     - **Cálculo de agregaciones en el servidor**: todas las sumas de ingresos/gastos deben calcularse en PostgreSQL mediante `SUM` y `GROUP BY`, evitando transferir datos crudos al cliente.
     - **Caché de resúmenes económicos**:
+      - Implementar la caché con Spring Cache sobre Redis (ADR-013, ADR-016).
       - Para períodos comunes (mes actual, mes anterior), almacenar el resultado en caché con TTL de 5 minutos.
       - Invalidar la caché automáticamente al crear, modificar o eliminar una transacción en el período cacheado.
       - En el cliente, mostrar un indicador de carga y usar caché local (ADR-006) para escenarios offline.

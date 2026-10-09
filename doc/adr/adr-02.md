@@ -162,7 +162,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -188,7 +188,7 @@
 
     - En un proyecto anterior, la duplicación de reglas de validación provocó un incidente donde un campo aceptaba un formato en la app pero era rechazado en el servidor, causando la pérdida de datos de varios usuarios. Esto reforzó la necesidad de centralizar las reglas.
     - También se identificó que los mensajes de error genéricos ("Dato inválido") no ayudan al usuario; es fundamental que el mensaje indique el campo y la acción correctiva.
-    - En el diseño del SPIKE-002 se confirmó que los mensajes deben ser específicos al campo y contener la acción a realizar (ej. "Ingrese un número mayor a 0").
+    - En el diseño del SPIKE-002 se planteó como hipótesis que los mensajes deben ser específicos al campo y contener la acción a realizar (ej. "Ingrese un número mayor a 0").
 
 - **Recomendación**:
 
@@ -203,6 +203,9 @@
     La implementación deberá considerar como mínimo:
 
     - Un repositorio único de reglas de validación, accesible tanto para el cliente móvil como para el servidor.
+    - Formato de las reglas: JSON Schema, versionado en el repositorio y empaquetado en la aplicación móvil.
+    - Validador en el cliente: librería JSON Schema para TypeScript (`ajv`, a confirmar en el SPIKE-002).
+    - Validador en el servidor: `json-schema-validator` (Java) sobre el mismo esquema. Jakarta Validation (ADR-016) se limita a la estructura de los DTO y no duplica reglas de negocio.
     - Mecanismo para empaquetar las reglas en la aplicación móvil (para validación offline) y, opcionalmente, actualizarlas mediante una API si cambian sin necesidad de actualizar la app.
     - Validación inmediata en el cliente (al perder el foco, al cambiar el valor) usando las reglas centralizadas, mostrando mensajes de error específicos junto al campo correspondiente.
     - Validación en el servidor utilizando las mismas reglas al recibir los datos, devolviendo errores estructurados que el cliente pueda mostrar de manera consistente.

@@ -187,7 +187,7 @@
   - **¿Quién da la opinión?**:
 
     - SPIKE-028 — Validará que las notificaciones locales y push con FCM funcionan correctamente en los 3 dispositivos Android, sin ser intrusivas — Propuesto.
-    - SPIKE-006 — Validará que NetInfo detecta conectividad y activa la notificación de sincronización — Propuesto.
+    - SPIKE-006 — Validará que NetInfo detecta los cambios de conectividad que disparan el aviso de sincronización; el aviso en sí se valida en SPIKE-028 — Propuesto.
     - SPIKE-001 — Validará que la sincronización offline funciona con retry y backoff — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
@@ -204,7 +204,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -247,6 +247,13 @@
 
     La implementación deberá considerar como mínimo:
 
+    - **Librerías y componentes (modelo C4)**:
+      - Notificaciones locales: `@notifee/react-native` (componente C7).
+      - Recepción de push en la app: `@react-native-firebase/messaging`.
+      - Envío de push desde el backend: Firebase Admin SDK (componente C16).
+    - **Relación con ADR-001**:
+      - La sincronización siempre la inicia la aplicación (ADR-001); el backend no usa las push para forzarla.
+      - Las push son solo avisos informativos para el usuario.
     - **Notificaciones locales (React Native)**:
       - **Registro guardado**: "¡Guardado localmente! Se sincronizará automáticamente."
       - **Registros pendientes**: "Tienes N registros pendientes de sincronizar."
@@ -260,7 +267,7 @@
     - **Configuración de Firebase Cloud Messaging**:
       - Crear proyecto en Firebase Console.
       - Registrar la app Android.
-      - Configurar la clave del servidor en el backend (Spring Boot).
+      - Configurar en el backend (Spring Boot) la credencial de cuenta de servicio de Firebase Admin SDK (ADR-030).
       - Implementar el envío de notificaciones desde el backend.
       - Implementar la recepción en React Native.
     - **Privacidad**:

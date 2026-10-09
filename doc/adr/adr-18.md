@@ -1,6 +1,6 @@
 # ADR-018: Usar monolito modular por capas con arquitectura offline-first y patrón Repository
 
-- **Título**: Usar un monolito modular por capas (presentación, aplicación, dominio, infraestructura) con módulos por dominio (fincas, cultivos, transacciones, sincronización, usuarios) y patrón Repository, descartando microservicios, monolito tradicional y serverless.
+- **Título**: Usar un monolito modular por capas (presentación, aplicación, dominio, infraestructura) con módulos por dominio (fincas, lotes, cultivos, transacciones, sincronización, usuarios y parámetros) y patrón Repository, descartando microservicios, monolito tradicional y serverless.
 
 - **Estado**: Propuesto.
 
@@ -27,8 +27,8 @@
   - **Enumerar todos los candidatos y opciones relacionadas**:
 
     1. **Monolito tradicional (sin módulos explícitos)**: una sola aplicación con capas técnicas (controladores, servicios, repositorios) sin separación por dominio.
-    2. **Monolito modular por capas con módulos por dominio y patrón Repository**: una sola aplicación con capas bien definidas (presentación, aplicación, dominio, infraestructura) y módulos por dominio (fincas, cultivos, transacciones, sincronización, usuarios), comunicados por interfaces.
-    3. **Microservicios**: múltiples servicios independientes (fincas, cultivos, transacciones, sincronización, usuarios) con comunicación por red (REST o mensajería).
+    2. **Monolito modular por capas con módulos por dominio y patrón Repository**: una sola aplicación con capas bien definidas (presentación, aplicación, dominio, infraestructura) y módulos por dominio (fincas, lotes, cultivos, transacciones, sincronización, usuarios y parámetros), comunicados por interfaces.
+    3. **Microservicios**: múltiples servicios independientes (fincas, lotes, cultivos, transacciones, sincronización, usuarios y parámetros) con comunicación por red (REST o mensajería).
     4. **Serverless (funciones como servicio)**: funciones independientes desplegadas en un proveedor cloud, con base de datos gestionada y sin servidor propio.
 
 - **Investigación y análisis de cada candidato**:
@@ -86,8 +86,8 @@
       - **Resumen**: Cumple plenamente con todos los criterios. Es la opción que mejor equilibra simplicidad, mantenibilidad, escalabilidad y costo.
 
       - **Detalles**:
-        - Capas bien definidas: presentación (controladores REST), aplicación (casos de uso), dominio (entidades y reglas de negocio), infraestructura (persistencia, seguridad, mensajería).
-        - Módulos por dominio: fincas, cultivos, transacciones, sincronización, usuarios.
+        - Capas bien definidas: presentación (controladores REST), aplicación (casos de uso), dominio (entidades y reglas de negocio), infraestructura (persistencia, seguridad, caché).
+        - Módulos por dominio: fincas, lotes, cultivos, transacciones, sincronización, usuarios y parámetros.
         - Comunicación entre módulos por interfaces, evitando acoplamiento directo.
         - Patrón Repository para abstraer el acceso a datos (PostgreSQL en backend, SQLite en cliente).
         - Favorece SOLID: responsabilidad única, inversión de dependencias, segregación de interfaces.
@@ -146,7 +146,7 @@
         - Transacciones ACID entre servicios son complejas (sagas, compensaciones).
         - El equipo es pequeño; mantener microservicios sería desproporcionado.
         - No hay necesidad real de escalar horizontalmente cada módulo por separado.
-        - Contradice la decisión de monolito inicial (ADR-001, ADR-005, ADR-011, ADR-016).
+        - Los flujos ya definidos (sincronización de ADR-001, cola de pendientes de ADR-005 y autenticación de ADR-011) quedarían repartidos entre varios servicios, lo que exige una coordinación distribuida que el alcance actual no justifica.
 
     - **Análisis de costos**:
 
@@ -194,7 +194,8 @@
         - Cold starts que afectan la latencia.
         - Difícil de probar localmente.
         - Transacciones ACID complejas entre funciones.
-        - No se alinea con la decisión de monolito modular ni con el stack Spring Boot.
+        - Spring Boot (ADR-016) tiene un arranque en frío lento para funciones de corta duración; adoptarlo obligaría a cambiar el stack del backend.
+        - Nota: Firebase y Cloudflare (ADR-021, ADR-026, ADR-027, ADR-028) se usan como servicios auxiliares y no almacenan los datos productivos ni económicos del campesino, que permanecen en PostgreSQL en el servidor propio (ADR-031).
 
     - **Análisis de costos**:
 
@@ -235,8 +236,8 @@
 
     - SPIKE-018 — Validará que el monolito modular por capas con patrón Repository es mantenible, testeable y evolutivo — Propuesto.
     - SPIKE-016 — Validará que Spring Boot 3 con Spring Data JPA implementa el patrón Repository correctamente — Propuesto.
-    - SPIKE-017 — Validará que React Native + TypeScript permite aplicar el patrón Repository en el cliente — Propuesto.
-    - SPIKE-013 — Validará que SQLite local soporta el patrón Repository con transacciones ACID — Propuesto.
+    - SPIKE-017 — Validará el stack React Native + TypeScript sobre el que se organizan las capas del cliente; el patrón Repository en el cliente se valida en SPIKE-018 — Propuesto.
+    - SPIKE-013 — Validará que SQLite local soporta transacciones ACID y replica el esquema remoto, base de los repositorios locales — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -257,7 +258,7 @@
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-018 (validación del monolito modular), SPIKE-016 (Spring Data JPA), SPIKE-017 (React Native + TypeScript) y SPIKE-013 (SQLite local).
+    Mediante SPIKE-018 (monolito modular y patrón Repository en backend y cliente), con apoyo de SPIKE-016 (Spring Data JPA), SPIKE-017 (React Native + TypeScript) y SPIKE-013 (SQLite local).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -276,13 +277,13 @@
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que el monolito modular por capas sea mantenible, testeable y evolutivo, y que el patrón Repository abstraiga correctamente el acceso a datos tanto en backend como en cliente.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % del backend y del frontend móvil.
     - **¿Qué tipos de integraciones están involucradas?**: Spring Boot (ADR-016), Spring Data JPA, PostgreSQL (ADR-013), SQLite local (ADR-005, ADR-013), motor de sincronización (ADR-001), REST (ADR-015), React Native (ADR-017) y Firebase Crashlytics.
-    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir los módulos por dominio desde el día 1 (fincas, cultivos, transacciones, sincronización, usuarios). Respetar las capas sin excepciones. Usar interfaces entre módulos. Documentar la estructura con un diagrama de arquitectura. No caer en la tentación de microservicios prematuros.
+    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir los módulos por dominio desde el día 1 (fincas, lotes, cultivos, transacciones, sincronización, usuarios y parámetros). Respetar las capas sin excepciones. Usar interfaces entre módulos. Documentar la estructura con un diagrama de arquitectura. No caer en la tentación de microservicios prematuros.
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-016 se confirmó que Spring Boot con Spring Data JPA implementa el patrón Repository de forma natural, reduciendo el código boilerplate.
+    - En el diseño del SPIKE-016 se planteó como hipótesis que Spring Boot con Spring Data JPA implementa el patrón Repository de forma natural, reduciendo el código boilerplate.
     - Durante el análisis se concluyó que intentar microservicios desde el inicio habría requerido al menos el doble de infraestructura y un equipo más grande.
-    - En el diseño del SPIKE-013 se confirmó que el patrón Repository en el cliente permite cambiar SQLite por otra base local sin afectar el dominio.
+    - En el diseño del SPIKE-018 se planteó como hipótesis que el patrón Repository en el cliente permite cambiar SQLite por otra base local sin afectar el dominio.
 
 - **Recomendación**:
 
@@ -300,10 +301,11 @@
       - **Presentación**: controladores REST (`@RestController`) con DTOs y validación.
       - **Aplicación**: servicios de caso de uso (`@Service`) que orquestan la lógica.
       - **Dominio**: entidades, value objects y reglas de negocio puras.
-      - **Infraestructura**: repositorios (`@Repository`) con Spring Data JPA, configuración de seguridad, caché y mensajería.
+      - **Infraestructura**: repositorios (`@Repository`) con Spring Data JPA, configuración de seguridad y caché.
     - **Módulos por dominio en el backend**:
-      - `farms`, `lots`, `crops`, `transactions`, `sync`, `users`, `auth`.
+      - `fincas`, `lotes`, `cultivos`, `transacciones`, `sincronizacion`, `usuarios`, `parametros`.
       - Cada módulo con sus propias capas y expuesto por interfaces.
+      - La autenticación y autorización no es un módulo de dominio: es el componente transversal de seguridad (Spring Security + JWT, ADR-011 y ADR-016).
     - **Patrón Repository en el backend**:
       - Interfaces de repositorio en el dominio.
       - Implementaciones con Spring Data JPA en infraestructura.
@@ -314,7 +316,7 @@
       - **Dominio**: entidades y reglas de negocio.
       - **Infraestructura**: repositorios locales (SQLite), cliente HTTP (Axios), almacenamiento seguro (SecureStore), conectividad (NetInfo).
     - **Módulos por dominio en el frontend**:
-      - `farms`, `lots`, `crops`, `transactions`, `sync`, `auth`.
+      - `fincas`, `lotes`, `cultivos`, `transacciones`, `sincronizacion`, `parametros`, `autenticacion`.
       - Cada módulo con sus componentes, hooks, servicios y repositorios.
     - **Patrón Repository en el frontend**:
       - Interfaces de repositorio en el dominio.
@@ -323,11 +325,21 @@
     - **Offline-first**:
       - Cola persistente de operaciones pendientes (ADR-005).
       - Motor de sincronización con retry y backoff (ADR-001).
-      - Idempotencia con `localId` (ADR-007).
+      - Idempotencia con `idLocal` (ADR-007).
       - Detección de conectividad (ADR-006).
     - **Documentación**:
       - Diagrama de arquitectura de capas y módulos.
       - Guía de estilo para el equipo.
+    - **Convención de nombres**:
+      - Los nombres del dominio van en español, sin tildes ni ñ: tablas, columnas, paquetes, carpetas, variables, estados, códigos de error y rutas de la API.
+      - Los términos técnicos del framework se mantienen en inglés: sufijos como `Controller`, `Service` y `Repository`, anotaciones, cabeceras HTTP y nombres de variables de entorno.
+      - Tablas y columnas en `snake_case`; variables y campos JSON en `camelCase`; clases en `PascalCase`.
+      - El listado completo de nombres está en `doc/NOMBRES.md`.
+    - **Despliegue**:
+      - El backend se empaqueta como una sola unidad desplegable (JAR dentro de un contenedor Docker). Dónde y cómo se publica se decide en ADR-031.
+    - **Correspondencia con el modelo C4**:
+      - Backend: componentes C8 a C16 del diagrama de componentes del API Backend.
+      - Aplicación móvil: componentes C1 a C7, C17 y C18 del diagrama de componentes de la aplicación móvil.
     - **Pruebas**:
       - Pruebas unitarias por capa y por módulo.
       - Pruebas de integración con Testcontainers (backend).

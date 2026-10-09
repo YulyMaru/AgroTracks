@@ -175,8 +175,8 @@
 
     - SPIKE-022 — Validará que TLS, SecureStore y SQLCipher protegen los datos sin degradar el rendimiento — Propuesto.
     - SPIKE-011 — Validará que el token se almacena de forma segura en SecureStore — Propuesto.
-    - SPIKE-013 — Validará que SQLCipher cifra la base local sin afectar las consultas — Propuesto.
-    - SPIKE-016 — Validará que TLS se configura correctamente en Spring Boot — Propuesto.
+    - SPIKE-013 — Validará el esquema SQLite local sobre el que se aplica el cifrado; el cifrado con SQLCipher se valida en SPIKE-022 — Propuesto.
+    - SPIKE-016 — Validará el backend Spring Boot que se publica por HTTPS; la configuración de TLS se valida en SPIKE-022 — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -192,11 +192,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-022 (seguridad completa), SPIKE-011 (SecureStore), SPIKE-013 (SQLCipher) y SPIKE-016 (TLS).
+    Mediante SPIKE-022 (TLS, SecureStore y SQLCipher), con apoyo de SPIKE-011 (SecureStore), SPIKE-013 (esquema SQLite local) y SPIKE-016 (backend base).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -218,9 +218,9 @@
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-011 se confirmó que SecureStore es seguro y fácil de usar.
+    - En el diseño del SPIKE-011 se planteó como hipótesis que SecureStore es seguro y fácil de usar.
     - Durante el análisis se concluyó que dejar SQLite sin cifrar habría sido un riesgo inaceptable para datos financieros.
-    - En el diseño del SPIKE-013 se confirmó que SQLCipher añade un overhead aceptable.
+    - En el diseño del SPIKE-022 se planteó como hipótesis que SQLCipher añade un overhead aceptable.
 
 - **Recomendación**:
 
@@ -235,13 +235,13 @@
     La implementación deberá considerar como mínimo:
 
     - **Tránsito (TLS)**:
-      - Configurar Spring Boot con TLS 1.2+ (certificado SSL/TLS).
+      - Configurar Spring Boot con TLS 1.2+ (certificado SSL/TLS) como servidor de origen; el TLS público lo termina Cloudflare (ADR-027).
       - Configurar Axios para usar HTTPS exclusivamente.
       - Deshabilitar tráfico en texto plano en Android (`android:usesCleartextTraffic="false"`).
       - Opcional: certificate pinning con `react-native-ssl-pinning` o similar.
     - **Reposo (SecureStore + SQLCipher)**:
-      - Almacenar el token JWT en SecureStore (Keychain/Keystore).
-      - Cifrar SQLite con SQLCipher (AES-256).
+      - Almacenar el token JWT en SecureStore (`react-native-secure-storage`, sobre Keychain/Keystore; ADR-017).
+      - Cifrar SQLite con SQLCipher (AES-256) mediante `@op-engineering/op-sqlite` (ADR-017).
       - Derivar la clave de SQLCipher de una clave maestra almacenada en SecureStore.
       - Nunca hardcodear claves en el código.
     - **Gestión de claves**:

@@ -18,6 +18,7 @@
     - **Escalabilidad**: soporte para cientos de dispositivos reconectando simultáneamente sin degradar el servicio.
     - **Mantenibilidad**: facilidad para monitorear, probar y modificar el mecanismo de sincronización.
     - **Escenario de calidad relacionado**: ESC-CAL-DP-01.
+    - **Funcionalidades significativas relacionadas**: HU-23 (sincronizar información cuando exista conexión) y HU-44 (evitar pérdida de información durante la sincronización).
 
 - **Candidatos a considerar**:
 
@@ -216,6 +217,7 @@
   - **¿Cuáles son otros candidatos que consideró?**:
 
     - Sincronización manual, sincronización híbrida Pull + Push, Message Brokers, WebSockets. Descartados por complejidad e infraestructura adicional.
+    - Nota de coherencia con ADR-028: Firebase Cloud Messaging se usa solo para avisos informativos al usuario; el backend no lo utiliza para forzar una sincronización, por lo que el descarte de la sincronización híbrida se mantiene.
 
   - **¿Qué estás creando?**:
 
@@ -224,7 +226,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final, no exclusivamente a empleados.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: inicialmente se implementará como una primera versión funcional, con criterios de calidad que permitan posteriormente utilizarla en producción.
-    - **Monolito o microservicios**: inicialmente se utilizará una arquitectura monolítica para reducir la complejidad y facilitar el desarrollo y mantenimiento del sistema.
+    - **Monolito o microservicios**: inicialmente se utilizará un monolito modular (ADR-018) para reducir la complejidad y facilitar el desarrollo y mantenimiento del sistema.
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -249,7 +251,7 @@
 
     - Durante el análisis se identificó que una solución técnicamente más avanzada no necesariamente representa una mejor decisión arquitectónica para el contexto actual. En AgroTrack, incorporar WebSockets o un Message Broker desde la primera versión aumentaría la complejidad sin resolver una necesidad prioritaria.
     - También se identificó que el principal riesgo de una sincronización offline no consiste únicamente en detectar nuevamente la conexión, sino en garantizar que una misma operación no sea registrada varias veces debido a los reintentos. Por esta razón, la **idempotencia** se considera un elemento fundamental de la solución y deberá implementarse mediante un identificador único de operación que permita al backend reconocer solicitudes previamente procesadas.
-    - En el diseño del SPIKE-001 se confirmó que el principal riesgo no es detectar la reconexión, sino evitar duplicados por reintentos.
+    - En el diseño del SPIKE-001 se planteó como hipótesis que el principal riesgo no es detectar la reconexión, sino evitar duplicados por reintentos.
 
 - **Recomendación**:
 

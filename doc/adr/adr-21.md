@@ -1,6 +1,6 @@
 # ADR-021: Implementar monitoreo y observabilidad en backend y frontend
 
-- **Título**: Implementar una estrategia de monitoreo y observabilidad con Spring Boot Actuator + Micrometer + Prometheus + Grafana en el backend, y Firebase Crashlytics + Analytics + Flipper en el frontend móvil, descartando monitoreo manual y herramientas propietarias costosas.
+- **Título**: Implementar una estrategia de monitoreo y observabilidad con Spring Boot Actuator + Micrometer + Prometheus + Grafana en el backend, y Firebase Crashlytics + Analytics + React Native DevTools en el frontend móvil, descartando monitoreo manual y herramientas propietarias costosas.
 
 - **Estado**: Propuesto.
 
@@ -28,7 +28,7 @@
 
     1. **Monitoreo manual (logs locales sin centralización)**: cada componente registra logs en archivos locales sin agregación ni visualización.
     2. **Monitoreo con herramientas propietarias (Datadog, New Relic)**: plataformas SaaS de observabilidad con agentes en backend y frontend.
-    3. **Monitoreo con stack open source + Firebase (Spring Boot Actuator + Micrometer + Prometheus + Grafana en backend; Firebase Crashlytics + Analytics + Flipper en frontend)**: combinación de herramientas open source y servicios gratuitos de Firebase.
+    3. **Monitoreo con stack open source + Firebase (Spring Boot Actuator + Micrometer + Prometheus + Grafana en backend; Firebase Crashlytics + Analytics + React Native DevTools en frontend)**: combinación de herramientas open source y servicios gratuitos de Firebase.
 
 - **Investigación y análisis de cada candidato**:
 
@@ -137,20 +137,19 @@
           - Micrometer recolecta métricas y las exporta a Prometheus.
           - Prometheus almacena las métricas y las consulta.
           - Grafana visualiza las métricas en dashboards.
-          - Loki (opcional) para agregación de logs.
+          - Logs del backend en archivos con rotación; Loki queda como evolución futura y no forma parte de esta fase.
           - Alertmanager para alertas.
         - **Frontend (React Native)**:
           - Firebase Crashlytics registra crashes y errores no controlados.
           - Firebase Analytics registra eventos clave de usuario.
-          - Flipper para debugging en desarrollo.
-          - Sentry (opcional) para errores más detallados.
+          - React Native DevTools para debugging en desarrollo.
         - **Trazabilidad**:
-          - Identificador de correlación (`traceId`) inyectado en las solicitudes HTTP y propagado en logs.
+          - Identificador de correlación (`idTraza`) inyectado en las solicitudes HTTP y propagado en logs.
           - Posibilidad de rastrear una operación desde el frontend hasta el backend.
         - **Costo**:
           - Stack open source: sin costo de licencias.
           - Firebase: plan gratuito generoso (Crashlytics ilimitado, Analytics hasta 500 eventos).
-          - Hosting de Prometheus/Grafana: contenedores en el mismo servidor del backend.
+          - Hosting de Prometheus, Grafana y Alertmanager: contenedores en el mismo servidor del backend (ADR-031).
 
     - **Análisis de costos**:
 
@@ -168,7 +167,7 @@
         - Sin costo de licencias.
         - Observabilidad completa.
         - Detección temprana de errores.
-        - Trazabilidad con `traceId`.
+        - Trazabilidad con `idTraza`.
         - Integración natural con Spring Boot y React Native.
         - Firebase Crashlytics es el estándar para apps móviles.
       - **Debilidades**:
@@ -186,7 +185,7 @@
 
       - "Prometheus + Grafana es el estándar open source para observabilidad."
       - "Firebase Crashlytics es obligatorio en cualquier app Android."
-      - "El `traceId` nos permite rastrear una operación desde el móvil hasta la base de datos."
+      - "El `idTraza` nos permite rastrear una operación desde el móvil hasta la base de datos."
 
 - **Opiniones y comentarios externos**:
 
@@ -195,15 +194,15 @@
   - **¿Quién da la opinión?**:
 
     - SPIKE-021 — Validará que Spring Boot Actuator + Micrometer + Prometheus + Grafana y Firebase Crashlytics + Analytics cubren las necesidades de observabilidad — Propuesto.
-    - SPIKE-001 — Validará que la sincronización offline puede rastrearse con `traceId` — Propuesto.
-    - SPIKE-007 — Validará que la idempotencia y la consistencia se pueden monitorear — Propuesto.
-    - SPIKE-016 — Validará que Spring Boot Actuator se integra correctamente — Propuesto.
+    - SPIKE-001 — Validará la sincronización offline que luego se instrumenta; su trazabilidad con `idTraza` se valida en SPIKE-021 — Propuesto.
+    - SPIKE-007 — Validará los estados de sincronización (`PENDIENTE`, `SINCRONIZADO`) que luego se exponen como métricas — Propuesto.
+    - SPIKE-016 — Validará el backend Spring Boot sobre el que se habilita Actuator; la integración de Actuator se valida en SPIKE-021 — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
     - Monitoreo manual — descartado por falta de visibilidad.
     - Datadog/New Relic — descartados por costo y dependencia de proveedor.
-    - ELK Stack (Elasticsearch + Logstash + Kibana) — considerado para logs, pero se prefirió Loki por menor consumo de recursos.
+    - ELK Stack (Elasticsearch + Logstash + Kibana) — considerado para logs, pero se descartó por consumo de recursos; Loki queda como evolución futura.
     - Sentry — considerado como complemento para errores en frontend, pero Crashlytics es suficiente.
 
   - **¿Qué estás creando?**:
@@ -213,11 +212,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-021 (observabilidad completa), SPIKE-001 (trazabilidad de sincronización), SPIKE-007 (monitoreo de idempotencia) y SPIKE-016 (Actuator).
+    Mediante SPIKE-021 (observabilidad completa, incluidos Actuator y la trazabilidad con `idTraza`), con apoyo de SPIKE-001 (sincronización offline), SPIKE-007 (estados de sincronización) y SPIKE-016 (backend base).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -225,7 +224,7 @@
     - Ofrece observabilidad completa sin costo de licencias.
     - Se integra naturalmente con Spring Boot (Actuator + Micrometer) y React Native (Crashlytics).
     - Permite detección temprana de errores.
-    - Permite trazabilidad con `traceId`.
+    - Permite trazabilidad con `idTraza`.
     - Firebase Crashlytics es el estándar para apps móviles.
     - Prometheus + Grafana es el estándar open source para métricas.
     - Es viable con el presupuesto y el equipo de AgroTrack.
@@ -234,19 +233,19 @@
 
     - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que Spring Boot Actuator + Micrometer + Prometheus + Grafana y Firebase Crashlytics + Analytics cubran las necesidades de observabilidad sin degradar el rendimiento.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las métricas, logs y errores.
-    - **¿Qué tipos de integraciones están involucradas?**: Spring Boot Actuator, Micrometer, Prometheus, Grafana, Alertmanager, Firebase Crashlytics, Firebase Analytics, Flipper y el sistema de logging del backend.
-    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Configurar Actuator y Micrometer desde el día 1. Inyectar `traceId` en todas las solicitudes. Configurar alertas para errores críticos (fallos de sincronización, pérdida de datos, 500). Usar Crashlytics desde la primera versión. No esperar a tener problemas para instrumentar.
+    - **¿Qué tipos de integraciones están involucradas?**: Spring Boot Actuator, Micrometer, Prometheus, Grafana, Alertmanager, Firebase Crashlytics, Firebase Analytics, React Native DevTools y el sistema de logging del backend.
+    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Configurar Actuator y Micrometer desde el día 1. Inyectar `idTraza` en todas las solicitudes. Configurar alertas para errores críticos (fallos de sincronización, pérdida de datos, 500). Usar Crashlytics desde la primera versión. No esperar a tener problemas para instrumentar.
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-016 se confirmó que Spring Boot Actuator expone métricas de endpoints, JVM y base de datos con solo añadir la dependencia.
-    - Durante el análisis se concluyó que sin `traceId` sería imposible rastrear una operación desde el móvil hasta el backend.
+    - En el diseño del SPIKE-021 se planteó como hipótesis que Spring Boot Actuator expone métricas de endpoints, JVM y base de datos con solo añadir la dependencia.
+    - Durante el análisis se concluyó que sin `idTraza` sería imposible rastrear una operación desde el móvil hasta el backend.
 
 - **Recomendación**:
 
   - **Resumen**:
 
-    Se recomienda implementar **Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager** en el backend, y **Firebase Crashlytics + Firebase Analytics + Flipper** en el frontend móvil, con **`traceId` propagado en todas las solicitudes**, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-03, ESC-CAL-CF-05, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
+    Se recomienda implementar **Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager** en el backend, y **Firebase Crashlytics + Firebase Analytics + React Native DevTools** en el frontend móvil, con **`idTraza` propagado en todas las solicitudes**, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-03, ESC-CAL-CF-05, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
 
   - **Detalles**:
 
@@ -270,7 +269,7 @@
         - Latencia p95 > 5 s en resúmenes.
         - Fallos de sincronización > 5 % en 10 minutos.
         - Uso de CPU > 80 % por 10 minutos.
-      - Inyectar `traceId` en logs y respuestas HTTP.
+      - Inyectar `idTraza` en logs y respuestas HTTP.
     - **Frontend (React Native)**:
       - Integrar Firebase Crashlytics para crashes y errores no controlados.
       - Integrar Firebase Analytics para eventos clave:
@@ -278,12 +277,12 @@
         - Registro offline.
         - Sincronización exitosa/fallida.
         - Consulta de resumen.
-      - Usar Flipper para debugging en desarrollo.
+      - Usar React Native DevTools para debugging en desarrollo.
       - Capturar errores no controlados y enviarlos a Crashlytics.
     - **Trazabilidad**:
-      - Generar `traceId` en el frontend y enviarlo en el header `X-Trace-Id`.
-      - Propagar el `traceId` en logs del backend.
-      - Incluir `traceId` en las respuestas de error.
+      - Generar `idTraza` en el frontend y enviarlo en el header `X-Trace-Id`.
+      - Propagar el `idTraza` en logs del backend.
+      - Incluir `idTraza` en las respuestas de error.
     - **Documentación**:
       - Guía de uso de dashboards.
       - Guía de interpretación de alertas.
@@ -291,6 +290,6 @@
     - **Pruebas**:
       - Verificar que las métricas se exponen correctamente.
       - Verificar que las alertas se disparan correctamente.
-      - Verificar que el `traceId` se propaga correctamente.
+      - Verificar que el `idTraza` se propaga correctamente.
 
     Se descarta el monitoreo manual por falta de visibilidad y Datadog/New Relic por costo y dependencia de proveedor. El stack open source + Firebase es la opción que garantiza observabilidad, detección temprana y trazabilidad en AgroTrack.

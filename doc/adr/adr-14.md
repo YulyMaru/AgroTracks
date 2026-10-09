@@ -190,7 +190,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -215,7 +215,7 @@
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-003 se comprobó que un panel de resultados con 500 movimientos se renderiza en menos de 300 ms usando componentes funcionales y `useMemo`. No fue necesario RxJS.
+    - En el diseño del SPIKE-003 se planteó como hipótesis que un panel de resultados con 500 movimientos se renderiza en menos de 300 ms usando componentes funcionales y `useMemo`. Si se confirma, no será necesario RxJS.
     - Durante las pruebas del SPIKE-010, los controles táctiles respondieron correctamente sin necesidad de gestión reactiva avanzada; el estado local fue suficiente.
 
 - **Recomendación**:
@@ -237,4 +237,4 @@
     - **Manejo de estado global** con Context para autenticación y tema; evaluar Zustand o Redux Toolkit si crece.
     - **Operaciones asíncronas** con async/await para consultas a SQLite y llamadas HTTP.
     - **Pruebas** con Jest y React Native Testing Library.
-    - **Monitoreo** de rendimiento con React DevTools Profiler y Flipper.
+    - **Monitoreo** de rendimiento con React DevTools Profiler y React Native DevTools.

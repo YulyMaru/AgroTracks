@@ -189,8 +189,8 @@
   - **¿Quién da la opinión?**:
 
     - SPIKE-027 — Validará que Cloudflare plan gratuito protege el backend contra ataques comunes sin degradar el rendimiento — Propuesto.
-    - SPIKE-011 — Validará que el backend rechaza accesos no autorizados con JWT — Propuesto.
-    - SPIKE-025 — Validará que el pipeline de CI/CD se integra con Cloudflare — Propuesto.
+    - SPIKE-016 — Validará que el backend rechaza accesos no autorizados con Spring Security + JWT — Propuesto.
+    - SPIKE-025 — Validará el pipeline de CI/CD que despliega el backend que queda detrás de Cloudflare; la configuración de Cloudflare se valida en SPIKE-027 — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -207,11 +207,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-027 (validación de Cloudflare), SPIKE-011 (autenticación JWT) y SPIKE-025 (integración con CI/CD).
+    Mediante SPIKE-027 (validación de Cloudflare), con apoyo de SPIKE-016 (autenticación JWT en el backend) y SPIKE-025 (pipeline de despliegue).
 
   - **¿Por qué elegiste al ganador?**:
 

@@ -210,7 +210,7 @@
         - "Área total: 5.2 ha" (hectáreas).
         - "Producción: 1,500 kg" (kilogramos).
         - Es la opción más clara y alineada con los criterios de calidad del escenario ACC-06.
-        - Se puede implementar un componente reutilizable `<ValueWithUnit concept="Ingresos totales" value={125000} unit="COP" />`.
+        - Se puede implementar un componente reutilizable `<ValorConUnidad concept="Ingresos totales" value={125000} unit="COP" />`.
 
     - **Análisis de costos**:
 
@@ -232,7 +232,7 @@
     - **Opiniones y comentarios internos**:
 
       - "El campesino necesita saber exactamente qué está viendo. 'Ingresos totales: $125,000 COP' es perfecto".
-      - "Podemos crear un objeto `UNITS` en el código con `COP`, `kg`, `ha`, `L`, y usarlo en toda la app".
+      - "Podemos crear un objeto `UNIDADES` en el código con `COP`, `kg`, `ha`, `L`, y usarlo en toda la app".
 
 - **Opiniones y comentarios externos**:
 
@@ -254,7 +254,7 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: arquitectura monolítica inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
@@ -274,16 +274,16 @@
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se creará un sistema de diseño con componentes que aseguren dimensiones mínimas de 48x48 dp / 44x44 pt, y un componente `<ValueWithUnit>` reutilizable. Se medirá la reducción de errores de pulsación y la mejora en comprensión de valores.
+    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se creará un sistema de diseño con componentes que aseguren dimensiones mínimas de 48x48 dp / 44x44 pt, y un componente `<ValorConUnidad>` reutilizable. Se medirá la reducción de errores de pulsación y la mejora en comprensión de valores.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las interacciones táctiles y el 100 % de los valores presentados utilizarán estas estrategias.
     - **¿Qué tipos de integraciones están involucradas?**: Integración con el sistema de diseño de la aplicación, con el módulo de internacionalización (para traducir conceptos y unidades), con el módulo de resultados económicos (ADR-003) y con el módulo de consultas (ADR-006).
-    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el sistema de diseño y los estándares de unidades desde el inicio del proyecto, para evitar refactorizaciones costosas. Probar los tamaños táctiles en dispositivos reales con usuarios, no solo en emuladores. Considerar el daltonismo usando iconos además del color. Incluir el componente `ValueWithUnit` en todas las pantallas de consulta, resumen y listado desde la primera implementación.
+    - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir el sistema de diseño y los estándares de unidades desde el inicio del proyecto, para evitar refactorizaciones costosas. Probar los tamaños táctiles en dispositivos reales con usuarios, no solo en emuladores. Considerar el daltonismo usando iconos además del color. Incluir el componente `ValorConUnidad` en todas las pantallas de consulta, resumen y listado desde la primera implementación.
 
   - **Anécdotas**:
 
     - En el diseño del SPIKE-010 se aprendió que un botón de 30x30 dp causa errores frecuentes; al pasar a 48x48 dp, el problema desaparece.
     - También se identificó que un usuario confundió un gasto de $50,000 con un ingreso porque solo veía el número sin el concepto. Al agregar "Gastos: $50,000 COP", la comprensión mejoró drásticamente.
-    - Se observó que las unidades abreviadas como "COP" no siempre son claras; conviene usar "$" + "COP" o "pesos colombianos".
+    - Se anticipa, pendiente de validar en el SPIKE-010, que las unidades abreviadas como "COP" no siempre son claras; conviene usar "$" + "COP" o "pesos colombianos".
 
 - **Recomendación**:
 
@@ -298,7 +298,7 @@
     La implementación deberá considerar como mínimo:
 
     - **Sistema de diseño táctil**:
-      - Crear un conjunto de componentes UI base (Button, IconButton, Checkbox, Radio, TouchableArea) que aseguren un tamaño mínimo de 48x48 dp en Android y 44x44 pt en iOS.
+      - Crear un conjunto de componentes UI base (Boton, BotonIcono, CasillaVerificacion, BotonRadio, AreaTactil) que aseguren un tamaño mínimo de 48x48 dp en Android y 44x44 pt en iOS.
       - Usar unidades relativas (`dp`, `pt`, `flex`) en lugar de píxeles fijos para adaptarse a diferentes densidades.
       - Asegurar una separación mínima de 8 dp entre controles adyacentes.
       - Probar en dispositivos de diferentes tamaños (teléfonos pequeños, grandes, tablets).

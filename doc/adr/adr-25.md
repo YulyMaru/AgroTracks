@@ -188,7 +188,7 @@
 
     - SPIKE-025 — Validará que GitHub Actions ejecuta pruebas, compila backend y frontend, distribuye APK con Firebase App Distribution y despliega el backend a staging — Propuesto.
     - SPIKE-020 — Validará que las pruebas en capas se integran en el pipeline — Propuesto.
-    - SPIKE-012 — Validará que los APK se distribuyen a los dispositivos de prueba — Propuesto.
+    - SPIKE-012 — Validará que los APK distribuidos se instalan y ejecutan en los 3 dispositivos de prueba — Propuesto.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -204,11 +204,11 @@
     - **Orientado al exterior o solo para empleados**: orientado al usuario final.
     - **Computadora de escritorio o móvil**: aplicación móvil.
     - **Piloto o producción**: primera versión funcional con criterios de calidad para producción.
-    - **Monolito o microservicios**: monolito modular inicial.
+    - **Monolito o microservicios**: monolito modular inicial (ADR-018).
 
   - **¿Cómo evaluó a los candidatos?**:
 
-    Mediante SPIKE-025 (pipeline completo), SPIKE-020 (pruebas en CI) y SPIKE-012 (distribución de APK).
+    Mediante SPIKE-025 (pipeline completo), SPIKE-020 (pruebas en CI) y SPIKE-012 (instalación del APK en dispositivos).
 
   - **¿Por qué elegiste al ganador?**:
 
@@ -231,7 +231,7 @@
 
   - **Anécdotas**:
 
-    - En el diseño del SPIKE-020 se confirmó que GitHub Actions puede ejecutar pruebas unitarias, integración y cobertura en menos de 15 minutos.
+    - En el diseño del SPIKE-020 se planteó como hipótesis que GitHub Actions puede ejecutar pruebas unitarias, integración y cobertura en menos de 15 minutos.
     - Durante el análisis se concluyó que Jenkins habría requerido al menos una semana de configuración y un servidor dedicado, sin aportar beneficios sobre GitHub Actions.
 
 - **Recomendación**:
@@ -258,7 +258,7 @@
       - Compilar el JAR del backend con Maven.
       - Compilar el APK de release del frontend.
       - Publicar artefactos versionados en GitHub Releases.
-      - Desplegar el backend a staging (Docker + docker-compose o servicio gestionado).
+      - Desplegar el backend a staging en el servidor propio con Docker + docker-compose por SSH (ADR-031).
       - Subir el APK a Firebase App Distribution.
       - Notificar a testers.
     - **Pipeline de release**:
