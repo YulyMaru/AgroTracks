@@ -41,7 +41,7 @@ Por esta razón, se necesita un prototipo que implemente al menos dos migracione
 Si implementamos:
 
 - **Backend (Flyway)**:
-  - Migraciones `V1__init.sql` (crear tablas) y `V2__add_notes.sql` (añadir columna).
+  - Migraciones `V1__inicial.sql` (crear tablas) y `V2__agregar_notas.sql` (añadir columna).
   - Configuración de Flyway en `application.yml`.
   - `ddl-auto=validate` en Hibernate.
   - Historial en `flyway_schema_history`.
@@ -70,9 +70,9 @@ El Spike incluirá:
 - **Backend (Spring Boot + Flyway)**:
   - Proyecto Spring Boot 3 con PostgreSQL 15+.
   - Dependencias: `flyway-core`, `flyway-database-postgresql`.
-  - Migración `V1__init.sql`: crear tablas `farms`, `lots`, `crops`, `transactions`, `users`.
-  - Migración `V2__add_notes_to_transactions.sql`: añadir columna `notes` a `transactions`.
-  - Migración `V3__add_index_to_transactions.sql`: añadir índice compuesto.
+  - Migración `V1__inicial.sql`: crear tablas `fincas`, `lotes`, `cultivos`, `transacciones`, `usuarios`.
+  - Migración `V2__agregar_notas_a_transacciones.sql`: añadir columna `notas` a `transacciones`.
+  - Migración `V3__agregar_indice_a_transacciones.sql`: añadir índice compuesto.
   - Configuración de Flyway en `application.yml`.
   - `ddl-auto=validate` en Hibernate.
   - Pruebas de aplicación de migraciones en entorno limpio y con datos.
@@ -80,9 +80,9 @@ El Spike incluirá:
   - Pruebas de reproducibilidad entre entornos.
 - **Cliente móvil (React Native + SQLite)**:
   - Mecanismo de migraciones con `PRAGMA user_version`.
-  - Migración local v1: crear tablas `farms`, `transactions`, `pending_operations`.
-  - Migración local v2: añadir columna `notes` a `transactions`.
-  - Migración local v3: añadir índice a `transactions`.
+  - Migración local v1: crear tablas `fincas`, `transacciones`, `operaciones_pendientes`.
+  - Migración local v2: añadir columna `notas` a `transacciones`.
+  - Migración local v3: añadir índice a `transacciones`.
   - Ejecución de migraciones al arrancar la app, dentro de una transacción.
   - Pruebas de aplicación de migraciones en app limpia y con datos.
   - Pruebas de rollback ante migración fallida.
@@ -118,17 +118,17 @@ El Spike no implementará:
 
 | Versión | Descripción | Cambio |
 |---------|-------------|--------|
-| V1 | `init` | Crear tablas `users`, `farms`, `lots`, `crops`, `transactions` |
-| V2 | `add_notes_to_transactions` | Añadir columna `notes TEXT` a `transactions` |
-| V3 | `add_index_to_transactions` | Añadir índice compuesto `(user_id, date, type)` |
+| V1 | `inicial` | Crear tablas `usuarios`, `fincas`, `lotes`, `cultivos`, `transacciones` |
+| V2 | `agregar_notas_a_transacciones` | Añadir columna `notas TEXT` a `transacciones` |
+| V3 | `agregar_indice_a_transacciones` | Añadir índice compuesto `(id_usuario, fecha, tipo)` |
 
 ### Cliente móvil (SQLite)
 
 | Versión | Descripción | Cambio |
 |---------|-------------|--------|
-| v1 | `init` | Crear tablas `farms`, `transactions`, `pending_operations` |
-| v2 | `add_notes_to_transactions` | Añadir columna `notes TEXT` a `transactions` |
-| v3 | `add_index_to_transactions` | Añadir índice `idx_transactions_user_date_type` |
+| v1 | `inicial` | Crear tablas `fincas`, `transacciones`, `operaciones_pendientes` |
+| v2 | `agregar_notas_a_transacciones` | Añadir columna `notas TEXT` a `transacciones` |
+| v3 | `agregar_indice_a_transacciones` | Añadir índice `idx_transacciones_usuario_fecha_tipo` |
 
 **Datos de prueba:**
 
@@ -171,14 +171,14 @@ El Spike no implementará:
 #### Procedimiento
 1. Aplicar solo `V1` en una base limpia.
 2. Insertar 20 fincas y 100 transacciones.
-3. Aplicar `V2` (añadir columna `notes`).
+3. Aplicar `V2` (añadir columna `notas`).
 4. Verificar que los datos existentes se conservan.
 5. Aplicar `V3` (añadir índice).
 6. Verificar que los datos siguen intactos y que el índice se usa.
 
 #### Resultado esperado
 - Los datos existentes se conservan tras cada migración.
-- La columna `notes` se añade con valor `NULL` por defecto.
+- La columna `notas` se añade con valor `NULL` por defecto.
 - El índice se crea correctamente.
 - No hay pérdida de datos.
 
@@ -189,7 +189,7 @@ El Spike no implementará:
 **Objetivo:** Validar que si una migración falla, se revierte completamente.
 
 #### Procedimiento
-1. Crear una migración `V4__failing_migration.sql` con un error intencional (ej. tabla inexistente).
+1. Crear una migración `V4__migracion_fallida.sql` con un error intencional (ej. tabla inexistente).
 2. Arrancar la aplicación.
 3. Verificar que Flyway falla y detiene el arranque.
 4. Verificar que la base queda en el estado de `V3`.
@@ -254,7 +254,7 @@ El Spike no implementará:
 
 #### Resultado esperado
 - Los datos existentes se conservan.
-- La columna `notes` se añade con valor `NULL`.
+- La columna `notas` se añade con valor `NULL`.
 - El índice se crea correctamente.
 - `PRAGMA user_version` es 3.
 
@@ -345,7 +345,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Migraciones backend**: Flyway Community.
 - **Persistencia backend**: Spring Data JPA + Hibernate con `ddl-auto=validate`.
 - **Cliente móvil**: React Native + TypeScript.
-- **Base de datos local**: SQLite con `react-native-quick-sqlite` o `react-native-sqlite-storage`.
+- **Base de datos local**: SQLite con `@op-engineering/op-sqlite`.
 - **Migraciones locales**: `PRAGMA user_version` + transacciones.
 - **Pruebas backend**: JUnit 5, Spring Boot Test, Testcontainers.
 - **Pruebas frontend**: Jest, React Native Testing Library.

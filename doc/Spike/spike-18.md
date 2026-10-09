@@ -41,11 +41,11 @@ Si implementamos:
 
 - **Backend (Spring Boot)**:
   - Capas: presentación (controladores REST), aplicación (servicios de caso de uso), dominio (entidades y reglas), infraestructura (repositorios JPA, seguridad, caché).
-  - Módulos por dominio: al menos `farms` y `transactions`.
+  - Módulos por dominio: al menos `fincas` y `transacciones`.
   - Patrón Repository: interfaces en dominio, implementaciones JPA en infraestructura.
 - **Frontend (React Native + TypeScript)**:
   - Capas: presentación (componentes y pantallas), aplicación (hooks y casos de uso), dominio (entidades y reglas), infraestructura (SQLite, Axios, SecureStore, NetInfo).
-  - Módulos por dominio: al menos `farms` y `transactions`.
+  - Módulos por dominio: al menos `fincas` y `transacciones`.
   - Patrón Repository: interfaces en dominio, implementaciones que combinan SQLite local y Axios remoto.
 
 Entonces:
@@ -65,18 +65,18 @@ El Spike incluirá:
 
 - **Backend (Spring Boot)**:
   - Estructura de paquetes por capa y por módulo.
-  - Dos módulos de dominio: `farms` y `transactions`.
+  - Dos módulos de dominio: `fincas` y `transacciones`.
   - Entidades de dominio (sin dependencias de JPA).
   - DTOs de presentación (request/response).
   - Servicios de aplicación (casos de uso).
   - Repositorios: interfaces en dominio, implementaciones JPA en infraestructura.
-  - Controladores REST para `farms` y `transactions`.
+  - Controladores REST para `fincas` y `transacciones`.
   - Configuración de seguridad y JWT (mínima).
   - Pruebas unitarias por capa y por módulo.
   - Pruebas de integración con Spring Boot Test.
 - **Frontend (React Native + TypeScript)**:
   - Estructura de carpetas por capa y por módulo.
-  - Dos módulos de dominio: `farms` y `transactions`.
+  - Dos módulos de dominio: `fincas` y `transacciones`.
   - Entidades de dominio (sin dependencias de SQLite ni Axios).
   - Componentes y pantallas para listar y registrar.
   - Hooks y casos de uso.
@@ -96,7 +96,7 @@ El Spike incluirá:
 
 El Spike no implementará:
 
-- Todos los módulos de AgroTrack (solo `farms` y `transactions`).
+- Todos los módulos de AgroTrack (solo `fincas` y `transacciones`).
 - La lógica completa de sincronización (solo la estructura de repositorios).
 - La interfaz definitiva de la aplicación (solo pantallas mínimas).
 - Pruebas E2E completas (solo pruebas unitarias e integración).
@@ -119,21 +119,21 @@ El Spike no implementará:
 
 **Estructura de capas en backend:**
 
-- `com.agrotrack.farms`
-  - `domain` (entidades, repositorios interfaces, reglas)
-  - `application` (servicios de caso de uso)
-  - `infrastructure` (implementaciones JPA)
-  - `presentation` (controladores REST, DTOs)
-- `com.agrotrack.transactions` (misma estructura)
+- `com.agrotrack.fincas`
+  - `dominio` (entidades, repositorios interfaces, reglas)
+  - `aplicacion` (servicios de caso de uso)
+  - `infraestructura` (implementaciones JPA)
+  - `presentacion` (controladores REST, DTOs)
+- `com.agrotrack.transacciones` (misma estructura)
 
 **Estructura de capas en frontend:**
 
-- `src/farms`
-  - `domain` (entidades, repositorios interfaces)
-  - `application` (hooks, casos de uso)
-  - `infrastructure` (implementaciones SQLite y Axios)
-  - `presentation` (componentes, pantallas)
-- `src/transactions` (misma estructura)
+- `src/fincas`
+  - `dominio` (entidades, repositorios interfaces)
+  - `aplicacion` (hooks, casos de uso)
+  - `infraestructura` (implementaciones SQLite y Axios)
+  - `presentacion` (componentes, pantallas)
+- `src/transacciones` (misma estructura)
 
 **Datos de prueba:**
 
@@ -155,10 +155,10 @@ El Spike no implementará:
 
 #### Procedimiento
 1. Revisar la estructura de paquetes del backend.
-2. Verificar que cada módulo tiene sus capas `domain`, `application`, `infrastructure`, `presentation`.
+2. Verificar que cada módulo tiene sus capas `dominio`, `aplicacion`, `infraestructura`, `presentacion`.
 3. Verificar que las dependencias entre capas respetan la dirección: presentación → aplicación → dominio ← infraestructura.
 4. Revisar la estructura de carpetas del frontend.
-5. Verificar que cada módulo tiene sus capas `domain`, `application`, `infrastructure`, `presentation`.
+5. Verificar que cada módulo tiene sus capas `dominio`, `aplicacion`, `infraestructura`, `presentacion`.
 6. Verificar que las dependencias entre capas respetan la dirección definida.
 
 #### Resultado esperado
@@ -195,10 +195,10 @@ El Spike no implementará:
 **Objetivo:** Validar que el patrón Repository abstrae correctamente el acceso a datos.
 
 #### Procedimiento
-1. Definir la interfaz `FarmRepository` en el dominio.
-2. Implementar `JpaFarmRepository` en infraestructura.
-3. Definir la interfaz `TransactionRepository` en el dominio.
-4. Implementar `JpaTransactionRepository` en infraestructura.
+1. Definir la interfaz `FincaRepository` en el dominio.
+2. Implementar `JpaFincaRepository` en infraestructura.
+3. Definir la interfaz `TransaccionRepository` en el dominio.
+4. Implementar `JpaTransaccionRepository` en infraestructura.
 5. Inyectar los repositorios en los servicios de aplicación.
 6. Simular el cambio de implementación (ej. usar un repositorio en memoria) sin afectar el dominio.
 7. Verificar que el dominio no importa clases de JPA ni de Spring.
@@ -217,10 +217,10 @@ El Spike no implementará:
 **Objetivo:** Validar que el patrón Repository abstrae correctamente el acceso a datos en el cliente.
 
 #### Procedimiento
-1. Definir la interfaz `FarmRepository` en el dominio.
-2. Implementar `FarmRepositoryImpl` que combina SQLite local y Axios remoto.
-3. Definir la interfaz `TransactionRepository` en el dominio.
-4. Implementar `TransactionRepositoryImpl` que combina SQLite local y Axios remoto.
+1. Definir la interfaz `FincaRepository` en el dominio.
+2. Implementar `FincaRepositoryImpl` que combina SQLite local y Axios remoto.
+3. Definir la interfaz `TransaccionRepository` en el dominio.
+4. Implementar `TransaccionRepositoryImpl` que combina SQLite local y Axios remoto.
 5. Inyectar los repositorios en los hooks y casos de uso.
 6. Simular el cambio de implementación (ej. usar solo SQLite) sin afectar el dominio.
 7. Verificar que el dominio no importa SQLite ni Axios.
@@ -241,7 +241,7 @@ El Spike no implementará:
 #### Procedimiento
 1. Generar el contrato OpenAPI desde el backend.
 2. Generar un cliente TypeScript a partir del contrato.
-3. Consumir los endpoints de `farms` y `transactions` desde el frontend.
+3. Consumir los endpoints de `fincas` y `transacciones` desde el frontend.
 4. Verificar que los DTOs de request/response coinciden.
 5. Verificar que los errores se manejan correctamente.
 6. Verificar que la autenticación JWT se inyecta correctamente.
@@ -260,10 +260,10 @@ El Spike no implementará:
 **Objetivo:** Validar que añadir un nuevo módulo de dominio es sencillo y no afecta a los existentes.
 
 #### Procedimiento
-1. Simular la incorporación de un nuevo módulo `crops`.
+1. Simular la incorporación de un nuevo módulo `cultivos`.
 2. Crear la estructura de capas en backend y frontend.
 3. Implementar un CRUD básico.
-4. Verificar que no se modifica ningún archivo de `farms` ni de `transactions`.
+4. Verificar que no se modifica ningún archivo de `fincas` ni de `transacciones`.
 5. Verificar que las pruebas existentes siguen pasando.
 6. Medir el tiempo de implementación.
 
@@ -280,10 +280,10 @@ El Spike no implementará:
 **Objetivo:** Validar que cambiar la implementación de un repositorio no afecta al dominio ni a la aplicación.
 
 #### Procedimiento
-1. En backend, cambiar `JpaFarmRepository` por una implementación en memoria.
+1. En backend, cambiar `JpaFincaRepository` por una implementación en memoria.
 2. Verificar que el dominio y la aplicación no se modifican.
 3. Verificar que las pruebas de aplicación siguen pasando.
-4. En frontend, cambiar `FarmRepositoryImpl` para que use solo SQLite (sin Axios).
+4. En frontend, cambiar `FincaRepositoryImpl` para que use solo SQLite (sin Axios).
 5. Verificar que el dominio y la aplicación no se modifican.
 6. Verificar que las pruebas de aplicación siguen pasando.
 
@@ -300,9 +300,9 @@ El Spike no implementará:
 **Objetivo:** Medir el impacto de las capas en el rendimiento del backend.
 
 #### Procedimiento
-1. Consumir `GET /api/v1/farms` con 20 fincas.
-2. Consumir `GET /api/v1/transactions` con 100 transacciones.
-3. Consumir `GET /api/v1/summary` con 100 transacciones.
+1. Consumir `GET /api/v1/fincas` con 20 fincas.
+2. Consumir `GET /api/v1/transacciones` con 100 transacciones.
+3. Consumir `GET /api/v1/resumen` con 100 transacciones.
 4. Medir los tiempos de respuesta.
 5. Comparar con un endpoint sin capas (monolítico).
 6. Repetir 3 veces y promediar.
@@ -319,7 +319,7 @@ El Spike no implementará:
 **Objetivo:** Validar que un módulo podría extraerse a microservicio sin reescribir el resto.
 
 #### Procedimiento
-1. Seleccionar el módulo `farms`.
+1. Seleccionar el módulo `fincas`.
 2. Simular su extracción a un servicio independiente (solo análisis).
 3. Verificar que las interfaces de repositorio y los contratos REST permiten la extracción.
 4. Documentar los cambios necesarios (configuración de red, descubrimiento, etc.).
@@ -364,12 +364,12 @@ El Spike se considerará **RECHAZADO** si:
 - **Documentación**: SpringDoc OpenAPI.
 - **Pruebas backend**: JUnit 5, Mockito, Spring Boot Test, Testcontainers (o H2).
 - **Frontend**: React Native + TypeScript.
-- **Persistencia local**: SQLite (react-native-quick-sqlite o react-native-sqlite-storage).
+- **Persistencia local**: SQLite (`@op-engineering/op-sqlite`).
 - **HTTP**: Axios.
 - **Almacenamiento seguro**: SecureStore.
 - **Conectividad**: NetInfo.
 - **Pruebas frontend**: Jest, React Native Testing Library.
-- **Medición**: `console.time`, Flipper, Postman, JMeter o k6.
+- **Medición**: `console.time`, React Native DevTools, Postman, JMeter o k6.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
 
 ## 10. Riesgos y mitigación (para el Spike)
@@ -400,8 +400,8 @@ El Spike se considerará **RECHAZADO** si:
 Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Repositorio de código** (branch del spike) con:
-   - Backend Spring Boot con estructura de capas y módulos `farms` y `transactions`.
-   - Frontend React Native con estructura de capas y módulos `farms` y `transactions`.
+   - Backend Spring Boot con estructura de capas y módulos `fincas` y `transacciones`.
+   - Frontend React Native con estructura de capas y módulos `fincas` y `transacciones`.
    - Patrón Repository implementado en backend y frontend.
    - Contratos OpenAPI generados.
    - Pruebas unitarias e integración.

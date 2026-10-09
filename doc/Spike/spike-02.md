@@ -30,7 +30,7 @@ Por esta razón, se necesita una prueba técnica que demuestre que compartir reg
 
 ## 3. Pregunta principal del Spike
 
-¿Es posible definir un conjunto de reglas de validación (ej. usando JSON Schema) en un solo lugar, empaquetarlas dentro de la aplicación móvil para validación offline instantánea y reutilizarlas en el backend (Node.js/Spring Boot) para validar los datos entrantes, mostrando mensajes de error específicos y conservando los datos válidos?
+¿Es posible definir un conjunto de reglas de validación (ej. usando JSON Schema) en un solo lugar, empaquetarlas dentro de la aplicación móvil para validación offline instantánea y reutilizarlas en el backend (Spring Boot) para validar los datos entrantes, mostrando mensajes de error específicos y conservando los datos válidos?
 
 ## 4. Hipótesis
 
@@ -38,7 +38,7 @@ Si definimos las reglas de validación en un archivo JSON centralizado, entonces
 
 - El cliente móvil podrá parsear ese JSON y validar los campos al vuelo (evento `onBlur`) en < 50 ms, sin necesidad de llamadas a la red.
 - El servidor podrá importar el mismo JSON para validar el payload completo del endpoint.
-- Si ambos lados usan la misma librería de validación (ej. `ajv` en JS o `everit-json-schema` en Java), la consistencia estará garantizada al 100 %.
+- Si ambos lados usan la misma librería de validación (ej. `ajv` en JS o `json-schema-validator` en Java), la consistencia estará garantizada al 100 %.
 - Los mensajes de error estarán predefinidos en el JSON, mostrando texto claro ("El campo 'Valor' debe ser un número positivo") en lugar de errores genéricos.
 - El formulario conservará todos los datos válidos, resaltando solo los campos erróneos.
 
@@ -50,7 +50,7 @@ El Spike incluirá únicamente los elementos necesarios para validar la estrateg
 
 - Definición de un esquema JSON con 3 reglas típicas (obligatorio, formato numérico, longitud máxima).
 - Una librería validadora en el cliente (ej. `ajv` para React Native / JavaScript).
-- Una librería validadora en el servidor (ej. `ajv` o la nativa del framework).
+- Una librería validadora en el servidor (`json-schema-validator` en Java).
 - Un formulario de ejemplo con 3 campos (Descripción, Valor, Fecha).
 - Validación en tiempo real al perder el foco (`onBlur`) mostrando mensaje en rojo debajo del campo.
 - Validación al enviar el formulario (que ejecuta las mismas reglas localmente antes de llamar al API).
@@ -171,8 +171,8 @@ El Spike se considerará **RECHAZADO** si:
 Para la ejecución de este Spike, se utilizará el siguiente stack mínimo:
 
 - **Cliente móvil**: React Native con la librería `ajv` (JSON Schema validator).
-- **Servidor**:Spring Boot utilizando la misma librería `ajv` (en Node) o `json-schema-validator` en Java.
-- **Almacenamiento del esquema**: Archivo `validation-schema.json` alojado en el repositorio central, copiado manualmente durante el build a las carpetas `assets/` del móvil y `resources/` del backend.
+- **Servidor**: Spring Boot con `json-schema-validator` (Java) sobre el mismo esquema.
+- **Almacenamiento del esquema**: Archivo `esquema-validacion.json` alojado en el repositorio central, copiado manualmente durante el build a las carpetas `assets/` del móvil y `resources/` del backend.
 - **Estado del formulario**: `useState` (React) o `setState` gestionando un objeto con los valores y un objeto con los errores.
 
 ## 10. Riesgos y mitigación (para el Spike)

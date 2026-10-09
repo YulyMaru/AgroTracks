@@ -56,7 +56,7 @@ Entonces:
 El Spike incluirá:
 
 - Definición de reglas de integridad para el análisis de "Rentabilidad mensual" (requiere ingresos y gastos del mes).
-- Un servicio de validación que retorne: `{ isComplete: boolean, missingData: string[] }`.
+- Un servicio de validación que retorne: `{ estaCompleto: boolean, datosFaltantes: string[] }`.
 - Interfaz de ejemplo con:
   - Banner de advertencia si el análisis está incompleto.
   - Lista de datos faltantes.
@@ -199,8 +199,8 @@ El Spike se considerará **RECHAZADO** si:
 ## 9. Entorno técnico del spike
 
 - **Cliente móvil**: React Native + TypeScript.
-- **Lógica de validación**: Función pura `validateAnalysis(type, transactions)` que retorna `{ isComplete, missingData }`.
-- **Reglas de integridad**: Archivo JSON de configuración `integrity-rules.json` con la lista de tipos de datos requeridos para cada análisis.
+- **Lógica de validación**: Función pura `validarAnalisis(tipo, transacciones)` que retorna `{ estaCompleto, datosFaltantes }`.
+- **Reglas de integridad**: Archivo JSON de configuración `reglas-integridad.json` con la lista de tipos de datos requeridos para cada análisis.
 - **UI de prueba**: Pantalla simple con banner, lista de faltantes, y tarjeta de resultado parcial.
 - **Pruebas de usabilidad**: Se realizan con 3 participantes (campesinos o simuladores).
 - **Documentación de usabilidad**: Formato de registro de respuestas por participante.

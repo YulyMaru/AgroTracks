@@ -254,7 +254,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Repositorio local**: mock o SQLite (según ADR-013).
 - **Conectividad**: `@react-native-community/netinfo`.
 - **Motor de sincronización**: mock (log en consola).
-- **Medición**: React DevTools Profiler, Flipper, `console.time` / `console.timeEnd`.
+- **Medición**: React DevTools Profiler, React Native DevTools, `console.time` / `console.timeEnd`.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
 
 ## 10. Riesgos y mitigación (para el Spike)

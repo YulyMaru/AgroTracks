@@ -130,8 +130,8 @@ El Spike no implementará:
 
 | Ataque | Herramienta | Objetivo |
 |--------|-------------|----------|
-| SQL Injection | `sqlmap` o manual | `GET /api/v1/transactions?id=1' OR '1'='1` |
-| XSS | Manual | `POST /api/v1/transactions` con `<script>alert(1)</script>` |
+| SQL Injection | `sqlmap` o manual | `GET /api/v1/transacciones?id=1' OR '1'='1` |
+| XSS | Manual | `POST /api/v1/transacciones` con `<script>alert(1)</script>` |
 | DDoS básico | `hey` o `ab` | 10,000 solicitudes en 10 segundos |
 | Bots maliciosos | `curl` con User-Agent falso | Múltiples solicitudes con UA sospechoso |
 
@@ -176,7 +176,7 @@ El Spike no implementará:
 
 #### Procedimiento
 1. Enviar una solicitud con payload de SQL injection:
-   - `GET /api/v1/transactions?id=1' OR '1'='1`
+   - `GET /api/v1/transacciones?id=1' OR '1'='1`
 2. Observar la respuesta de Cloudflare.
 3. Verificar que la solicitud es bloqueada antes de llegar al backend.
 4. Repetir con diferentes payloads (`UNION SELECT`, `DROP TABLE`, etc.).
@@ -196,7 +196,7 @@ El Spike no implementará:
 
 #### Procedimiento
 1. Enviar una solicitud con payload de XSS:
-   - `POST /api/v1/transactions` con `<script>alert(1)</script>` en el body.
+   - `POST /api/v1/transacciones` con `<script>alert(1)</script>` en el body.
 2. Observar la respuesta de Cloudflare.
 3. Verificar que la solicitud es bloqueada o sanitizada.
 4. Repetir con diferentes payloads (`<img src=x onerror=alert(1)>`, etc.).
@@ -250,7 +250,7 @@ El Spike no implementará:
 **Objetivo:** Medir el impacto de Cloudflare en el rendimiento.
 
 #### Procedimiento
-1. Medir el tiempo de respuesta de `GET /api/v1/farms` sin Cloudflare.
+1. Medir el tiempo de respuesta de `GET /api/v1/fincas` sin Cloudflare.
 2. Medir el tiempo de respuesta con Cloudflare.
 3. Repetir 10 veces y promediar.
 4. Medir la latencia desde diferentes ubicaciones (si es posible).

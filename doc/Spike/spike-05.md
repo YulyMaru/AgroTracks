@@ -38,7 +38,7 @@ Por esta razón, se necesita un prototipo que implemente el flujo completo de re
 
 Si implementamos el registro offline con los siguientes componentes:
 
-- **Base de datos local**: SQLite con una tabla `pending_operations`.
+- **Base de datos local**: SQLite con una tabla `operaciones_pendientes`.
 - **Validación offline**: usando el esquema centralizado de reglas (ADR-002).
 - **Encolado**: el registro se añade a la cola de pendientes.
 - **Feedback**: se muestra un toast/snackbar con mensaje de confirmación.
@@ -57,11 +57,11 @@ Entonces:
 
 El Spike incluirá:
 
-- Configuración de una base de datos local (SQLite) con la tabla `pending_operations`.
+- Configuración de una base de datos local (SQLite) con la tabla `operaciones_pendientes`.
 - Creación del modelo de datos para un "Gasto" (descripción, valor, fecha, categoría).
 - Implementación de la validación del formulario usando las reglas centralizadas (esquema JSON) en modo offline.
-- Lógica de almacenamiento: al validar correctamente, guardar el registro en SQLite con `status = 'PENDING'`.
-- Generación de un `localId` (UUID) para cada registro offline.
+- Lógica de almacenamiento: al validar correctamente, guardar el registro en SQLite con `estado = 'PENDIENTE'`.
+- Generación de un `idLocal` (UUID) para cada registro offline.
 - Mensaje de confirmación (toast/snackbar) con el texto: "¡Guardado localmente! Se sincronizará automáticamente".
 - Simulación de recuperación de conectividad y procesamiento de la cola (integrando con un mock del motor de sincronización).
 - Verificación de que el registro persiste al cerrar y abrir la aplicación.
@@ -98,7 +98,7 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 
 1. Usuario llena el formulario sin conexión.
 2. El sistema valida localmente.
-3. Si es válido, se guarda en SQLite con estado `PENDING`.
+3. Si es válido, se guarda en SQLite con estado `PENDIENTE`.
 4. Se muestra el mensaje de confirmación.
 5. El usuario cierra la aplicación.
 6. El usuario abre la aplicación nuevamente.
@@ -118,7 +118,7 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 3. Llenar todos los campos con datos válidos.
 4. Presionar "Guardar".
 5. Observar el mensaje de confirmación.
-6. Verificar en la base de datos local que el registro existe con `status = 'PENDING'`.
+6. Verificar en la base de datos local que el registro existe con `estado = 'PENDIENTE'`.
 7. Verificar en la interfaz (ej. historial) que el registro aparece con el ícono de pendiente.
 
 #### Resultado esperado
@@ -155,15 +155,15 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 #### Procedimiento
 1. Sin conexión, registrar 5 gastos diferentes.
 2. Verificar que los 5 aparecen en la lista con estado "Pendiente".
-3. Verificar en la base de datos que los 5 están en la tabla `pending_operations`.
+3. Verificar en la base de datos que los 5 están en la tabla `operaciones_pendientes`.
 4. Activar la conexión (simular reconexión).
 5. Verificar que el motor de sincronización procesa la cola y envía los 5 registros.
-6. Verificar que después de procesarlos, el estado cambia a "SYNCED" (o se eliminan de la cola).
+6. Verificar que después de procesarlos, el estado cambia a "SINCRONIZADO" (o se eliminan de la cola).
 
 #### Resultado esperado
 - Los 5 registros se almacenan correctamente.
 - Al reconectar, los 5 son procesados por el motor de sincronización.
-- El estado de los registros se actualiza a "SYNCED" (o desaparecen de la cola de pendientes).
+- El estado de los registros se actualiza a "SINCRONIZADO" (o desaparecen de la cola de pendientes).
 - No hay pérdida ni duplicación.
 
 ---
@@ -202,13 +202,13 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 #### Resultado esperado
 - Tiempo promedio de almacenamiento < 200 ms por registro.
 - La UI no se congela durante la inserción.
-- Los 50 registros quedan en la tabla `pending_operations` con `status = 'PENDING'`.
+- Los 50 registros quedan en la tabla `operaciones_pendientes` con `estado = 'PENDIENTE'`.
 
 ## 8. Criterios de aceptación del Spike
 
 El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 
-1. **Registro offline**: El 100 % de los registros válidos realizados sin conexión se almacenan en la base de datos local con `status = 'PENDING'`.
+1. **Registro offline**: El 100 % de los registros válidos realizados sin conexión se almacenan en la base de datos local con `estado = 'PENDIENTE'`.
 2. **Feedback al usuario**: En el 100 % de los registros offline exitosos, se muestra el mensaje de confirmación claro.
 3. **Persistencia**: El 100 % de los registros offline sobrevive al cierre y reapertura de la aplicación.
 4. **Múltiples registros**: El sistema maneja correctamente al menos 5 registros offline en la cola.
@@ -230,10 +230,10 @@ El Spike se considerará **RECHAZADO** si:
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
 - **Cliente móvil**: React Native + TypeScript
-- **Base de datos local**: SQLite (con librería `react-native-sqlite-storage`).
-- **Modelo de datos**: Tabla `pending_operations` con columnas: `localId` (UUID), `operation_type` (text), `payload` (JSON), `status` (text: PENDING, SYNCED, ERROR), `created_at` (timestamp), `retry_count` (int), `last_attempt` (timestamp).
+- **Base de datos local**: SQLite (con `@op-engineering/op-sqlite`, ADR-017).
+- **Modelo de datos**: Tabla `operaciones_pendientes` con columnas: `id_local` (UUID), `tipo_operacion` (text), `contenido` (JSON), `estado` (text: PENDIENTE, SINCRONIZADO, ERROR), `creado_en` (timestamp), `reintentos` (int), `ultimo_intento_en` (timestamp).
 - **Validación**: Esquema JSON de validación (ADR-002) cargado localmente.
-- **Sincronización mock**: Un servicio que simula el envío al backend (log en consola) y cambia el estado de los registros a `SYNCED`.
+- **Sincronización mock**: Un servicio que simula el envío al backend (log en consola) y cambia el estado de los registros a `SINCRONIZADO`.
 - **UI de prueba**: Formulario simple de gasto y lista de gastos con indicador de estado.
 - **Simulación de red**: Alternar entre modo avión y conexión para probar los flujos.
 - **Medición de rendimiento**: `console.time` / `console.timeEnd` o herramientas de perfilado del framework.
@@ -261,7 +261,7 @@ Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Repositorio de código** (branch del spike) con:
    - Configuración de SQLite.
-   - Modelo de `pending_operations`.
+   - Modelo de `operaciones_pendientes`.
    - Formulario de gasto con validación offline.
    - Lógica de almacenamiento y encolado.
    - Lista de gastos con indicador de estado.
@@ -296,7 +296,7 @@ Al finalizar el timebox, el equipo deberá entregar:
 
 - **Recomendaciones para implementación en producción**:
   - (Ejemplo: "Usar transacciones al insertar en SQLite para garantizar integridad.")
-  - (Ejemplo: "Añadir un índice en `status` para consultas rápidas a la cola de pendientes.")
+  - (Ejemplo: "Añadir un índice en `estado` para consultas rápidas a la cola de pendientes.")
   - (Ejemplo: "Implementar un límite de tamaño de la base de datos local y un proceso de limpieza.")
 
 - **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)

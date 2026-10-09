@@ -173,7 +173,7 @@ El Spike se considerará **RECHAZADO** si:
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
 - **Cliente móvil**: React Native + TypeScript. Se utilizarán componentes funcionales con estado local.
-- **Lógica de cálculo**: Función pura `calculateEconomicResult(transactions)` que recibe un arreglo de transacciones y devuelve `{ totalIncome, totalExpense, netResult }`.
+- **Lógica de cálculo**: Función pura `calcularResultadoEconomico(transacciones)` que recibe un arreglo de transacciones y devuelve `{ totalIngresos, totalGastos, resultadoNeto }`.
 - **Datos de prueba**: Archivo JSON estático con movimientos, cargado localmente para las pruebas offline.
 - **Servidor (mock)**: Endpoint simple que devuelve el mismo JSON o que aplica la misma función de cálculo.
 - **Diseño**: Uso de la librería de iconos del framework (ej. `react-native-vector-icons`) y estilos inline o con `StyleSheet`.

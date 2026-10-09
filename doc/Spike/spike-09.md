@@ -41,11 +41,11 @@ Por esta razón, se necesita una prueba técnica que mida el impacto real de las
 
 Si implementamos:
 
-- Índices compuestos `(user_id, fecha, tipo)` en `transactions`.
-- Índices en `farms(user_id)` y `lots(farm_id)`.
+- Índices compuestos `(id_usuario, fecha, tipo)` en `transacciones`.
+- Índices en `fincas(id_usuario)` y `lotes(id_finca)`.
 - Agregaciones `SUM` + `GROUP BY` en PostgreSQL (no en cliente).
 - Paginación de 20-50 registros por página.
-- Caché de resúmenes (en memoria o Redis) con TTL de 5 min e invalidación al modificar.
+- Caché de resúmenes (Redis) con TTL de 5 min e invalidación al modificar.
 
 Entonces:
 
@@ -63,7 +63,7 @@ Entonces:
 - Consultas optimizadas con `EXPLAIN ANALYZE`.
 - Agregaciones en servidor (`SUM`, `GROUP BY`).
 - Paginación en listados.
-- Implementación de caché (en memoria o Redis) con invalidación.
+- Implementación de caché (Redis) con invalidación.
 - Medición de tiempos con y sin optimizaciones.
 - Comparación de escenarios: sin índices, con índices, con índices + agregaciones, con índices + agregaciones + caché.
 
@@ -115,7 +115,7 @@ Entonces:
 **Objetivo:** Medir el impacto de índices compuestos y paginación.
 
 #### Procedimiento
-1. Crear índices `idx_transactions_user_date_type`, `idx_farms_user_id`, `idx_lots_farm_id`.
+1. Crear índices `idx_transacciones_usuario_fecha_tipo`, `idx_fincas_id_usuario`, `idx_lotes_id_finca`.
 2. Implementar paginación de 20 registros.
 3. Ejecutar las mismas consultas.
 4. Comparar con la Prueba 1.
@@ -132,7 +132,7 @@ Entonces:
 **Objetivo:** Medir el impacto de calcular sumas en PostgreSQL en lugar del cliente.
 
 #### Procedimiento
-1. Implementar `SELECT tipo, SUM(monto) FROM transactions WHERE user_id = ? AND fecha BETWEEN ? AND ? GROUP BY tipo`.
+1. Implementar `SELECT tipo, SUM(monto) FROM transactions WHERE id_usuario = ? AND fecha BETWEEN ? AND ? GROUP BY tipo`.
 2. Ejecutar los resúmenes.
 3. Comparar con Prueba 2.
 
@@ -148,7 +148,7 @@ Entonces:
 **Objetivo:** Medir el impacto de cachear resúmenes de períodos recurrentes.
 
 #### Procedimiento
-1. Implementar caché (en memoria o Redis) para resúmenes del mes actual y mes anterior.
+1. Implementar caché (Redis) para resúmenes del mes actual y mes anterior.
 2. TTL de 5 minutos.
 3. Invalidar al crear/modificar/eliminar transacción.
 4. Ejecutar los resúmenes 5 veces seguidas.
@@ -199,8 +199,8 @@ El Spike se considerará **RECHAZADO** si:
 ## 9. Entorno técnico del spike
 
 - **Base de datos**: PostgreSQL 15+.
-- **Backend**: Spring Boot o Node.js (según el stack de AgroTrack) con consultas optimizadas.
-- **Caché**: Redis (o caché en memoria con `Caffeine` para el spike).
+- **Backend**: Spring Boot 3 + Java 17 (ADR-016) con consultas optimizadas.
+- **Caché**: Redis en un contenedor Docker local, mediante Spring Cache (ADR-013, ADR-016).
 - **Datos de prueba**: script de generación de 10,000 transacciones, 500 fincas, 2,000 lotes.
 - **Medición**: `EXPLAIN ANALYZE`, logs de tiempo, métricas de hit ratio.
 - **Cliente**: React Native + TypeScript para validar paginación e indicadores de carga.
@@ -210,8 +210,8 @@ El Spike se considerará **RECHAZADO** si:
 - **Riesgo**: Los índices compuestos pueden ralentizar las escrituras.
   - **Mitigación**: Medir el impacto en INSERT/UPDATE. Si es significativo (> 20 %), evaluar índices parciales.
 
-- **Riesgo**: La caché en memoria no es distribuida y puede perderse al reiniciar.
-  - **Mitigación**: Para el spike es suficiente. En producción, evaluar Redis.
+- **Riesgo**: Redis es un servicio más que mantener y su contenido puede perderse al reiniciar.
+  - **Mitigación**: Tratar la caché como descartable; los resúmenes se recalculan desde PostgreSQL.
 
 - **Riesgo**: El volumen máximo definido puede ser superado en producción.
   - **Mitigación**: Documentar el límite y planificar archivado de datos antiguos (> 2 años).

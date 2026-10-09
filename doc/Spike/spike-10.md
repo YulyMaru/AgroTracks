@@ -38,7 +38,7 @@ Por esta razón, se necesita un prototipo que implemente los componentes con los
 Si implementamos:
 
 - Botones y controles con un tamaño mínimo de 48x48 dp en Android (44x44 pt en iOS) mediante un sistema de diseño estandarizado.
-- Un componente `ValueWithUnit` que muestra el formato "Concepto: $Valor Unidad" (ej. "Gastos totales: $60,000 COP").
+- Un componente `ValorConUnidad` que muestra el formato "Concepto: $Valor Unidad" (ej. "Gastos totales: $60,000 COP").
 
 Entonces:
 
@@ -54,10 +54,10 @@ Entonces:
 El Spike incluirá:
 
 - Creación de componentes UI reutilizables con dimensiones estándar:
-  - `Button` (tamaño mínimo 48x48 dp).
-  - `IconButton` (tamaño mínimo 48x48 dp).
-  - `Checkbox` y `Radio` (área de toque mínima 48x48 dp).
-- Creación del componente `ValueWithUnit` que recibe `concept`, `value`, `unit` y los muestra formateados.
+  - `Boton` (tamaño mínimo 48x48 dp).
+  - `BotonIcono` (tamaño mínimo 48x48 dp).
+  - `CasillaVerificacion` y `BotonRadio` (área de toque mínima 48x48 dp).
+- Creación del componente `ValorConUnidad` que recibe `concepto`, `valor`, `unidad` y los muestra formateados.
 - Integración en el resumen económico (ADR-003) y en un listado de gastos de ejemplo.
 - Herramientas de medición:
   - En Android: Layout Inspector para medir dimensiones.
@@ -83,7 +83,7 @@ El Spike no implementará:
 - Botón "Guardar" en el formulario de gasto.
 - Botón "Ver resumen" en el dashboard.
 - Botón "Eliminar" en la lista de gastos.
-- Checkbox de "Aceptar términos" en el registro.
+- CasillaVerificacion de "Aceptar términos" en el registro.
 - Elementos de navegación en el bottom tab (ej. "Inicio", "Registros", "Resumen", "Perfil").
 
 **Valores a evaluar:**
@@ -101,13 +101,13 @@ El Spike no implementará:
 **Objetivo:** Validar que los controles cumplen con las dimensiones estándar.
 
 #### Procedimiento
-1. Abrir la app en un emulador o dispositivo de prueba (Android y/o iOS).
+1. Abrir la app en un emulador o dispositivo de prueba (Android).
 2. Usar herramientas de inspección (Layout Inspector en Android Studio, View Hierarchy Debugger en Xcode) para medir el ancho y alto de:
    - Botón "Guardar".
    - Botón "Cancelar".
    - Botón "Eliminar".
    - Elementos del bottom navigation.
-   - Checkbox de "Aceptar términos".
+   - CasillaVerificacion de "Aceptar términos".
    - Área de toque de los ítems en la lista de gastos.
 3. Verificar que todos miden al menos 48x48 dp (Android) o 44x44 pt (iOS).
 4. Medir la separación entre controles adyacentes (debe ser ≥ 8 dp).
@@ -165,7 +165,7 @@ El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 2. **Tasa de errores**: La tasa de pulsaciones accidentales es < 5 % en las pruebas con los estándares (vs > 10 % sin estándares).
 3. **Comprensión de valores**: El 100 % de los participantes identifica correctamente el concepto y la unidad de los valores presentados con el formato completo.
 4. **Preferencia de usuario**: Los participantes expresan preferencia por el formato completo sobre el formato sin concepto/unidad.
-5. **Reusabilidad**: Los componentes creados (`Button` estándar y `ValueWithUnit`) son reutilizables y se integran en al menos dos pantallas diferentes.
+5. **Reusabilidad**: Los componentes creados (`Boton` estándar y `ValorConUnidad`) son reutilizables y se integran en al menos dos pantallas diferentes.
 
 El Spike se considerará **RECHAZADO** si:
 
@@ -178,8 +178,8 @@ El Spike se considerará **RECHAZADO** si:
 
 - **Cliente móvil**: React Native + TypeScript.
 - **Componentes**:
-  - `Button`: con `minWidth: 48`, `minHeight: 48` (Android) y `minWidth: 44`, `minHeight: 44` (iOS), usando `StyleSheet` o `styled-components`.
-  - `ValueWithUnit`: componente funcional que recibe `concept`, `value`, `unit` y renderiza `<Text>{concept}: ${formatCurrency(value)} ${unit}</Text>`.
+  - `Boton`: con `minWidth: 48`, `minHeight: 48` (Android) y `minWidth: 44`, `minHeight: 44` (iOS), usando `StyleSheet` o `styled-components`.
+  - `ValorConUnidad`: componente funcional que recibe `concepto`, `valor`, `unidad` y renderiza `<Text>{concepto}: ${formatearMoneda(valor)} ${unidad}</Text>`.
 - **Herramientas de medición**:
   - Android: Layout Inspector.
   - iOS: View Hierarchy Debugger.
@@ -195,7 +195,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Riesgo**: Los usuarios pueden no entender las unidades abreviadas (ej. "COP" vs "pesos colombianos").
   - **Mitigación**: Usar la unidad completa ("pesos colombianos") en lugar de la abreviatura, o combinarla (ej. "$125,000 COP (pesos colombianos)"). Validar en las pruebas de usabilidad.
 
-- **Riesgo**: El componente `ValueWithUnit` puede alargar demasiado los textos, especialmente en dispositivos pequeños.
+- **Riesgo**: El componente `ValorConUnidad` puede alargar demasiado los textos, especialmente en dispositivos pequeños.
   - **Mitigación**: Usar tipografía responsive y permitir que el texto se envuelva en varias líneas si es necesario.
 
 - **Riesgo**: La muestra de 3 participantes puede no ser representativa.
@@ -208,7 +208,7 @@ El Spike se considerará **RECHAZADO** si:
 
 Al finalizar el timebox, el equipo deberá entregar:
 
-1. **Código** de los componentes `Button` (con estándar táctil) y `ValueWithUnit`.
+1. **Código** de los componentes `Boton` (con estándar táctil) y `ValorConUnidad`.
 2. **Reporte de mediciones**:
    - Dimensiones de los controles (capturas de Layout Inspector).
    - Tasa de errores de pulsación en la versión control y la versión spike.

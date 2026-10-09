@@ -14,7 +14,7 @@
 
 Validar técnica y cualitativamente que el componente de estado vacío contextual permite al usuario identificar claramente que no hay datos para una consulta, diferenciarlo de un error, y lo guía hacia una acción útil, tal como lo exige el escenario de calidad ESC-CAL-US-13.
 
-El Spike busca comprobar que el componente `EmptyState` es fácil de integrar, se comporta correctamente en diferentes módulos, y que los mensajes personalizados son comprendidos por el usuario objetivo.
+El Spike busca comprobar que el componente `EstadoVacio` es fácil de integrar, se comporta correctamente en diferentes módulos, y que los mensajes personalizados son comprendidos por el usuario objetivo.
 
 ## 2. Problema que se busca validar
 
@@ -30,11 +30,11 @@ Por esta razón, se necesita un prototipo que implemente el componente en al men
 
 ## 3. Pregunta principal del Spike
 
-¿Un componente `EmptyState` con icono, mensaje contextual y acción sugerida, junto con un `ErrorState` diferenciado, permite que el 100 % de los usuarios objetivo identifiquen correctamente que no hay datos y sepan qué acción tomar, evitando la confusión con errores de sistema?
+¿Un componente `EstadoVacio` con icono, mensaje contextual y acción sugerida, junto con un `EstadoError` diferenciado, permite que el 100 % de los usuarios objetivo identifiquen correctamente que no hay datos y sepan qué acción tomar, evitando la confusión con errores de sistema?
 
 ## 4. Hipótesis
 
-Si implementamos un componente `EmptyState` con las siguientes características:
+Si implementamos un componente `EstadoVacio` con las siguientes características:
 
 - Icono/ilustración amigable (ej. lupa, calendario, lista vacía).
 - Título claro: "No hay [X] registrados".
@@ -47,7 +47,7 @@ Entonces:
 - Al menos el 90 % de los usuarios hará clic en la acción sugerida o expresará su intención de hacerlo.
 - Los desarrolladores podrán reutilizar el componente con menos de 5 líneas de código por pantalla.
 
-Además, si mostramos un `ErrorState` (con un icono de advertencia y botón "Reintentar") cuando hay un fallo de red, el 100 % de los usuarios distinguirá ambos estados.
+Además, si mostramos un `EstadoError` (con un icono de advertencia y botón "Reintentar") cuando hay un fallo de red, el 100 % de los usuarios distinguirá ambos estados.
 
 ## 5. Alcance
 
@@ -55,13 +55,13 @@ Además, si mostramos un `ErrorState` (con un icono de advertencia y botón "Rei
 
 El Spike incluirá:
 
-- Creación del componente `EmptyState` (icono, título, descripción, botón de acción).
-- Creación del componente `ErrorState` (icono de error, mensaje, botón "Reintentar").
+- Creación del componente `EstadoVacio` (icono, título, descripción, botón de acción).
+- Creación del componente `EstadoError` (icono de error, mensaje, botón "Reintentar").
 - Integración en al menos 2 pantallas:
   1. **Lista de gastos** (vacía).
   2. **Resultados económicos** (sin movimientos).
 - Datos de prueba: un escenario con datos, otro sin datos, y otro con simulación de error de red.
-- Lógica de estado en las pantallas: `loading`, `success (con datos)`, `empty`, `error`.
+- Lógica de estado en las pantallas: `cargando`, `exito (con datos)`, `vacio`, `error`.
 - Pruebas de usabilidad con 3 participantes (campesinos o simuladores) para evaluar comprensión.
 - Registro de tiempos de implementación para medir reusabilidad.
 
@@ -86,24 +86,24 @@ Se utilizarán dos módulos de ejemplo:
 **Módulo 2: Resultados económicos**
 - Escenario vacío: "No hay movimientos en este período. Los resultados se mostrarán cuando registres ingresos o gastos.".
 
-**Escenario de error (simulado)**: desconectar el internet y forzar un fallo de red. Se debe mostrar el `ErrorState` con "No pudimos cargar la información. Verifica tu conexión e intenta de nuevo.".
+**Escenario de error (simulado)**: desconectar el internet y forzar un fallo de red. Se debe mostrar el `EstadoError` con "No pudimos cargar la información. Verifica tu conexión e intenta de nuevo.".
 
 ## 7. Pruebas a realizar
 
 ### 7.1 Prueba 1 — Distinción entre estado vacío y estado con datos
 
-**Objetivo:** Validar que el componente `EmptyState` se muestra solo cuando no hay datos, y que los datos se muestran correctamente cuando existen.
+**Objetivo:** Validar que el componente `EstadoVacio` se muestra solo cuando no hay datos, y que los datos se muestran correctamente cuando existen.
 
 #### Procedimiento
 1. Cargar la pantalla de gastos con datos de prueba (al menos 3 registros).
-2. Verificar que se muestra la lista de gastos (no el `EmptyState`).
+2. Verificar que se muestra la lista de gastos (no el `EstadoVacio`).
 3. Limpiar los datos (simular que no hay gastos).
 4. Recargar la pantalla.
-5. Verificar que se muestra el `EmptyState` con el mensaje correspondiente.
+5. Verificar que se muestra el `EstadoVacio` con el mensaje correspondiente.
 
 #### Resultado esperado
 - La transición entre ambos estados debe ser clara.
-- El `EmptyState` solo aparece cuando el arreglo de datos está vacío.
+- El `EstadoVacio` solo aparece cuando el arreglo de datos está vacío.
 
 ---
 
@@ -120,8 +120,8 @@ Se utilizarán dos módulos de ejemplo:
 6. Observar que los datos (o el estado vacío) vuelven a aparecer.
 
 #### Resultado esperado
-- En el paso 3, debe mostrarse el `ErrorState` (no el `EmptyState`).
-- El `ErrorState` debe tener un mensaje diferente (ej. "Error de conexión") y un botón de "Reintentar".
+- En el paso 3, debe mostrarse el `EstadoError` (no el `EstadoVacio`).
+- El `EstadoError` debe tener un mensaje diferente (ej. "Error de conexión") y un botón de "Reintentar".
 - En el paso 5, debe recuperarse el estado correcto (datos o vacío).
 
 ---
@@ -131,14 +131,14 @@ Se utilizarán dos módulos de ejemplo:
 **Objetivo:** Validar que los usuarios identifican correctamente el estado vacío y entienden la acción sugerida.
 
 #### Procedimiento
-1. Mostrar a 3 participantes la pantalla de gastos en estado vacío (con el componente `EmptyState`).
+1. Mostrar a 3 participantes la pantalla de gastos en estado vacío (con el componente `EstadoVacio`).
 2. Preguntar: "¿Qué significa lo que ves en la pantalla?".
 3. Preguntar: "¿Qué crees que puedes hacer ahora?".
 4. Repetir con la pantalla de resultados en estado vacío (otro mensaje).
 5. Registrar las respuestas.
 
 #### Resultado esperado
-- El 100 % de los participantes debe identificar que la pantalla de `EmptyState` significa que no hay registros (no que la app está dañada).
+- El 100 % de los participantes debe identificar que la pantalla de `EstadoVacio` significa que no hay registros (no que la app está dañada).
 - Al menos el 90 % debe mencionar la acción sugerida (ej. "Darle a registrar gasto") o expresar que debe agregar información.
 
 ---
@@ -148,30 +148,30 @@ Se utilizarán dos módulos de ejemplo:
 **Objetivo:** Validar que los usuarios distinguen claramente un estado vacío de un error del sistema.
 
 #### Procedimiento
-1. Mostrar a los mismos 3 participantes la pantalla con `ErrorState` (simulando error de red).
+1. Mostrar a los mismos 3 participantes la pantalla con `EstadoError` (simulando error de red).
 2. Preguntar: "¿Es lo mismo que viste antes? ¿Qué crees que pasó?".
 3. Preguntar: "¿Qué harías en este caso?".
 4. Registrar las respuestas.
 
 #### Resultado esperado
-- El 100 % de los participantes debe diferenciar el `EmptyState` del `ErrorState`.
-- El 100 % debe identificar el `ErrorState` como un problema de conexión (no como "no hay datos").
+- El 100 % de los participantes debe diferenciar el `EstadoVacio` del `EstadoError`.
+- El 100 % debe identificar el `EstadoError` como un problema de conexión (no como "no hay datos").
 - Al menos el 80 % debe mencionar el botón "Reintentar" como acción esperada.
 
 ## 8. Criterios de aceptación del Spike
 
 El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 
-1. **Diferenciación de estados**: El sistema muestra correctamente `EmptyState` para listas vacías y `ErrorState` para fallos de red/servidor, sin confundirlos.
-2. **Reusabilidad**: El componente `EmptyState` se integra en al menos 2 pantallas diferentes con menos de 5 líneas de código cada una.
-3. **Comprensión de vacío**: El 100 % de los participantes identifica que `EmptyState` significa "sin datos".
-4. **Diferenciación de error**: El 100 % de los participantes identifica que `ErrorState` significa "problema técnico".
+1. **Diferenciación de estados**: El sistema muestra correctamente `EstadoVacio` para listas vacías y `EstadoError` para fallos de red/servidor, sin confundirlos.
+2. **Reusabilidad**: El componente `EstadoVacio` se integra en al menos 2 pantallas diferentes con menos de 5 líneas de código cada una.
+3. **Comprensión de vacío**: El 100 % de los participantes identifica que `EstadoVacio` significa "sin datos".
+4. **Diferenciación de error**: El 100 % de los participantes identifica que `EstadoError` significa "problema técnico".
 5. **Orientación a la acción**: Al menos el 90 % de los participantes entiende la acción sugerida y expresa su disposición a realizarla.
 6. **Tiempo de implementación**: El desarrollo del componente base no supera las 4 horas de trabajo.
 
 El Spike se considerará **RECHAZADO** si:
 
-- Alguno de los participantes confunde `EmptyState` con `ErrorState`.
+- Alguno de los participantes confunde `EstadoVacio` con `EstadoError`.
 - El componente no es reutilizable (más de 5 líneas por pantalla).
 - El tiempo de implementación del componente base supera las 6 horas.
 - Los mensajes no son comprendidos por los usuarios.
@@ -182,9 +182,9 @@ Para la ejecución de este Spike, se utilizará el siguiente stack:
 
 - **Cliente móvil**: React Native + TypeScript.
 - **Componentes**:
-  - `EmptyState`: recibe `iconName`, `title`, `description`, `actionLabel`, `onAction`.
-  - `ErrorState`: recibe `errorTitle`, `errorDescription`, `onRetry`.
-- **Manejo de estado**: Estados locales `loading`, `data`, `error`, `empty` en el componente contenedor.
+  - `EstadoVacio`: recibe `nombreIcono`, `titulo`, `descripcion`, `etiquetaAccion`, `alAccionar`.
+  - `EstadoError`: recibe `tituloError`, `descripcionError`, `alReintentar`.
+- **Manejo de estado**: Estados locales `cargando`, `datos`, `error`, `vacio` en el componente contenedor.
 - **Simulación**: Datos mock en un archivo JSON, y un interruptor para simular fallo de red.
 - **Pruebas**: Uso de `console.log` o herramientas de debugging para verificar transiciones de estado.
 - **Documentación de usabilidad**: Formato de registro de respuestas por participante.
@@ -197,7 +197,7 @@ Para la ejecución de este Spike, se utilizará el siguiente stack:
 - **Riesgo**: El icono elegido puede no ser intuitivo (ej. una lupa puede interpretarse como "buscar" en lugar de "sin resultados").
   - **Mitigación**: Usar iconos comúnmente asociados con vacío (ej. carpeta vacía, lista vacía, calendario sin marcas). Validar en las pruebas.
 
-- **Riesgo**: El componente `EmptyState` se use en contextos donde no tiene sentido una acción (ej. una consulta histórica fija).
+- **Riesgo**: El componente `EstadoVacio` se use en contextos donde no tiene sentido una acción (ej. una consulta histórica fija).
   - **Mitigación**: La acción será opcional; si no se provee, solo se muestra el mensaje.
 
 - **Riesgo**: La muestra de 3 participantes puede no ser representativa.
@@ -210,13 +210,13 @@ Para la ejecución de este Spike, se utilizará el siguiente stack:
 
 Al finalizar el timebox, el equipo deberá entregar:
 
-1. **Repositorio de código** (branch del spike) con los componentes `EmptyState` y `ErrorState`, y su integración en las 2 pantallas de ejemplo.
+1. **Repositorio de código** (branch del spike) con los componentes `EstadoVacio` y `EstadoError`, y su integración en las 2 pantallas de ejemplo.
 2. **Reporte de pruebas**:
    - Resultados de las pruebas de transición de estados (diferencia entre vacío y error).
    - Resultados de las pruebas de usabilidad (respuestas de los participantes, con métricas y observaciones cualitativas).
    - Tiempo de implementación del componente base.
 3. **Evidencia visual**:
-   - Capturas de pantalla de los 4 estados (`loading`, `success`, `empty`, `error`).
+   - Capturas de pantalla de los 4 estados (`cargando`, `exito`, `vacio`, `error`).
    - Video (máx 2 minutos) mostrando los diferentes estados en acción y las respuestas de los usuarios.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada, incluyendo recomendaciones sobre los mensajes y acciones para cada módulo en la implementación definitiva.
 
@@ -227,7 +227,7 @@ Al finalizar el timebox, el equipo deberá entregar:
 *(Esta sección se llena al completar el spike)*
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El sistema diferenció correctamente `EmptyState` y `ErrorState`?
+  - ✅ / ❌ ¿El sistema diferenció correctamente `EstadoVacio` y `EstadoError`?
   - ✅ / ❌ ¿El componente se integró en 2 pantallas con < 5 líneas?
   - ✅ / ❌ ¿El 100 % de los participantes identificó "sin datos"?
   - ✅ / ❌ ¿El 100 % de los participantes identificó "problema técnico"?

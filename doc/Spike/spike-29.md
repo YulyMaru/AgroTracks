@@ -40,15 +40,15 @@ Por esta razón, se necesita un prototipo que implemente el catálogo centraliza
 Si implementamos:
 
 - **Backend**:
-  - Tabla `parameters` en PostgreSQL con columnas: `id`, `type`, `code`, `label`, `description`, `sort_order`, `active`, `created_at`, `updated_at`.
-  - Restricción única en `(type, code)`.
-  - Endpoint `GET /api/v1/parameters` que devuelve todos los parámetros activos.
-  - Parámetro opcional `?since=timestamp` para sincronización incremental.
+  - Tabla `parametros` en PostgreSQL con columnas: `id`, `tipo`, `codigo`, `etiqueta`, `descripcion`, `orden`, `activo`, `creado_en`, `actualizado_en`.
+  - Restricción única en `(tipo, codigo)`.
+  - Endpoint `GET /api/v1/parametros` que devuelve todos los parámetros activos.
+  - Parámetro opcional `?desde=fechaHora` para sincronización incremental.
   - Migración Flyway que inserta los parámetros iniciales.
 - **Frontend**:
-  - Tabla `parameters` en SQLite.
+  - Tabla `parametros` en SQLite.
   - Sincronización al arrancar la app y al recuperar conexión.
-  - Función `getParametersByType(type)` que lee de SQLite.
+  - Función `obtenerParametrosPorTipo(tipo)` que lee de SQLite.
   - Uso offline desde la caché.
 
 Entonces:
@@ -68,36 +68,36 @@ Entonces:
 El Spike incluirá:
 
 - **Backend (Spring Boot)**:
-  - Migración Flyway que crea la tabla `parameters` y carga los parámetros iniciales.
-  - Entidad JPA `Parameter`.
-  - Repositorio `ParameterRepository`.
-  - Servicio `ParameterService`.
-  - Controlador `ParameterController` con `GET /api/v1/parameters`.
-  - Soporte para `?since=timestamp`.
+  - Migración Flyway que crea la tabla `parametros` y carga los parámetros iniciales.
+  - Entidad JPA `Parametro`.
+  - Repositorio `ParametroRepository`.
+  - Servicio `ParametroService`.
+  - Controlador `ParametroController` con `GET /api/v1/parametros`.
+  - Soporte para `?desde=fechaHora`.
   - Pruebas unitarias e integración.
 - **Frontend (React Native)**:
-  - Migración SQLite que crea la tabla `parameters`.
-  - Repositorio local `ParameterRepository`.
-  - Servicio `ParameterService` que sincroniza con el backend.
-  - Función `getParametersByType(type)`.
+  - Migración SQLite que crea la tabla `parametros`.
+  - Repositorio local `ParametroRepository`.
+  - Servicio `ParametroService` que sincroniza con el backend.
+  - Función `obtenerParametrosPorTipo(tipo)`.
   - Uso de parámetros en el formulario de registro de gastos.
   - Pruebas unitarias e integración.
 - **Sincronización**:
   - Lógica para sincronizar parámetros al arrancar y al recuperar conexión.
-  - Uso de `?since=lastSync` para traer solo cambios.
+  - Uso de `?desde=ultimaSincronizacion` para traer solo cambios.
 - **Tipos de parámetros iniciales**:
-  - `EXPENSE_CATEGORY`.
-  - `INCOME_CATEGORY`.
-  - `UNIT`.
-  - `CROP_TYPE`.
-  - `ACTIVITY_TYPE`.
-  - `RESOURCE_TYPE`.
+  - `CATEGORIA_GASTO`.
+  - `CATEGORIA_INGRESO`.
+  - `UNIDAD`.
+  - `TIPO_CULTIVO`.
+  - `TIPO_ACTIVIDAD`.
+  - `TIPO_RECURSO`.
 - **Pruebas**:
   - Carga inicial de parámetros.
   - Funcionamiento offline.
   - Propagación de cambios.
   - Desactivación de parámetros sin romper datos históricos.
-  - Sincronización incremental con `?since`.
+  - Sincronización incremental con `?desde`.
 - **Métricas**:
   - Tiempo de carga de parámetros.
   - Tamaño de la respuesta.
@@ -121,26 +121,26 @@ El Spike no implementará:
 
 | Tipo | Ejemplos |
 |------|----------|
-| `EXPENSE_CATEGORY` | Abonos y semillas, Mano de obra, Transporte, Otros |
-| `INCOME_CATEGORY` | Venta de café, Venta de plátano, Otros ingresos |
-| `UNIT` | kg, tonelada, arroba, bulto, ha, m², L, unidad |
-| `CROP_TYPE` | Café, Plátano, Maíz, Frijol, Yuca |
-| `ACTIVITY_TYPE` | Siembra, Riego, Fertilización, Cosecha |
-| `RESOURCE_TYPE` | Fertilizante, Semilla, Agua, Pesticida |
+| `CATEGORIA_GASTO` | Abonos y semillas, Mano de obra, Transporte, Otros |
+| `CATEGORIA_INGRESO` | Venta de café, Venta de plátano, Otros ingresos |
+| `UNIDAD` | kg, tonelada, arroba, bulto, ha, m², L, unidad |
+| `TIPO_CULTIVO` | Café, Plátano, Maíz, Frijol, Yuca |
+| `TIPO_ACTIVIDAD` | Siembra, Riego, Fertilización, Cosecha |
+| `TIPO_RECURSO` | Fertilizante, Semilla, Agua, Pesticida |
 
 **Estructura del parámetro:**
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id` | UUID | Identificador único |
-| `type` | Texto | Tipo de parámetro |
-| `code` | Texto | Código estable (ej. `FERTILIZER`) |
-| `label` | Texto | Etiqueta visible (ej. "Fertilizante") |
-| `description` | Texto | Descripción opcional |
-| `sortOrder` | Int | Orden de visualización |
-| `active` | Boolean | Si está activo |
-| `createdAt` | Timestamp | Fecha de creación |
-| `updatedAt` | Timestamp | Fecha de última modificación |
+| `tipo` | Texto | Tipo de parámetro |
+| `codigo` | Texto | Código estable (ej. `FERTILIZANTE`) |
+| `etiqueta` | Texto | Etiqueta visible (ej. "Fertilizante") |
+| `descripcion` | Texto | Descripción opcional |
+| `orden` | Int | Orden de visualización |
+| `activo` | Boolean | Si está activo |
+| `creado_en` | Timestamp | Fecha de creación |
+| `actualizado_en` | Timestamp | Fecha de última modificación |
 
 **Datos de prueba:**
 
@@ -164,16 +164,16 @@ El Spike no implementará:
 
 #### Procedimiento
 1. Arrancar el backend con la migración Flyway que carga los parámetros iniciales.
-2. Consumir `GET /api/v1/parameters` con Postman.
+2. Consumir `GET /api/v1/parametros` con Postman.
 3. Verificar que devuelve todos los parámetros activos.
 4. Abrir la app en un dispositivo limpio.
 5. Verificar que el frontend sincroniza los parámetros.
-6. Verificar que la tabla `parameters` en SQLite contiene los parámetros.
+6. Verificar que la tabla `parametros` en SQLite contiene los parámetros.
 
 #### Resultado esperado
 - El backend devuelve todos los parámetros activos.
 - El frontend los sincroniza correctamente.
-- La tabla `parameters` en SQLite contiene los parámetros.
+- La tabla `parametros` en SQLite contiene los parámetros.
 - El tiempo de sincronización es < 3 s.
 - No hay errores.
 
@@ -221,15 +221,15 @@ El Spike no implementará:
 
 ---
 
-### 7.4 Prueba 4 — Sincronización incremental con `?since`
+### 7.4 Prueba 4 — Sincronización incremental con `?desde`
 
 **Objetivo:** Validar que la sincronización incremental funciona.
 
 #### Procedimiento
-1. Sincronizar parámetros con `GET /api/v1/parameters`.
+1. Sincronizar parámetros con `GET /api/v1/parametros`.
 2. Guardar el timestamp de la última sincronización.
 3. Añadir un nuevo parámetro en el backend.
-4. Consumir `GET /api/v1/parameters?since=timestamp`.
+4. Consumir `GET /api/v1/parametros?desde=fechaHora`.
 5. Verificar que solo devuelve el parámetro nuevo o modificado.
 6. Verificar que el frontend actualiza la caché correctamente.
 
@@ -270,7 +270,7 @@ El Spike no implementará:
 2. Verificar que coinciden exactamente.
 3. Verificar que no hay parámetros huérfanos.
 4. Verificar que no hay parámetros duplicados.
-5. Verificar que el orden (`sortOrder`) se respeta.
+5. Verificar que el orden (`orden`) se respeta.
 
 #### Resultado esperado
 - Los códigos y etiquetas coinciden.
@@ -304,7 +304,7 @@ El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 1. **Carga inicial**: El frontend obtiene todos los parámetros del backend.
 2. **Offline**: El frontend funciona sin conexión con la caché local.
 3. **Propagación**: Los cambios en backend se propagan al frontend.
-4. **Incremental**: La sincronización incremental con `?since` funciona.
+4. **Incremental**: La sincronización incremental con `?desde` funciona.
 5. **Desactivación**: Desactivar un parámetro no rompe datos históricos.
 6. **Consistencia**: Backend y frontend usan los mismos códigos y etiquetas.
 7. **Rendimiento**: La carga de parámetros no degrada el rendimiento.
@@ -334,7 +334,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 10. Riesgos y mitigación (para el Spike)
 
-- **Riesgo**: La sincronización incremental con `?since` puede fallar si el reloj del servidor y del cliente no están sincronizados.
+- **Riesgo**: La sincronización incremental con `?desde` puede fallar si el reloj del servidor y del cliente no están sincronizados.
   - **Mitigación**: Usar timestamps del servidor como referencia. Documentar la limitación.
 
 - **Riesgo**: La caché local puede quedar desactualizada si la sincronización falla.
@@ -354,9 +354,9 @@ El Spike se considerará **RECHAZADO** si:
 Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Repositorio de código** (branch del spike) con:
-   - Migración Flyway con la tabla `parameters` y los parámetros iniciales.
-   - Endpoint `GET /api/v1/parameters` con soporte para `?since`.
-   - Migración SQLite con la tabla `parameters`.
+   - Migración Flyway con la tabla `parametros` y los parámetros iniciales.
+   - Endpoint `GET /api/v1/parametros` con soporte para `?desde`.
+   - Migración SQLite con la tabla `parametros`.
    - Servicio de sincronización en el frontend.
    - Uso de parámetros en el formulario de registro.
    - Pruebas unitarias e integración.
@@ -366,8 +366,8 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Tiempo de sincronización incremental.
    - Resultados de las pruebas en los 3 dispositivos.
 3. **Evidencia**:
-   - Capturas de la tabla `parameters` en PostgreSQL.
-   - Capturas de la tabla `parameters` en SQLite.
+   - Capturas de la tabla `parametros` en PostgreSQL.
+   - Capturas de la tabla `parametros` en SQLite.
    - Capturas del formulario con parámetros.
    - Capturas de la sincronización incremental.
    - Capturas de la desactivación sin romper datos históricos.
@@ -383,20 +383,20 @@ Al finalizar el timebox, el equipo deberá entregar:
   - ✅ / ❌ ¿El frontend obtuvo todos los parámetros del backend?
   - ✅ / ❌ ¿El frontend funcionó offline con la caché local?
   - ✅ / ❌ ¿Los cambios se propagaron al frontend?
-  - ✅ / ❌ ¿La sincronización incremental con `?since` funcionó?
+  - ✅ / ❌ ¿La sincronización incremental con `?desde` funcionó?
   - ✅ / ❌ ¿Desactivar un parámetro no rompió datos históricos?
   - ✅ / ❌ ¿Backend y frontend usaron los mismos códigos y etiquetas?
   - ✅ / ❌ ¿La carga de parámetros no degradó el rendimiento?
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "La sincronización incremental con `?since` reduce el tráfico significativamente.")
+  - (Ejemplo: "La sincronización incremental con `?desde` reduce el tráfico significativamente.")
   - (Ejemplo: "Desactivar parámetros en lugar de eliminarlos evita romper datos históricos.")
   - (Ejemplo: "Los códigos estables son clave para la consistencia entre backend y frontend.")
 
 - **Recomendaciones para implementación en producción**:
   - (Ejemplo: "Definir los tipos de parámetros desde el día 1.")
-  - (Ejemplo: "Usar códigos estables (ej. `EXPENSE_CATEGORY_FERTILIZER`) en lugar de IDs numéricos.")
-  - (Ejemplo: "Incluir `updatedAt` para sincronización incremental.")
+  - (Ejemplo: "Usar códigos estables (ej. `CATEGORIA_GASTO_FERTILIZANTE`) en lugar de IDs numéricos.")
+  - (Ejemplo: "Incluir `actualizado_en` para sincronización incremental.")
   - (Ejemplo: "Permitir desactivar parámetros sin eliminarlos.")
   - (Ejemplo: "Cachear en SQLite desde la primera versión.")
 

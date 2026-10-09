@@ -77,7 +77,7 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 
 - 50 gastos de ejemplo con diferentes montos y fechas.
 - 100 gastos de ejemplo para la prueba de rendimiento.
-- Al menos 3 registros con estado `PENDING` (creados en SPIKE-005) para la prueba de sincronización.
+- Al menos 3 registros con estado `PENDIENTE` (creados en SPIKE-005) para la prueba de sincronización.
 
 **Escenarios:**
 
@@ -118,7 +118,7 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 
 #### Resultado esperado
 - La lista muestra los mismos datos que antes de cerrar.
-- Los registros `PENDING` siguen marcados como pendientes.
+- Los registros `PENDIENTE` siguen marcados como pendientes.
 - La base de datos mantiene la integridad.
 
 ---
@@ -133,13 +133,13 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 3. Activar la conexión a Internet.
 4. Observar el comportamiento del monitor de conectividad.
 5. Verificar que la sincronización se activa automáticamente.
-6. Confirmar que los registros pasan de `PENDING` a `SYNCED`.
+6. Confirmar que los registros pasan de `PENDIENTE` a `SINCRONIZADO`.
 
 #### Resultado esperado
 - El monitor detecta la recuperación de red en < 5 s.
 - La sincronización se activa sin intervención del usuario.
 - Los 3 registros pendientes se sincronizan correctamente.
-- El estado local cambia a `SYNCED`.
+- El estado local cambia a `SINCRONIZADO`.
 
 ---
 
@@ -185,7 +185,7 @@ El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 1. **Consulta offline**: La lista de gastos se carga desde SQLite en < 2 s para 100 registros.
 2. **Persistencia**: El 100 % de los datos sobrevive al cierre y reapertura de la app.
 3. **Detección de conectividad**: El monitor detecta la recuperación de red en < 5 s.
-4. **Sincronización automática**: Los registros `PENDING` se sincronizan automáticamente al recuperar la conexión.
+4. **Sincronización automática**: Los registros `PENDIENTE` se sincronizan automáticamente al recuperar la conexión.
 5. **Indicador visual**: El usuario ve un indicador claro de "datos locales" / "conectado" y la última fecha de sincronización.
 6. **Tolerancia a red intermitente**: El sistema no dispara sincronizaciones innecesarias ante cambios frecuentes de red.
 
@@ -202,9 +202,9 @@ El Spike se considerará **RECHAZADO** si:
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
 - **Cliente móvil**: React Native + TypeScript
-- **Base de datos local**: SQLite (con `react-native-sqlite-storage` o `sqflite`).
+- **Base de datos local**: SQLite (con `@op-engineering/op-sqlite`, ADR-017).
 - **Monitor de conectividad**: `@react-native-community/netinfo` (React Native).
-- **Sincronización mock**: Un servicio que simula el envío al backend (log en consola) y cambia el estado de los registros a `SYNCED`.
+- **Sincronización mock**: Un servicio que simula el envío al backend (log en consola) y cambia el estado de los registros a `SINCRONIZADO`.
 - **UI de prueba**: Lista de gastos con indicador de estado de conexión.
 - **Medición**: `console.time` / `console.timeEnd` o herramientas de perfilado del framework.
 - **Datos de prueba**: Script de generación de 50 y 100 gastos de ejemplo.
@@ -218,7 +218,7 @@ Para la ejecución de este Spike, se utilizará el siguiente stack:
   - **Mitigación**: Implementar un debounce (esperar 5-10 s de red estable antes de sincronizar).
 
 - **Riesgo**: SQLite puede tener problemas de rendimiento con consultas sobre 100 registros en dispositivos de gama baja.
-  - **Mitigación**: Crear índices en `status` y `created_at`. Medir en dispositivo de gama baja.
+  - **Mitigación**: Crear índices en `estado` y `creado_en`. Medir en dispositivo de gama baja.
 
 - **Riesgo**: La fecha de última sincronización puede quedar desactualizada si la sincronización falla silenciosamente.
   - **Mitigación**: Actualizar la fecha solo cuando la sincronización sea confirmada por el backend.
@@ -264,7 +264,7 @@ Al finalizar el timebox, el equipo deberá entregar:
   - (Ejemplo: "Los mensajes técnicos como 'Sin conexión' no son claros para el usuario; usar 'Mostrando datos guardados'.")
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Añadir índices en `status` y `created_at` para consultas rápidas.")
+  - (Ejemplo: "Añadir índices en `estado` y `creado_en` para consultas rápidas.")
   - (Ejemplo: "Implementar un límite de antigüedad de la fecha de última sincronización.")
   - (Ejemplo: "Considerar un mecanismo de sincronización manual como respaldo.")
 

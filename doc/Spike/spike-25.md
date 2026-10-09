@@ -5,7 +5,7 @@
 - **ID:** SPIKE-025
 - **Nombre:** Validar pipeline de CI/CD con GitHub Actions y distribución de APK con Firebase App Distribution
 - **ADR relacionado:** ADR-025 — Automatizar integración continua y despliegue con GitHub Actions
-- **ADR complementarios:** ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend)
+- **ADR complementarios:** ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-031 (Desplegar el backend en un servidor propio con Docker y docker-compose)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -281,7 +281,7 @@ El Spike no implementará:
 **Objetivo:** Validar que el backend se despliega automáticamente a staging.
 
 #### Procedimiento
-1. Configurar el despliegue del backend a staging (Docker + docker-compose o servicio gestionado).
+1. Configurar el despliegue del backend a staging en el servidor propio (Docker + docker-compose por SSH, ADR-031).
 2. Hacer merge a `main`.
 3. Verificar que el workflow compila y despliega.
 4. Consumir un endpoint del backend en staging.
@@ -364,7 +364,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Pruebas frontend**: Jest, React Native Testing Library.
 - **Cobertura**: JaCoCo, Jest Coverage.
 - **Distribución APK**: Firebase App Distribution.
-- **Despliegue backend**: Docker + docker-compose o servicio gestionado.
+- **Despliegue backend**: Docker + docker-compose por SSH en el servidor propio (ADR-031).
 - **Gestión de secretos**: GitHub Secrets.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
 - **Medición**: GitHub Actions UI, tiempo de pipeline.

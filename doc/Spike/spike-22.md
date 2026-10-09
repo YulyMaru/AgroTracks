@@ -111,7 +111,7 @@ El Spike no implementará:
 
 **Backend (Spring Boot):**
 
-- Endpoint: `GET /api/v1/farms` protegido con JWT.
+- Endpoint: `GET /api/v1/fincas` protegido con JWT.
 - Configuración TLS: certificado autofirmado en `keystore.p12`.
 - Redirección: `http://localhost:8080` → `https://localhost:8443`.
 
@@ -143,8 +143,8 @@ El Spike no implementará:
 1. Generar certificado autofirmado.
 2. Configurar Spring Boot con TLS en `application.yml`.
 3. Arrancar el backend.
-4. Consumir `https://localhost:8443/api/v1/farms` con `curl -k` y verificar que responde.
-5. Consumir `http://localhost:8080/api/v1/farms` y verificar que redirige a HTTPS o rechaza.
+4. Consumir `https://localhost:8443/api/v1/fincas` con `curl -k` y verificar que responde.
+5. Consumir `http://localhost:8080/api/v1/fincas` y verificar que redirige a HTTPS o rechaza.
 6. Verificar que TLS 1.2+ está habilitado (usar `openssl s_client`).
 7. Verificar headers de seguridad (HSTS, etc.).
 
@@ -324,8 +324,8 @@ El Spike se considerará **RECHAZADO** si:
 - **Backend**: Spring Boot 3 + Java 17.
 - **TLS**: Certificado autofirmado con `keytool`.
 - **Frontend**: React Native + TypeScript.
-- **SecureStore**: `react-native-secure-storage` o `expo-secure-store`.
-- **SQLCipher**: `react-native-sqlcipher-storage` o `@op-engineering/op-sqlite` con SQLCipher.
+- **SecureStore**: `react-native-secure-storage`.
+- **SQLCipher**: `@op-engineering/op-sqlite` con SQLCipher (ADR-017).
 - **HTTP**: Axios con HTTPS.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
 - **Medición**: `console.time`, `openssl s_client`, inspección hexadecimal.
@@ -334,7 +334,7 @@ El Spike se considerará **RECHAZADO** si:
 ## 10. Riesgos y mitigación (para el Spike)
 
 - **Riesgo**: SQLCipher puede no ser compatible con React Native.
-  - **Mitigación**: Probar con `react-native-sqlcipher-storage` o `@op-engineering/op-sqlite`. Si falla, documentar y evaluar alternativas.
+  - **Mitigación**: Probar con `@op-engineering/op-sqlite`. Si falla, evaluar `react-native-sqlcipher-storage` y registrar el cambio en ADR-017.
 
 - **Riesgo**: El overhead de SQLCipher puede ser mayor al esperado en gama baja.
   - **Mitigación**: Medir en los tres dispositivos. Si supera el 10 %, optimizar consultas o considerar cifrado a nivel de campos.

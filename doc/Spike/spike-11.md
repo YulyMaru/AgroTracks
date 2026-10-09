@@ -58,11 +58,11 @@ Entonces:
 El Spike incluirá:
 
 - **Servicio de autenticación**:
-  - `login(username, password)` → guarda token en SecureStore.
-  - `logout()` → elimina token.
-  - `isAuthenticated()` → verifica existencia y validez local del token.
-  - `refreshToken()` → intenta obtener un nuevo token (mock).
-  - `getToken()` → recupera token del almacenamiento seguro.
+  - `iniciarSesion(usuario, clave)` → guarda token en SecureStore.
+  - `cerrarSesion()` → elimina token.
+  - `estaAutenticado()` → verifica existencia y validez local del token.
+  - `renovarToken()` → intenta obtener un nuevo token (mock).
+  - `obtenerToken()` → recupera token del almacenamiento seguro.
 - **Middleware de navegación**:
   - En React Navigation: `useEffect` en el punto de entrada que verifica autenticación y redirige a login si no está autenticado.
 - **Pantalla de login** (mock) y pantalla de resumen (protegida).
@@ -130,7 +130,7 @@ El Spike no implementará:
 3. Intentar cargar el resumen económico (que hace una solicitud HTTP).
 4. Observar el comportamiento del interceptor:
    - Debe detectar el 401.
-   - Debe intentar refrescar el token (llamar a `refreshToken`).
+   - Debe intentar refrescar el token (llamar a `tokenRenovacion`).
 5. Escenario A (refresco exitoso): el mock devuelve un nuevo token.
 6. Escenario B (refresco fallido): el mock devuelve error.
 
@@ -194,7 +194,7 @@ El Spike no implementará:
 - Sin autenticación, la consulta es rechazada (no se ejecuta).
 - Se muestra un mensaje o se redirige al login.
 - Con autenticación, la consulta se ejecuta correctamente.
-- Los datos locales están asociados al `userId` del usuario autenticado.
+- Los datos locales están asociados al `idUsuario` del usuario autenticado.
 
 ## 8. Criterios de aceptación del Spike
 
@@ -219,7 +219,7 @@ El Spike se considerará **RECHAZADO** si:
 ## 9. Entorno técnico del spike
 
 - **Cliente móvil**: React Native + TypeScript.
-- **Almacenamiento seguro**: `SecureStore` (React Native).
+- **Almacenamiento seguro**: SecureStore (`react-native-secure-storage`, ADR-017).
 - **Manejo de navegación**: React Navigation.
 - **HTTP Interceptor**: `axios` con interceptors para manejar 401 y refresh token.
 - **Mock de autenticación**: Servicio mock que simula login, refresh y validación de token.
@@ -229,7 +229,7 @@ El Spike se considerará **RECHAZADO** si:
 ## 10. Riesgos y mitigación (para el Spike)
 
 - **Riesgo**: El middleware puede tener problemas de "flash" (mostrar brevemente la pantalla protegida antes de redirigir).
-  - **Mitigación**: Usar un estado de carga (`isLoading`) que se active al iniciar la app y solo renderizar la navegación después de verificar el token.
+  - **Mitigación**: Usar un estado de carga (`estaCargando`) que se active al iniciar la app y solo renderizar la navegación después de verificar el token.
 
 - **Riesgo**: El refresco de token puede fallar en medio de una operación crítica.
   - **Mitigación**: En el interceptor, si el refresco falla, cerrar sesión y mostrar un mensaje claro al usuario.
@@ -248,7 +248,7 @@ El Spike se considerará **RECHAZADO** si:
 Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Código** de:
-   - `AuthService` (login, logout, refresh, isAuthenticated, secure storage).
+   - `AutenticacionService` (login, logout, refresh, isAuthenticated, secure storage).
    - Middleware de navegación (verificación centralizada).
    - Interceptor HTTP con manejo de 401 y refresh.
    - Pantalla de login mock y pantalla de resumen protegida.

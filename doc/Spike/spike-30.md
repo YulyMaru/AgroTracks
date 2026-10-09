@@ -85,7 +85,7 @@ El Spike incluirá:
   - `DB_PASSWORD`: contraseña de PostgreSQL.
   - `JWT_SECRET`: clave para firmar tokens JWT.
   - `JWT_REFRESH_SECRET`: clave para refresh tokens.
-  - `FIREBASE_SERVER_KEY`: clave del servidor de FCM.
+  - `FIREBASE_SERVICE_ACCOUNT`: credencial (JSON) de la cuenta de servicio de Firebase Admin SDK.
   - `CLOUDFLARE_API_TOKEN`: token de API de Cloudflare.
 - **Procedimiento de rotación**:
   - Documentar el procedimiento por secreto.
@@ -123,7 +123,7 @@ El Spike no implementará:
 | `DB_PASSWORD` | Contraseña de PostgreSQL | Todos |
 | `JWT_SECRET` | Firma de access tokens | Todos |
 | `JWT_REFRESH_SECRET` | Firma de refresh tokens | Todos |
-| `FIREBASE_SERVER_KEY` | Envío de notificaciones push | Todos |
+| `FIREBASE_SERVICE_ACCOUNT` | Envío de notificaciones push (Firebase Admin SDK) | Todos |
 | `CLOUDFLARE_API_TOKEN` | Invalidación de caché | Staging, Prod |
 
 **Environments de GitHub a configurar:**

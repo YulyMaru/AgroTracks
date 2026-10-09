@@ -73,9 +73,9 @@ El Spike incluirá:
 - Instalación y configuración de las librerías:
   - `@react-navigation/native` con `native-stack` y `bottom-tabs`.
   - `axios` con interceptores para JWT.
-  - `react-native-quick-sqlite` (o `react-native-sqlite-storage`).
+  - `@op-engineering/op-sqlite` (con SQLCipher).
   - `@react-native-community/netinfo`.
-  - `react-native-secure-storage` (o `expo-secure-store`).
+  - `react-native-secure-storage`.
   - `react-native-uuid`.
   - `react-native-vector-icons`.
 - Implementación de un flujo mínimo funcional:
@@ -352,15 +352,15 @@ El Spike se considerará **RECHAZADO** si:
 - **Framework**: React Native con TypeScript.
 - **Navegación**: `@react-navigation/native` con `native-stack` y `bottom-tabs`.
 - **HTTP**: Axios con interceptores.
-- **Base de datos local**: `react-native-quick-sqlite` (preferido) o `react-native-sqlite-storage`.
+- **Base de datos local**: `@op-engineering/op-sqlite` (con SQLCipher).
 - **Conectividad**: `@react-native-community/netinfo`.
-- **Almacenamiento seguro**: `react-native-secure-storage` o `expo-secure-store`.
+- **Almacenamiento seguro**: `react-native-secure-storage`.
 - **UUID**: `react-native-uuid`.
 - **Iconos**: `react-native-vector-icons`.
 - **Estado**: `useState`, `useReducer`, `useContext` (ADR-014).
 - **Compilación**: Metro bundler, Gradle para Android.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
-- **Medición**: React Native Debugger, Flipper, `console.time` / `console.timeEnd`.
+- **Medición**: React Native Debugger, React Native DevTools, `console.time` / `console.timeEnd`.
 - **Backend mock**: no se usa backend real; las llamadas HTTP se simulan con un mock local.
 
 ## 10. Riesgos y mitigación (para el Spike)
@@ -435,7 +435,7 @@ Al finalizar el timebox, el equipo deberá entregar:
   - (Ejemplo: "NetInfo requiere configuración adicional para detectar cambios rápidos en redes rurales.")
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar react-native-quick-sqlite por su mejor rendimiento.")
+  - (Ejemplo: "Mantener @op-engineering/op-sqlite por su compatibilidad con SQLCipher.")
   - (Ejemplo: "Configurar ESLint y Prettier desde el día 1.")
   - (Ejemplo: "Habilitar Hermes, ProGuard y R8 para reducir el tamaño del APK.")
   - (Ejemplo: "Usar Firebase App Distribution para pruebas tempranas.")

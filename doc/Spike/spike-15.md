@@ -40,16 +40,16 @@ Por esta razón, se necesita un prototipo que implemente endpoints REST represen
 Si implementamos:
 
 - Endpoints REST versionados (`/api/v1/...`) para fincas, lotes, cultivos, transacciones y sincronización.
-- Sincronización con `POST /api/v1/sync/transactions` que verifica `localId` para idempotencia.
-- Paginación con `?page=1&size=20` y filtros por fecha, tipo, finca, lote y cultivo.
+- Sincronización con `POST /api/v1/sincronizacion/transacciones` que verifica `idLocal` para idempotencia.
+- Paginación con `?pagina=1&limite=20` y filtros por fecha, tipo, finca, lote y cultivo.
 - Autenticación con JWT en header `Authorization: Bearer <token>`.
 - Interceptor en Axios para inyectar token y manejar 401 con refresco silencioso.
-- Manejo de errores con códigos HTTP estándar y cuerpo estructurado (`code`, `message`, `details`).
+- Manejo de errores con códigos HTTP estándar y cuerpo estructurado (`codigo`, `mensaje`, `detalles`).
 - Documentación con OpenAPI/Swagger.
 
 Entonces:
 
-- La sincronización será idempotente: N reintentos con el mismo `localId` generarán 1 solo registro.
+- La sincronización será idempotente: N reintentos con el mismo `idLocal` generarán 1 solo registro.
 - Las consultas paginadas cumplirán ≤ 3 s para 10,000 transacciones.
 - Los resúmenes económicos cumplirán ≤ 5 s para 10,000 transacciones.
 - La autenticación JWT funcionará con refresco silencioso sin interrumpir al usuario.
@@ -64,18 +64,18 @@ Entonces:
 El Spike incluirá:
 
 - Implementación de un backend mock con Spring Boot que exponga endpoints REST representativos:
-  - `POST /api/v1/auth/login` (autenticación).
-  - `POST /api/v1/auth/refresh` (refresco de token).
-  - `GET /api/v1/farms` (listado paginado).
-  - `GET /api/v1/lots?farmId=...` (listado filtrado).
-  - `GET /api/v1/crops?lotId=...` (listado filtrado).
-  - `GET /api/v1/transactions?page=1&size=20&type=EXPENSE&from=...&to=...` (listado paginado y filtrado).
-  - `GET /api/v1/summary?from=...&to=...&farmId=...&cropId=...` (resumen económico agregado).
-  - `POST /api/v1/sync/transactions` (sincronización idempotente con `localId`).
+  - `POST /api/v1/autenticacion/inicio-sesion` (autenticación).
+  - `POST /api/v1/autenticacion/renovacion` (refresco de token).
+  - `GET /api/v1/fincas` (listado paginado).
+  - `GET /api/v1/lotes?idFinca=...` (listado filtrado).
+  - `GET /api/v1/cultivos?idLote=...` (listado filtrado).
+  - `GET /api/v1/transacciones?pagina=1&limite=20&type=EXPENSE&desde=...&hasta=...` (listado paginado y filtrado).
+  - `GET /api/v1/resumen?desde=...&hasta=...&idFinca=...&idCultivo=...` (resumen económico agregado).
+  - `POST /api/v1/sincronizacion/transacciones` (sincronización idempotente con `idLocal`).
 - Cliente móvil en React Native con Axios que consuma los endpoints.
 - Interceptor de Axios para inyectar token y manejar 401 con refresco silencioso.
 - Simulación de errores HTTP (400, 401, 403, 404, 409, 500, 503).
-- Pruebas de idempotencia: 5 reintentos con el mismo `localId` → 1 registro.
+- Pruebas de idempotencia: 5 reintentos con el mismo `idLocal` → 1 registro.
 - Pruebas de paginación y filtros.
 - Pruebas de rendimiento con 10,000 transacciones (mock o base de datos real).
 - Pruebas de autenticación: login, token expirado, refresco exitoso, refresco fallido.
@@ -100,14 +100,14 @@ El Spike no implementará:
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| POST | `/api/v1/auth/login` | Autentica y devuelve access token + refresh token |
-| POST | `/api/v1/auth/refresh` | Refresca el access token |
-| GET | `/api/v1/farms?page=1&size=20` | Lista fincas paginadas |
-| GET | `/api/v1/lots?farmId=...&page=1&size=20` | Lista lotes por finca |
-| GET | `/api/v1/crops?lotId=...&page=1&size=20` | Lista cultivos por lote |
-| GET | `/api/v1/transactions?page=1&size=20&type=EXPENSE&from=...&to=...` | Lista transacciones filtradas |
-| GET | `/api/v1/summary?from=...&to=...&farmId=...&cropId=...` | Resumen económico agregado |
-| POST | `/api/v1/sync/transactions` | Sincroniza transacciones con `localId` |
+| POST | `/api/v1/autenticacion/inicio-sesion` | Autentica y devuelve access token + refresh token |
+| POST | `/api/v1/autenticacion/renovacion` | Refresca el access token |
+| GET | `/api/v1/fincas?pagina=1&limite=20` | Lista fincas paginadas |
+| GET | `/api/v1/lotes?idFinca=...&pagina=1&limite=20` | Lista lotes por finca |
+| GET | `/api/v1/cultivos?idLote=...&pagina=1&limite=20` | Lista cultivos por lote |
+| GET | `/api/v1/transacciones?pagina=1&limite=20&type=EXPENSE&desde=...&hasta=...` | Lista transacciones filtradas |
+| GET | `/api/v1/resumen?desde=...&hasta=...&idFinca=...&idCultivo=...` | Resumen económico agregado |
+| POST | `/api/v1/sincronizacion/transacciones` | Sincroniza transacciones con `idLocal` |
 
 **Datos de prueba:**
 
@@ -130,11 +130,11 @@ El Spike no implementará:
 **Objetivo:** Validar que el login, el uso del token y el refresco silencioso funcionan correctamente.
 
 #### Procedimiento
-1. Consumir `POST /api/v1/auth/login` con credenciales válidas.
+1. Consumir `POST /api/v1/autenticacion/inicio-sesion` con credenciales válidas.
 2. Verificar que se recibe access token y refresh token.
-3. Consumir un endpoint protegido (`GET /api/v1/farms`) con el token en el header.
+3. Consumir un endpoint protegido (`GET /api/v1/fincas`) con el token en el header.
 4. Simular token expirado (401) en el backend mock.
-5. Verificar que el interceptor de Axios detecta el 401 y llama a `POST /api/v1/auth/refresh`.
+5. Verificar que el interceptor de Axios detecta el 401 y llama a `POST /api/v1/autenticacion/renovacion`.
 6. Verificar que la solicitud original se reintenta con el nuevo token.
 7. Simular fallo en el refresco (refresh token inválido) y verificar que se redirige a login.
 
@@ -147,22 +147,22 @@ El Spike no implementará:
 
 ---
 
-### 7.2 Prueba 2 — Sincronización idempotente con `localId`
+### 7.2 Prueba 2 — Sincronización idempotente con `idLocal`
 
-**Objetivo:** Validar que los reintentos con el mismo `localId` no generan duplicados.
+**Objetivo:** Validar que los reintentos con el mismo `idLocal` no generan duplicados.
 
 #### Procedimiento
-1. Consumir `POST /api/v1/sync/transactions` con una transacción y `localId = "abc-123"`.
+1. Consumir `POST /api/v1/sincronizacion/transacciones` con una transacción y `idLocal = "abc-123"`.
 2. Verificar que el backend crea 1 registro.
-3. Reintentar 5 veces la misma solicitud con el mismo `localId`.
+3. Reintentar 5 veces la misma solicitud con el mismo `idLocal`.
 4. Verificar que el backend devuelve la misma respuesta y no crea nuevos registros.
-5. Consultar el backend y verificar que solo existe 1 registro con ese `localId`.
+5. Consultar el backend y verificar que solo existe 1 registro con ese `idLocal`.
 
 #### Resultado esperado
 - El backend crea exactamente 1 registro.
 - Los reintentos devuelven la misma respuesta.
 - No hay duplicados.
-- El estado local pasa a `SYNCED` una sola vez.
+- El estado local pasa a `SINCRONIZADO` una sola vez.
 
 ---
 
@@ -171,17 +171,17 @@ El Spike no implementará:
 **Objetivo:** Medir el tiempo de respuesta de consultas REST con paginación y filtros.
 
 #### Procedimiento
-1. Consumir `GET /api/v1/transactions?page=1&size=20&type=EXPENSE&from=...&to=...` con 10,000 transacciones.
+1. Consumir `GET /api/v1/transacciones?pagina=1&limite=20&type=EXPENSE&desde=...&hasta=...` con 10,000 transacciones.
 2. Medir el tiempo desde la solicitud hasta la respuesta.
 3. Repetir con diferentes páginas y filtros.
-4. Medir también `GET /api/v1/farms`, `GET /api/v1/lots`, `GET /api/v1/crops`.
+4. Medir también `GET /api/v1/fincas`, `GET /api/v1/lotes`, `GET /api/v1/cultivos`.
 5. Repetir 3 veces y promediar.
 
 #### Resultado esperado
 - Consultas productivas (fincas, lotes, cultivos): ≤ 3 s.
 - Listados de transacciones con paginación: ≤ 2 s por página.
 - Los filtros se aplican correctamente.
-- La respuesta incluye metadatos de paginación (`page`, `size`, `total`).
+- La respuesta incluye metadatos de paginación (`pagina`, `limite`, `total`).
 
 ---
 
@@ -190,7 +190,7 @@ El Spike no implementará:
 **Objetivo:** Medir el tiempo de respuesta del endpoint de resumen económico.
 
 #### Procedimiento
-1. Consumir `GET /api/v1/summary?from=...&to=...&farmId=...&cropId=...` con 10,000 transacciones.
+1. Consumir `GET /api/v1/resumen?desde=...&hasta=...&idFinca=...&idCultivo=...` con 10,000 transacciones.
 2. Medir el tiempo desde la solicitud hasta la respuesta.
 3. Repetir con diferentes períodos y filtros.
 4. Repetir 3 veces y promediar.
@@ -243,7 +243,7 @@ El Spike no implementará:
 El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 
 1. **Autenticación**: Login, uso de token y refresco silencioso funcionan correctamente.
-2. **Idempotencia**: 5 reintentos con el mismo `localId` generan exactamente 1 registro.
+2. **Idempotencia**: 5 reintentos con el mismo `idLocal` generan exactamente 1 registro.
 3. **Consultas productivas**: ≤ 3 s para fincas, lotes y cultivos con 10,000 registros.
 4. **Resumen económico**: ≤ 5 s con 10,000 transacciones.
 5. **Manejo de errores**: El cliente interpreta correctamente los códigos HTTP y muestra mensajes claros.
@@ -284,7 +284,7 @@ El Spike se considerará **RECHAZADO** si:
   - **Mitigación**: Crear índices en PostgreSQL para los campos de filtro y ordenamiento.
 
 - **Riesgo**: El resumen económico puede ser lento si no se optimiza.
-  - **Mitigación**: Usar agregaciones en servidor (SUM, GROUP BY) y caché (Redis o Caffeine).
+  - **Mitigación**: Usar agregaciones en servidor (SUM, GROUP BY) y caché (Redis).
 
 - **Riesgo**: La documentación OpenAPI puede no generarse correctamente.
   - **Mitigación**: Configurar SpringDoc desde el inicio y validar con Swagger UI.
@@ -330,8 +330,8 @@ Al finalizar el timebox, el equipo deberá entregar:
 
 - **Lecciones aprendidas**:
   - (Ejemplo: "El interceptor de Axios debe manejar el refresco de forma atómica para evitar múltiples solicitudes simultáneas.")
-  - (Ejemplo: "Los endpoints de sincronización deben verificar `localId` antes de insertar para garantizar idempotencia.")
-  - (Ejemplo: "La paginación con `page` y `size` es suficiente; no se necesita cursor-based pagination para este volumen.")
+  - (Ejemplo: "Los endpoints de sincronización deben verificar `idLocal` antes de insertar para garantizar idempotencia.")
+  - (Ejemplo: "La paginación con `pagina` y `limite` es suficiente; no se necesita cursor-based pagination para este volumen.")
 
 - **Recomendaciones para implementación en producción**:
   - (Ejemplo: "Definir los endpoints REST desde el inicio con OpenAPI.")

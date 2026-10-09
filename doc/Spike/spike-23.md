@@ -59,11 +59,11 @@ Entonces:
 El Spike incluirá:
 
 - Sistema de diseño con componentes base:
-  - `Button` (48x48 dp mínimo).
-  - `IconButton` (48x48 dp mínimo).
-  - `Input` (48x48 dp mínimo).
-  - `Card` (con contraste verificado).
-  - `ListItem` (48x48 dp mínimo).
+  - `Boton` (48x48 dp mínimo).
+  - `BotonIcono` (48x48 dp mínimo).
+  - `CampoTexto` (48x48 dp mínimo).
+  - `Tarjeta` (con contraste verificado).
+  - `ElementoLista` (48x48 dp mínimo).
 - Paleta de colores con contraste verificado con WebAIM Contrast Checker.
 - Tipografía legible con `allowFontScaling`.
 - Pantallas de prueba que usan los componentes.
@@ -93,11 +93,11 @@ El Spike no implementará:
 | Botón "Guardar" | 48x48 dp mínimo |
 | Botón "Eliminar" | 48x48 dp mínimo |
 | Elemento de navegación | 48x48 dp mínimo |
-| Card "Ingresos" | Contraste ≥ 4.5:1 |
-| Card "Gastos" | Contraste ≥ 4.5:1 |
-| Card "Resultado" | Contraste ≥ 4.5:1 |
-| Input "Descripción" | Contraste ≥ 4.5:1, legible con fuente grande |
-| Input "Valor" | Contraste ≥ 4.5:1, legible con fuente grande |
+| Tarjeta "Ingresos" | Contraste ≥ 4.5:1 |
+| Tarjeta "Gastos" | Contraste ≥ 4.5:1 |
+| Tarjeta "Resultado" | Contraste ≥ 4.5:1 |
+| CampoTexto "Descripción" | Contraste ≥ 4.5:1, legible con fuente grande |
+| CampoTexto "Valor" | Contraste ≥ 4.5:1, legible con fuente grande |
 
 **Datos de prueba:**
 

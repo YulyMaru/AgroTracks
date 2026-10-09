@@ -13,7 +13,7 @@
 
 ## 1. Objetivo
 
-Validar técnicamente que Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager en el backend, y Firebase Crashlytics + Firebase Analytics + Flipper en el frontend móvil, permiten monitorear y observar el sistema de forma completa, detectar errores tempranamente, rastrear operaciones de sincronización con `traceId`, y visualizar métricas de rendimiento sin degradar el servicio, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-03, ESC-CAL-CF-05, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
+Validar técnicamente que Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager en el backend, y Firebase Crashlytics + Firebase Analytics + React Native DevTools en el frontend móvil, permiten monitorear y observar el sistema de forma completa, detectar errores tempranamente, rastrear operaciones de sincronización con `idTraza`, y visualizar métricas de rendimiento sin degradar el servicio, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-03, ESC-CAL-CF-05, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
 
 El Spike busca comprobar que la estrategia de observabilidad seleccionada en ADR-021 es viable antes de implementarla completamente en AgroTrack.
 
@@ -29,13 +29,13 @@ AgroTrack necesita visibilidad completa de su funcionamiento en producción, per
 - Las alertas no se disparen ante problemas críticos.
 - El monitoreo degrade el rendimiento del backend o del frontend.
 - La configuración de Prometheus y Grafana sea compleja y consuma demasiado tiempo.
-- El `traceId` no se propague correctamente entre frontend y backend.
+- El `idTraza` no se propague correctamente entre frontend y backend.
 
 Por esta razón, se necesita un prototipo que implemente el stack de observabilidad, configure dashboards y alertas, y valide su comportamiento en condiciones realistas.
 
 ## 3. Pregunta principal del Spike
 
-¿Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager en el backend, y Firebase Crashlytics + Firebase Analytics + Flipper en el frontend, permiten monitorear métricas, detectar errores, rastrear operaciones con `traceId` y visualizar dashboards sin degradar el rendimiento, y se integran correctamente con el stack de AgroTrack?
+¿Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager en el backend, y Firebase Crashlytics + Firebase Analytics + React Native DevTools en el frontend, permiten monitorear métricas, detectar errores, rastrear operaciones con `idTraza` y visualizar dashboards sin degradar el rendimiento, y se integran correctamente con el stack de AgroTrack?
 
 ## 4. Hipótesis
 
@@ -47,11 +47,11 @@ Si implementamos:
   - Prometheus para almacenar métricas.
   - Grafana para visualizar dashboards.
   - Alertmanager para alertas.
-  - `traceId` propagado en logs y respuestas HTTP.
+  - `idTraza` propagado en logs y respuestas HTTP.
 - **Frontend**:
   - Firebase Crashlytics para crashes.
   - Firebase Analytics para eventos clave.
-  - Flipper para debugging en desarrollo.
+  - React Native DevTools para debugging en desarrollo.
   - Captura de errores no controlados.
 
 Entonces:
@@ -59,7 +59,7 @@ Entonces:
 - Las métricas del backend se expondrán correctamente.
 - Grafana mostrará dashboards con latencia, errores, throughput, JVM, DB y sincronización.
 - Las alertas se dispararán ante errores críticos.
-- El `traceId` permitirá rastrear una operación desde el móvil hasta el backend.
+- El `idTraza` permitirá rastrear una operación desde el móvil hasta el backend.
 - Crashlytics registrará crashes y errores no controlados.
 - Analytics registrará eventos clave de usuario.
 - El monitoreo no degradará el rendimiento (< 5 % de overhead).
@@ -83,18 +83,18 @@ El Spike incluirá:
     - Errores 500 > 1 % en 5 minutos.
     - Latencia p95 > 3 s en consultas productivas.
     - Fallos de sincronización > 5 % en 10 minutos.
-  - Inyectar `traceId` en logs y respuestas HTTP.
+  - Inyectar `idTraza` en logs y respuestas HTTP.
   - Endpoints representativos para generar métricas:
-    - `GET /api/v1/farms` (consulta productiva).
-    - `GET /api/v1/summary` (resumen económico).
-    - `POST /api/v1/sync/transactions` (sincronización idempotente).
+    - `GET /api/v1/fincas` (consulta productiva).
+    - `GET /api/v1/resumen` (resumen económico).
+    - `POST /api/v1/sincronizacion/transacciones` (sincronización idempotente).
 - **Frontend (React Native)**:
   - Integrar Firebase Crashlytics.
   - Integrar Firebase Analytics.
-  - Integrar Flipper para desarrollo.
+  - Integrar React Native DevTools para desarrollo.
   - Capturar errores no controlados y enviarlos a Crashlytics.
   - Registrar eventos clave en Analytics: login, registro offline, sincronización, consulta de resumen.
-  - Generar `traceId` y enviarlo en el header `X-Trace-Id`.
+  - Generar `idTraza` y enviarlo en el header `X-Trace-Id`.
 - **Infraestructura**:
   - Docker Compose con Prometheus, Grafana y Alertmanager.
   - Configuración de alertas en Alertmanager.
@@ -103,7 +103,7 @@ El Spike incluirá:
   - Verificar que las métricas se exponen correctamente.
   - Verificar que Grafana muestra los dashboards.
   - Verificar que las alertas se disparan correctamente.
-  - Verificar que el `traceId` se propaga correctamente.
+  - Verificar que el `idTraza` se propaga correctamente.
   - Verificar que Crashlytics registra crashes.
   - Verificar que Analytics registra eventos.
   - Medir el overhead del monitoreo.
@@ -129,9 +129,9 @@ El Spike no implementará:
 
 | Método | Endpoint | Métrica esperada |
 |--------|----------|------------------|
-| GET | `/api/v1/farms` | Latencia, throughput, tasa de errores |
-| GET | `/api/v1/summary` | Latencia, throughput, tasa de errores |
-| POST | `/api/v1/sync/transactions` | Latencia, throughput, tasa de errores, idempotencia |
+| GET | `/api/v1/fincas` | Latencia, throughput, tasa de errores |
+| GET | `/api/v1/resumen` | Latencia, throughput, tasa de errores |
+| POST | `/api/v1/sincronizacion/transacciones` | Latencia, throughput, tasa de errores, idempotencia |
 
 **Métricas a exponer:**
 
@@ -140,16 +140,16 @@ El Spike no implementará:
 - `jvm_memory_used_bytes` (memoria JVM).
 - `jvm_gc_pause_seconds` (pausas de GC).
 - `hikaricp_connections_active` (conexiones a BD).
-- `sync_pending_operations_total` (operaciones pendientes).
-- `sync_retries_total` (reintentos).
-- `sync_idempotent_hits_total` (idempotencia).
+- `sincronizacion_operaciones_pendientes_total` (operaciones pendientes).
+- `sincronizacion_reintentos_total` (reintentos).
+- `sincronizacion_operaciones_repetidas_total` (idempotencia).
 
 **Eventos de Analytics:**
 
-- `login_success`, `login_failure`.
-- `offline_record_saved`.
-- `sync_success`, `sync_failure`.
-- `summary_viewed`.
+- `inicio_sesion_exitoso`, `inicio_sesion_fallido`.
+- `registro_offline_guardado`.
+- `sincronizacion_exitosa`, `sincronizacion_fallida`.
+- `resumen_consultado`.
 
 **Infraestructura:**
 
@@ -260,20 +260,20 @@ El Spike no implementará:
 
 ---
 
-### 7.5 Prueba 5 — Propagación de `traceId`
+### 7.5 Prueba 5 — Propagación de `idTraza`
 
-**Objetivo:** Validar que el `traceId` se propaga entre frontend y backend.
+**Objetivo:** Validar que el `idTraza` se propaga entre frontend y backend.
 
 #### Procedimiento
-1. Generar un `traceId` en el frontend.
+1. Generar un `idTraza` en el frontend.
 2. Enviarlo en el header `X-Trace-Id` en cada solicitud HTTP.
 3. Configurar el backend para leer el header y añadirlo al MDC (Mapped Diagnostic Context).
-4. Verificar que el `traceId` aparece en los logs del backend.
-5. Verificar que el `traceId` aparece en las respuestas de error.
+4. Verificar que el `idTraza` aparece en los logs del backend.
+5. Verificar que el `idTraza` aparece en las respuestas de error.
 6. Rastrear una operación desde el frontend hasta el backend.
 
 #### Resultado esperado
-- El `traceId` se propaga correctamente.
+- El `idTraza` se propaga correctamente.
 - Aparece en los logs del backend.
 - Aparece en las respuestas de error.
 - Permite rastrear una operación de extremo a extremo.
@@ -310,10 +310,10 @@ El Spike no implementará:
 #### Procedimiento
 1. Integrar Firebase Analytics en el frontend.
 2. Registrar eventos clave:
-   - `login_success`, `login_failure`.
-   - `offline_record_saved`.
-   - `sync_success`, `sync_failure`.
-   - `summary_viewed`.
+   - `inicio_sesion_exitoso`, `inicio_sesion_fallido`.
+   - `registro_offline_guardado`.
+   - `sincronizacion_exitosa`, `sincronizacion_fallida`.
+   - `resumen_consultado`.
 3. Consumir la app y provocar cada evento.
 4. Verificar en la consola de Firebase que los eventos se registran.
 5. Verificar que los parámetros de cada evento son correctos.
@@ -352,7 +352,7 @@ El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 2. **Prometheus**: Prometheus hace scraping sin errores.
 3. **Grafana**: Los 3 dashboards se muestran y actualizan correctamente.
 4. **Alertas**: Las 3 alertas se disparan correctamente.
-5. **`traceId`**: Se propaga entre frontend y backend y permite rastrear operaciones.
+5. **`idTraza`**: Se propaga entre frontend y backend y permite rastrear operaciones.
 6. **Crashlytics**: Registra crashes, errores no controlados y errores personalizados.
 7. **Analytics**: Registra los eventos clave con parámetros correctos.
 8. **Overhead**: El overhead del monitoreo es < 5 % en tiempo de respuesta.
@@ -363,7 +363,7 @@ El Spike se considerará **RECHAZADO** si:
 - Prometheus no hace scraping.
 - Los dashboards de Grafana no se muestran o no se actualizan.
 - Las alertas no se disparan.
-- El `traceId` no se propaga.
+- El `idTraza` no se propaga.
 - Crashlytics no registra crashes o errores.
 - Analytics no registra eventos.
 - El overhead del monitoreo supera el 5 %.
@@ -375,11 +375,11 @@ El Spike se considerará **RECHAZADO** si:
 - **Almacenamiento de métricas**: Prometheus.
 - **Visualización**: Grafana.
 - **Alertas**: Alertmanager.
-- **Logs**: SLF4J + Logback con MDC para `traceId`.
+- **Logs**: SLF4J + Logback con MDC para `idTraza`.
 - **Frontend**: React Native + TypeScript.
 - **Crashes frontend**: Firebase Crashlytics.
 - **Eventos frontend**: Firebase Analytics.
-- **Debugging frontend**: Flipper.
+- **Debugging frontend**: React Native DevTools.
 - **Infraestructura**: Docker Compose con Prometheus, Grafana y Alertmanager.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
 - **Datos de prueba**: script de generación de 20 fincas, 100 transacciones, 5 pendientes.
@@ -392,7 +392,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Riesgo**: Las alertas pueden generar falsos positivos.
   - **Mitigación**: Ajustar los umbrales después de observar el comportamiento real. Documentar los ajustes.
 
-- **Riesgo**: El `traceId` puede no propagarse correctamente.
+- **Riesgo**: El `idTraza` puede no propagarse correctamente.
   - **Mitigación**: Usar un filtro en el backend para leer el header y añadirlo al MDC. Probar con múltiples solicitudes.
 
 - **Riesgo**: Crashlytics puede no registrarse en el plan gratuito de Firebase.
@@ -412,8 +412,8 @@ El Spike se considerará **RECHAZADO** si:
 Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Repositorio de código** (branch del spike) con:
-   - Backend Spring Boot con Actuator, Micrometer y `traceId`.
-   - Frontend React Native con Crashlytics, Analytics y Flipper.
+   - Backend Spring Boot con Actuator, Micrometer y `idTraza`.
+   - Frontend React Native con Crashlytics, Analytics y React Native DevTools.
    - `docker-compose.yml` con Prometheus, Grafana y Alertmanager.
    - `prometheus.yml` con configuración de scraping.
    - Dashboards de Grafana exportados como JSON.
@@ -423,7 +423,7 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Impacto en CPU y memoria del backend.
    - Impacto en tamaño del APK del frontend.
    - Resultados de las pruebas de alertas.
-   - Resultados de las pruebas de `traceId`.
+   - Resultados de las pruebas de `idTraza`.
    - Resultados de las pruebas de Crashlytics y Analytics.
 3. **Evidencia**:
    - Capturas de Grafana mostrando los dashboards.
@@ -431,7 +431,7 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de Alertmanager mostrando las alertas.
    - Capturas de Crashlytics mostrando los crashes.
    - Capturas de Analytics mostrando los eventos.
-   - Capturas de logs con `traceId`.
+   - Capturas de logs con `idTraza`.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
 ---
@@ -445,19 +445,19 @@ Al finalizar el timebox, el equipo deberá entregar:
   - ✅ / ❌ ¿Prometheus hizo scraping sin errores?
   - ✅ / ❌ ¿Grafana mostró los 3 dashboards?
   - ✅ / ❌ ¿Las 3 alertas se dispararon correctamente?
-  - ✅ / ❌ ¿El `traceId` se propagó entre frontend y backend?
+  - ✅ / ❌ ¿El `idTraza` se propagó entre frontend y backend?
   - ✅ / ❌ ¿Crashlytics registró crashes y errores?
   - ✅ / ❌ ¿Analytics registró los eventos clave?
   - ✅ / ❌ ¿El overhead del monitoreo fue < 5 %?
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El `traceId` debe generarse en el frontend y propagarse en todas las solicitudes.")
+  - (Ejemplo: "El `idTraza` debe generarse en el frontend y propagarse en todas las solicitudes.")
   - (Ejemplo: "Los umbrales de alertas deben ajustarse después de observar el comportamiento real.")
   - (Ejemplo: "Grafana con dashboards predefinidos acelera la configuración.")
 
 - **Recomendaciones para implementación en producción**:
   - (Ejemplo: "Configurar Actuator y Micrometer desde el día 1.")
-  - (Ejemplo: "Inyectar `traceId` en todas las solicitudes.")
+  - (Ejemplo: "Inyectar `idTraza` en todas las solicitudes.")
   - (Ejemplo: "Configurar alertas para errores críticos (fallos de sincronización, pérdida de datos, 500).")
   - (Ejemplo: "Usar Crashlytics desde la primera versión.")
   - (Ejemplo: "Migrar a Grafana Cloud o Loki si el volumen de logs crece.")

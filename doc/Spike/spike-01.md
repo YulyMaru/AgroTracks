@@ -52,7 +52,7 @@ El Spike incluirá únicamente los elementos necesarios para validar la estrateg
 
 - Registro de una operación sencilla (Gasto).
 - Almacenamiento local de la operación en SQLite.
-- Identificador único (`localId`) para cada operación.
+- Identificador único (`idLocal`) para cada operación.
 - Cola de operaciones pendientes.
 - Detección de pérdida de conectividad.
 - Detección de recuperación de conectividad (`NetInfo`).
@@ -92,7 +92,7 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 - **Valor**: $50.000 COP
 - **Fecha**: 2026-01-15
 - **Categoría**: Insumos
-- **localId**: `a1b2c3d4-e5f6-7890-abcd-ef1234567890` (UUID generado por el cliente)
+- **idLocal**: `a1b2c3d4-e5f6-7890-abcd-ef1234567890` (UUID generado por el cliente)
 
 ## 7. Pruebas a realizar
 
@@ -106,12 +106,12 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 2. Abrir AgroTrack.
 3. Registrar la operación del caso de prueba.
 4. Guardar la información.
-5. Consultar el almacenamiento local (tabla `pending_operations`).
+5. Consultar el almacenamiento local (tabla `operaciones_pendientes`).
 
 #### Resultado esperado
 
-- La operación se almacena localmente con `status = 'PENDING'`.
-- El `localId` se conserva en la base local.
+- La operación se almacena localmente con `estado = 'PENDIENTE'`.
+- El `idLocal` se conserva en la base local.
 - El usuario recibe un mensaje de confirmación ("Guardado localmente, se sincronizará automáticamente").
 
 ---
@@ -122,7 +122,7 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 
 #### Procedimiento
 
-1. Partir de la Prueba 1 (operación en `PENDING`).
+1. Partir de la Prueba 1 (operación en `PENDIENTE`).
 2. Activar la conexión a Internet.
 3. Esperar a que el monitor de conectividad (`NetInfo`) detecte el cambio.
 4. Observar el procesamiento de la cola.
@@ -132,26 +132,26 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 
 - El monitor detecta la recuperación de red en < 5 s.
 - La operación pendiente se envía automáticamente al backend.
-- El backend registra la operación con el mismo `localId`.
-- El estado local cambia a `SYNCED`.
+- El backend registra la operación con el mismo `idLocal`.
+- El estado local cambia a `SINCRONIZADO`.
 
 ---
 
 ### 7.3 Prueba 3 — Idempotencia ante reintentos
 
-**Objetivo:** Validar que los reintentos con el mismo `localId` no generan duplicados.
+**Objetivo:** Validar que los reintentos con el mismo `idLocal` no generan duplicados.
 
 #### Procedimiento
 
-1. Registrar una operación offline con `localId = "abc-123"`.
-2. Forzar 5 reintentos de sincronización con el mismo `localId` (simular fallos de red).
+1. Registrar una operación offline con `idLocal = "abc-123"`.
+2. Forzar 5 reintentos de sincronización con el mismo `idLocal` (simular fallos de red).
 3. Consultar el backend.
 
 #### Resultado esperado
 
-- El backend crea **exactamente 1 registro** correspondiente al `localId`.
+- El backend crea **exactamente 1 registro** correspondiente al `idLocal`.
 - En los reintentos 2 a 5, el backend devuelve la misma respuesta (sin crear nuevos registros).
-- El estado local pasa a `SYNCED` una sola vez.
+- El estado local pasa a `SINCRONIZADO` una sola vez.
 
 ---
 
@@ -189,7 +189,7 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 
 #### Resultado esperado
 
-- La operación permanece en `PENDING` tras el error.
+- La operación permanece en `PENDIENTE` tras el error.
 - El sistema reintenta con backoff exponencial.
 - Al desaparecer el error, la operación se sincroniza correctamente.
 - No hay pérdida ni duplicación.
@@ -209,7 +209,7 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 
 #### Resultado esperado
 
-- El registro permanece en `PENDING`.
+- El registro permanece en `PENDIENTE`.
 - Al reconectar, el sistema reintenta y sincroniza correctamente.
 - No hay pérdida de información.
 
@@ -221,7 +221,7 @@ El Spike se considerará **EXITOSO** si:
 2. **Idempotencia**: ninguna operación se duplica durante los reintentos (validado enviando la misma operación 5 veces).
 3. **Control de tráfico**: el backoff exponencial evita que se hagan más de 10 intentos en el primer minuto.
 4. **Detección de conectividad**: el monitor detecta la recuperación de red en < 5 s.
-5. **Conservación ante interrupción**: el 100 % de los registros no confirmados permanece en `PENDING`.
+5. **Conservación ante interrupción**: el 100 % de los registros no confirmados permanece en `PENDIENTE`.
 
 El Spike se considerará **RECHAZADO** si:
 
@@ -233,7 +233,7 @@ El Spike se considerará **RECHAZADO** si:
 ## 9. Entorno técnico del spike
 
 - **Cliente**: React Native.
-- **Base de datos local**: SQLite (`react-native-sqlite-storage` o equivalente).
+- **Base de datos local**: SQLite (`@op-engineering/op-sqlite`, ADR-017).
 - **Detección de conectividad**: `@react-native-community/netinfo`.
 - **Servidor**: API REST en Spring Boot (mock con endpoints de error simulables).
 - **HTTP client**: `axios` con interceptor para reintentos y manejo de `retry-after`.
@@ -255,8 +255,8 @@ El Spike se considerará **RECHAZADO** si:
 - **Riesgo**: El backoff exponencial puede no estar bien configurado y saturar el backend.
   - **Mitigación**: Definir límites máximos (≤ 10 intentos en el primer minuto) y probar con errores simulados.
 
-- **Riesgo**: La idempotencia puede fallar si el backend no verifica correctamente el `localId`.
-  - **Mitigación**: Implementar verificación estricta del `localId` en el backend mock y probar con 5 reintentos.
+- **Riesgo**: La idempotencia puede fallar si el backend no verifica correctamente el `idLocal`.
+  - **Mitigación**: Implementar verificación estricta del `idLocal` en el backend mock y probar con 5 reintentos.
 
 - **Riesgo**: El timebox de 5 días puede ser insuficiente para cubrir las 6 pruebas.
   - **Mitigación**: Priorizar las pruebas 1, 2, 3 y 4; si el tiempo no alcanza, documentar las pruebas 5 y 6 como pendientes para la implementación final.
@@ -278,7 +278,7 @@ Al finalizar el timebox, el equipo deberá entregar:
 3. **Evidencia**:
    - Capturas o video del flujo completo (registro offline, reconexión, sync).
    - Logs de la base de datos mostrando cambios de estado.
-   - Logs del backend mostrando la verificación de `localId`.
+   - Logs del backend mostrando la verificación de `idLocal`.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
 ---
@@ -300,7 +300,7 @@ Al finalizar el timebox, el equipo deberá entregar:
 
 - **Recomendaciones para implementación en producción**:
   - (Ejemplo: "Usar transacciones al insertar en SQLite para garantizar integridad.")
-  - (Ejemplo: "Añadir un índice en `status` para consultas rápidas a la cola de pendientes.")
+  - (Ejemplo: "Añadir un índice en `estado` para consultas rápidas a la cola de pendientes.")
   - (Ejemplo: "Implementar un límite de tamaño de la base local y un proceso de limpieza.")
 
 - **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)

@@ -80,7 +80,7 @@ El Spike incluirá:
   - Pruebas unitarias de servicios de aplicación con repositorios mockeados.
   - Pruebas de integración de repositorios JPA con Testcontainers (PostgreSQL real).
   - Pruebas de integración de controladores REST con MockMvc.
-  - Pruebas de idempotencia: 5 reintentos con el mismo `localId` → 1 registro.
+  - Pruebas de idempotencia: 5 reintentos con el mismo `idLocal` → 1 registro.
   - Pruebas de migraciones Flyway (ADR-019).
   - Pruebas de rendimiento con k6 para endpoints críticos.
   - Pruebas de seguridad con OWASP ZAP para validar JWT.
@@ -148,7 +148,7 @@ El Spike no implementará:
 #### Procedimiento
 1. Escribir pruebas unitarias para el cálculo económico (ingresos, gastos, resultado).
 2. Escribir pruebas para la consistencia tras modificación de un registro.
-3. Escribir pruebas para la idempotencia (verificación de `localId`).
+3. Escribir pruebas para la idempotencia (verificación de `idLocal`).
 4. Ejecutar las pruebas y medir cobertura con JaCoCo.
 5. Verificar que las pruebas no dependen de frameworks ni bases de datos.
 
@@ -184,7 +184,7 @@ El Spike no implementará:
 
 #### Procedimiento
 1. Configurar Testcontainers con PostgreSQL 15+.
-2. Escribir pruebas de integración para los repositorios de `farms` y `transactions`.
+2. Escribir pruebas de integración para los repositorios de `fincas` y `transacciones`.
 3. Verificar que las consultas paginadas y filtradas funcionan.
 4. Verificar que las agregaciones (SUM, GROUP BY) funcionan.
 5. Verificar que las restricciones únicas se respetan.
@@ -203,7 +203,7 @@ El Spike no implementará:
 **Objetivo:** Validar que los controladores REST funcionan correctamente.
 
 #### Procedimiento
-1. Escribir pruebas con MockMvc para los endpoints de `farms` y `transactions`.
+1. Escribir pruebas con MockMvc para los endpoints de `fincas` y `transacciones`.
 2. Verificar que la autenticación JWT funciona.
 3. Verificar que los errores se manejan correctamente (400, 401, 404, 500).
 4. Verificar que la paginación y los filtros funcionan.
@@ -222,10 +222,10 @@ El Spike no implementará:
 **Objetivo:** Validar que la sincronización idempotente funciona.
 
 #### Procedimiento
-1. Escribir una prueba que envíe 5 veces la misma transacción con el mismo `localId`.
+1. Escribir una prueba que envíe 5 veces la misma transacción con el mismo `idLocal`.
 2. Verificar que solo se crea 1 registro en la base.
 3. Verificar que las respuestas son idénticas en los 5 reintentos.
-4. Verificar que la restricción única en `localId` se respeta.
+4. Verificar que la restricción única en `idLocal` se respeta.
 
 #### Resultado esperado
 - Solo se crea 1 registro.
@@ -391,7 +391,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Seguridad backend**: OWASP ZAP.
 - **Frontend**: React Native + TypeScript.
 - **Pruebas frontend**: Jest, React Native Testing Library, Detox o Maestro.
-- **Rendimiento frontend**: React DevTools Profiler, Flipper.
+- **Rendimiento frontend**: React DevTools Profiler, React Native DevTools.
 - **Cobertura frontend**: Jest Coverage.
 - **CI/CD**: GitHub Actions.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.

@@ -16,8 +16,8 @@
 Validar técnicamente que AgroTrack puede garantizar tres comportamientos críticos en la sincronización offline:
 
 1. **Consistencia de cálculos**: al modificar un gasto o ingreso, los cálculos económicos posteriores reflejan el valor actualizado.
-2. **Idempotencia**: los reintentos de sincronización con el mismo `localId` no generan registros duplicados en el backend.
-3. **Conservación ante interrupción**: los registros no confirmados permanecen en estado `PENDING` si la conexión se interrumpe antes de recibir confirmación.
+2. **Idempotencia**: los reintentos de sincronización con el mismo `idLocal` no generan registros duplicados en el backend.
+3. **Conservación ante interrupción**: los registros no confirmados permanecen en estado `PENDIENTE` si la conexión se interrumpe antes de recibir confirmación.
 
 El Spike busca comprobar que estos tres comportamientos se cumplen de forma integrada, cumpliendo con los escenarios ESC-CAL-CF-03, ESC-CAL-CF-04, ESC-CAL-CF-05 y ESC-CAL-INT-03, antes de implementar la funcionalidad completa.
 
@@ -35,23 +35,23 @@ Por esta razón, se necesita una prueba técnica que demuestre que la estrategia
 
 ## 3. Pregunta principal del Spike
 
-¿El sistema actualiza correctamente los cálculos tras modificar un dato, los reintentos de sincronización con el mismo `localId` generan exactamente 1 registro en el backend, y los registros no confirmados permanecen en estado `PENDING` ante una interrupción de conexión?
+¿El sistema actualiza correctamente los cálculos tras modificar un dato, los reintentos de sincronización con el mismo `idLocal` generan exactamente 1 registro en el backend, y los registros no confirmados permanecen en estado `PENDIENTE` ante una interrupción de conexión?
 
 ## 4. Hipótesis
 
 Si implementamos:
 
 - **Servicios de cálculo centralizados** que siempre leen de la fuente de datos actualizada.
-- **`localId` (UUID)** generado en el cliente y enviado en cada reintento.
-- **Backend con verificación de `localId`** como clave de idempotencia.
-- **Cola persistente** que conserva registros en `PENDING` hasta recibir confirmación explícita.
+- **`idLocal` (UUID)** generado en el cliente y enviado en cada reintento.
+- **Backend con verificación de `idLocal`** como clave de idempotencia.
+- **Cola persistente** que conserva registros en `PENDIENTE` hasta recibir confirmación explícita.
 
 Entonces:
 
 - El 100 % de los cálculos posteriores a una modificación reflejarán el valor actualizado.
-- Después de N reintentos con el mismo `localId`, existirá exactamente 1 registro en el backend.
-- El 100 % de los registros no confirmados permanecerá en `PENDING` tras una interrupción.
-- El registro solo pasará a `SYNCED` tras recibir confirmación del servidor.
+- Después de N reintentos con el mismo `idLocal`, existirá exactamente 1 registro en el backend.
+- El 100 % de los registros no confirmados permanecerá en `PENDIENTE` tras una interrupción.
+- El registro solo pasará a `SINCRONIZADO` tras recibir confirmación del servidor.
 
 ## 5. Alcance
 
@@ -61,10 +61,10 @@ El Spike incluirá:
 
 - Servicios de cálculo centralizados para ingresos y gastos.
 - Invalidación de caché al modificar un registro.
-- Generación de `localId` (UUID) en el cliente.
-- Endpoint mock en el backend con verificación de `localId`.
-- Cola persistente (SQLite) que conserva registros en `PENDING`.
-- Simulación de reintentos (5 veces con el mismo `localId`).
+- Generación de `idLocal` (UUID) en el cliente.
+- Endpoint mock en el backend con verificación de `idLocal`.
+- Cola persistente (SQLite) que conserva registros en `PENDIENTE`.
+- Simulación de reintentos (5 veces con el mismo `idLocal`).
 - Simulación de interrupción de conexión a mitad de la sincronización.
 - Medición de tiempos y conteo de registros creados.
 
@@ -86,15 +86,15 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 
 **Datos de prueba:**
 
-- **Gasto inicial**: $100.000 COP, descripción "Compra de fertilizante", `localId = "abc-123"`.
+- **Gasto inicial**: $100.000 COP, descripción "Compra de fertilizante", `idLocal = "abc-123"`.
 - **Modificación**: el mismo gasto cambia a $50.000 COP.
 - **Escenario de interrupción**: gasto de $30.000 COP con conexión inestable.
 
 **Escenarios:**
 
 1. **Consistencia**: registrar gasto → consultar resultado → modificar → consultar nuevamente.
-2. **Idempotencia**: registrar gasto con `localId` → simular 5 reintentos → verificar 1 registro.
-3. **Interrupción**: registrar gasto → iniciar sync → cortar conexión → verificar `PENDING`.
+2. **Idempotencia**: registrar gasto con `idLocal` → simular 5 reintentos → verificar 1 registro.
+3. **Interrupción**: registrar gasto → iniciar sync → cortar conexión → verificar `PENDIENTE`.
 
 ## 7. Pruebas a realizar
 
@@ -119,25 +119,25 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 
 ### 7.2 Prueba 2 — Idempotencia ante reintentos
 
-**Objetivo:** Validar que los reintentos con el mismo `localId` no generan duplicados en el backend.
+**Objetivo:** Validar que los reintentos con el mismo `idLocal` no generan duplicados en el backend.
 
 #### Procedimiento
-1. Registrar un gasto offline con `localId = "abc-123"`.
-2. Simular 5 reintentos de sincronización con el mismo `localId`.
+1. Registrar un gasto offline con `idLocal = "abc-123"`.
+2. Simular 5 reintentos de sincronización con el mismo `idLocal`.
 3. Consultar el backend mock.
 4. Verificar la cantidad de registros creados.
 
 #### Resultado esperado
-- El backend crea **exactamente 1 registro** correspondiente al `localId = "abc-123"`.
+- El backend crea **exactamente 1 registro** correspondiente al `idLocal = "abc-123"`.
 - En los reintentos 2 a 5, el backend devuelve la misma respuesta sin crear nuevos registros.
-- El estado local pasa a `SYNCED` una sola vez.
+- El estado local pasa a `SINCRONIZADO` una sola vez.
 - No hay duplicación en los cálculos económicos.
 
 ---
 
 ### 7.3 Prueba 3 — Conservación ante interrupción de conexión
 
-**Objetivo:** Validar que los registros no confirmados permanecen en `PENDING` si la conexión se interrumpe.
+**Objetivo:** Validar que los registros no confirmados permanecen en `PENDIENTE` si la conexión se interrumpe.
 
 #### Procedimiento
 1. Registrar un gasto offline.
@@ -148,8 +148,8 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 6. Verificar que el sistema reintenta y sincroniza.
 
 #### Resultado esperado
-- El registro permanece en `PENDING` tras la interrupción.
-- No se marca como `SYNCED` sin confirmación.
+- El registro permanece en `PENDIENTE` tras la interrupción.
+- No se marca como `SINCRONIZADO` sin confirmación.
 - Al reconectar, el sistema reintenta y sincroniza correctamente.
 - No hay pérdida ni duplicación.
 
@@ -160,7 +160,7 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 **Objetivo:** Validar que los tres comportamientos funcionan de forma integrada en un flujo realista.
 
 #### Procedimiento
-1. Registrar 3 gastos offline con `localId` distintos.
+1. Registrar 3 gastos offline con `idLocal` distintos.
 2. Modificar uno de ellos localmente.
 3. Iniciar sincronización.
 4. Simular interrupción después del primer envío.
@@ -178,8 +178,8 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 El Spike se considerará **EXITOSO** si se cumplen todos los siguientes puntos:
 
 1. **Consistencia de cálculos**: El 100 % de las modificaciones se reflejan en los cálculos posteriores.
-2. **Idempotencia**: Después de 5 reintentos con el mismo `localId`, existe exactamente 1 registro en el backend.
-3. **Conservación ante interrupción**: El 100 % de los registros no confirmados permanece en `PENDING`.
+2. **Idempotencia**: Después de 5 reintentos con el mismo `idLocal`, existe exactamente 1 registro en el backend.
+3. **Conservación ante interrupción**: El 100 % de los registros no confirmados permanece en `PENDIENTE`.
 4. **Integración**: Los tres comportamientos funcionan juntos en el flujo combinado (Prueba 4).
 5. **Sin pérdida**: No se pierde ningún registro durante las pruebas.
 
@@ -187,7 +187,7 @@ El Spike se considerará **RECHAZADO** si:
 
 - Algún cálculo posterior a una modificación muestra el valor obsoleto.
 - Los reintentos generan más de 1 registro en el backend.
-- Algún registro se marca como `SYNCED` sin confirmación del servidor.
+- Algún registro se marca como `SINCRONIZADO` sin confirmación del servidor.
 - Se pierde algún registro durante una interrupción.
 - Los cálculos económicos finales no coinciden con los datos del backend.
 
@@ -196,10 +196,10 @@ El Spike se considerará **RECHAZADO** si:
 Para la ejecución de este Spike, se utilizará el siguiente stack:
 
 - **Cliente móvil**: React Native + TypeScript.
-- **Base de datos local**: SQLite (con `react-native-sqlite-storage`).
-- **Servicios de cálculo**: Funciones puras centralizadas (`calculateEconomicResult(transactions)`).
+- **Base de datos local**: SQLite (con `@op-engineering/op-sqlite`, ADR-017).
+- **Servicios de cálculo**: Funciones puras centralizadas (`calcularResultadoEconomico(transacciones)`).
 - **Generación de UUID**: `react-native-uuid` o equivalente.
-- **Backend mock**: Endpoint REST que simula la verificación de `localId` y devuelve respuestas predefinidas (éxito, error, timeout).
+- **Backend mock**: Endpoint REST que simula la verificación de `idLocal` y devuelve respuestas predefinidas (éxito, error, timeout).
 - **Simulación de interrupciones**: Interruptor manual para cortar la conexión a mitad del envío.
 - **Medición**: Logs de tiempo y conteo de registros creados.
 
@@ -214,7 +214,7 @@ Para la ejecución de este Spike, se utilizará el siguiente stack:
 - **Riesgo**: La cola persistente puede corromperse si el dispositivo se apaga durante una escritura.
   - **Mitigación**: Usar transacciones de SQLite. Probar el escenario de apagado abrupto.
 
-- **Riesgo**: Los reintentos con el mismo `localId` pueden tardar demasiado si el backoff está mal configurado.
+- **Riesgo**: Los reintentos con el mismo `idLocal` pueden tardar demasiado si el backoff está mal configurado.
   - **Mitigación**: Configurar backoff con límites máximos (≤ 10 intentos en el primer minuto).
 
 - **Riesgo**: La simulación de interrupción puede no ser realista si no se prueba en dispositivo físico.
@@ -226,9 +226,9 @@ Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Repositorio de código** (branch del spike) con:
    - Servicios de cálculo centralizados.
-   - Generación de `localId` (UUID).
+   - Generación de `idLocal` (UUID).
    - Endpoint mock con verificación de idempotencia.
-   - Cola persistente con estado `PENDING`/`SYNCED`.
+   - Cola persistente con estado `PENDIENTE`/`SINCRONIZADO`.
    - Simulación de interrupciones.
 2. **Reporte de pruebas**:
    - Resultados de las 4 pruebas.
@@ -237,7 +237,7 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Tiempos de sincronización.
 3. **Evidencia**:
    - Capturas o video del flujo completo.
-   - Logs del backend mostrando la verificación de `localId`.
+   - Logs del backend mostrando la verificación de `idLocal`.
    - Logs de SQLite mostrando los cambios de estado.
 4. **Este documento actualizado** con la sección de "Conclusión del Spike" llenada, incluyendo recomendaciones para la implementación en producción.
 
@@ -250,17 +250,17 @@ Al finalizar el timebox, el equipo deberá entregar:
 - **Resumen de resultados**:
   - ✅ / ❌ ¿Los cálculos se actualizaron tras modificar?
   - ✅ / ❌ ¿Los 5 reintentos generaron 1 solo registro?
-  - ✅ / ❌ ¿Los registros no confirmados permanecieron en `PENDING`?
+  - ✅ / ❌ ¿Los registros no confirmados permanecieron en `PENDIENTE`?
   - ✅ / ❌ ¿Los tres comportamientos funcionaron juntos?
   - ✅ / ❌ ¿Se perdió algún registro?
 
 - **Lecciones aprendidas**:
   - (Ejemplo: "La invalidación de caché debe ser parte del servicio centralizado, no de cada pantalla.")
-  - (Ejemplo: "La verificación de `localId` en el backend debe ser estricta y devolver la misma respuesta en reintentos.")
+  - (Ejemplo: "La verificación de `idLocal` en el backend debe ser estricta y devolver la misma respuesta en reintentos.")
 
 - **Recomendaciones para implementación en producción**:
   - (Ejemplo: "Implementar idempotencia desde el día 1.")
   - (Ejemplo: "Usar transacciones en SQLite para evitar corrupción.")
-  - (Ejemplo: "Monitorear la cantidad de registros en `PENDING` y el tiempo promedio de sincronización.")
+  - (Ejemplo: "Monitorear la cantidad de registros en `PENDIENTE` y el tiempo promedio de sincronización.")
 
 - **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
