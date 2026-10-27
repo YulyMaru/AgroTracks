@@ -1,10 +1,10 @@
-# SPIKE-016: Validar Spring Boot 3 con PostgreSQL, Flyway, Spring Security y JWT
+# SPIKE-016: Validar Spring Boot 4.1 con PostgreSQL, Flyway, Spring Security y JWT
 
 ## Información general
 
 - **ID:** SPIKE-016
-- **Nombre:** Validar stack backend Spring Boot 3 con PostgreSQL, Flyway, Spring Security y JWT
-- **ADR relacionado:** ADR-016 — Usar Spring Boot 3 con Java 17 como stack del backend
+- **Nombre:** Validar stack backend Spring Boot 4.1 con PostgreSQL, Flyway, Spring Security y JWT
+- **ADR relacionado:** ADR-016 — Usar Spring Boot 4.1 con Java 27 como stack del backend
 - **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-013 (Base de datos relacional SQL), ADR-015 (Usar REST como estilo de comunicación), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
@@ -13,7 +13,7 @@
 
 ## 1. Objetivo
 
-Validar técnicamente que Spring Boot 3 con Java 17, PostgreSQL 15+, Flyway, Spring Security + JWT, Spring Data JPA y SpringDoc OpenAPI cubre todos los requisitos funcionales y no funcionales del backend de AgroTrack, incluyendo transacciones ACID, idempotencia en sincronización, seguridad JWT, migraciones versionadas, documentación OpenAPI y rendimiento dentro de los umbrales definidos.
+Validar técnicamente que Spring Boot 4.1 con Java 27, PostgreSQL 15+, Flyway, Spring Security + JWT, Spring Data JPA y SpringDoc OpenAPI cubre todos los requisitos funcionales y no funcionales del backend de AgroTrack, incluyendo transacciones ACID, idempotencia en sincronización, seguridad JWT, migraciones versionadas, documentación OpenAPI y rendimiento dentro de los umbrales definidos.
 
 El Spike busca comprobar que el stack seleccionado en ADR-016 es viable antes de implementar el backend completo de AgroTrack.
 
@@ -21,7 +21,7 @@ El Spike busca comprobar que el stack seleccionado en ADR-016 es viable antes de
 
 AgroTrack requiere un backend robusto que soporte transacciones ACID, sincronización idempotente, seguridad JWT y consultas optimizadas. Existen riesgos de que:
 
-- Spring Boot 3 no se integre correctamente con PostgreSQL 15+ en el entorno de despliegue previsto.
+- Spring Boot 4.1 no se integre correctamente con PostgreSQL 15+ en el entorno de despliegue previsto.
 - Las transacciones ACID fallen en escenarios de concurrencia o errores parciales.
 - Spring Security + JWT no maneje correctamente la expiración y el refresco de tokens.
 - Flyway falle al aplicar migraciones en una base con datos existentes.
@@ -34,13 +34,13 @@ Por esta razón, se necesita un prototipo que implemente el stack completo con e
 
 ## 3. Pregunta principal del Spike
 
-¿Spring Boot 3 con PostgreSQL 15+, Flyway, Spring Security + JWT, Spring Data JPA y SpringDoc OpenAPI permite implementar transacciones ACID, sincronización idempotente, autenticación JWT con refresco, migraciones versionadas, documentación OpenAPI y consultas dentro de los umbrales definidos (≤ 3 s y ≤ 5 s), sin requerir infraestructura adicional?
+¿Spring Boot 4.1 con PostgreSQL 15+, Flyway, Spring Security + JWT, Spring Data JPA y SpringDoc OpenAPI permite implementar transacciones ACID, sincronización idempotente, autenticación JWT con refresco, migraciones versionadas, documentación OpenAPI y consultas dentro de los umbrales definidos (≤ 3 s y ≤ 5 s), sin requerir infraestructura adicional?
 
 ## 4. Hipótesis
 
 Si implementamos:
 
-- Proyecto Spring Boot 3 con Java 17.
+- Proyecto Spring Boot 4.1 con Java 27.
 - PostgreSQL 15+ como base de datos.
 - Flyway para migraciones versionadas.
 - Spring Data JPA + Hibernate para persistencia.
@@ -68,7 +68,7 @@ Entonces:
 
 El Spike incluirá:
 
-- Configuración inicial del proyecto Spring Boot 3 con Java 17 y Maven.
+- Configuración inicial del proyecto Spring Boot 4.1 con Java 27 y Maven.
 - Integración con PostgreSQL 15+ (local o en contenedor).
 - Configuración de Flyway con al menos 2 migraciones versionadas.
 - Configuración de Spring Security con JWT (access token + refresh token).
@@ -132,16 +132,16 @@ El Spike no implementará:
 
 - PostgreSQL 15+ (local o en contenedor Docker).
 - Redis (opcional, solo si el tiempo lo permite).
-- Java 17, Maven, Spring Boot 3.
+- Java 27, Maven, Spring Boot 4.1.
 
 ## 7. Pruebas a realizar
 
 ### 7.1 Prueba 1 — Configuración inicial y migraciones con Flyway
 
-**Objetivo:** Validar que el proyecto Spring Boot 3 se configura correctamente y que Flyway aplica migraciones sin errores.
+**Objetivo:** Validar que el proyecto Spring Boot 4.1 se configura correctamente y que Flyway aplica migraciones sin errores.
 
 #### Procedimiento
-1. Crear el proyecto Spring Boot 3 con las dependencias necesarias (Web, JPA, Security, Flyway, PostgreSQL, Validation, SpringDoc).
+1. Crear el proyecto Spring Boot 4.1 con las dependencias necesarias (Web, JPA, Security, Flyway, PostgreSQL, Validation, SpringDoc).
 2. Configurar la conexión a PostgreSQL en `application.yml`.
 3. Crear la primera migración Flyway (crear tablas: `usuarios`, `fincas`, `lotes`, `cultivos`, `transacciones`, `operaciones_pendientes`).
 4. Ejecutar la aplicación y verificar que Flyway aplica la migración.
@@ -298,7 +298,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Build**: Maven.
 - **Base de datos**: PostgreSQL 15+ (local o en contenedor Docker).
 - **Migraciones**: Flyway.
@@ -336,7 +336,7 @@ El Spike se considerará **RECHAZADO** si:
 Al finalizar el timebox, el equipo deberá entregar:
 
 1. **Repositorio de código** (branch del spike) con:
-   - Proyecto Spring Boot 3 configurado.
+   - Proyecto Spring Boot 4.1 configurado.
    - Migraciones Flyway.
    - Endpoints REST representativos.
    - Configuración de Spring Security + JWT.

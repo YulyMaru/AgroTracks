@@ -5,7 +5,7 @@
 - **ID:** SPIKE-029
 - **Nombre:** Validar catálogo centralizado de parámetros con API única y caché local en SQLite
 - **ADR relacionado:** ADR-029 — Centralizar parámetros no sensibles en un catálogo compartido
-- **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-013 (Usar base de datos relacional SQL para backend y almacenamiento local), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas)
+- **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-013 (Usar base de datos relacional SQL para backend y almacenamiento local), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Media-Alta
@@ -321,7 +321,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Base de datos backend**: PostgreSQL 15+ con migraciones Flyway.
 - **API**: REST (ADR-015).
 - **Frontend**: React Native + TypeScript.

@@ -5,7 +5,7 @@
 - **ID:** SPIKE-020
 - **Nombre:** Validar estrategia de pruebas en capas e integración con CI/CD
 - **ADR relacionado:** ADR-020 — Definir la estrategia de pruebas en capas para backend y frontend
-- **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas)
+- **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -384,7 +384,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Base de datos backend**: PostgreSQL 15+ con Testcontainers.
 - **Pruebas backend**: JUnit 5, Mockito, Spring Boot Test, MockMvc, Testcontainers, JaCoCo.
 - **Rendimiento backend**: k6.

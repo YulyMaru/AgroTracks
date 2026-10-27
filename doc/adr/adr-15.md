@@ -349,6 +349,6 @@
       - Los endpoints de sincronización verifican `idLocal` y devuelven la misma respuesta en reintentos (ADR-007).
     - **Caché**:
       - Uso de ETag y Cache-Control para consultas de datos maestros.
-      - Redis para caché de resúmenes económicos (ADR-009, ADR-013).
+      - Spring Cache para resúmenes económicos: en memoria en el piloto, Memorystore (Redis) si crece (ADR-009, ADR-013, ADR-031).
     - **Pruebas**:
       - Pruebas de integración con Spring Boot Test.

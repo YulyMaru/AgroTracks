@@ -149,10 +149,10 @@
 
     - **Análisis de costos**:
 
-      - **Resumen**: Costo adicional bajo (Redis open source, como contenedor en el servidor propio) con retorno en rendimiento.
+      - **Resumen**: Costo adicional bajo (caché en memoria durante el piloto; Memorystore, el Redis gestionado de Google Cloud, cuando se necesite caché compartida) con retorno en rendimiento.
 
       - **Ejemplos**:
-        - **Licencias**: Redis open source, ejecutado como contenedor en el servidor propio (ADR-031).
+        - **Licencias**: Redis open source, ofrecido como servicio gestionado (Memorystore) en Google Cloud (ADR-031); en el piloto se usa caché en memoria sin costo.
         - **Capacitación**: el equipo debe aprender invalidación y TTL.
         - **Operación**: monitoreo de hit ratio y memoria.
         - **Medición**: hit ratio, tiempos con y sin caché.
@@ -241,7 +241,7 @@
     La implementación deberá considerar como mínimo:
 
     - **Backend**:
-      - PostgreSQL 15+ como fuente de verdad.
+      - PostgreSQL 15+ como fuente de verdad (PostgreSQL 16 en Cloud SQL de Google Cloud, con copias de seguridad automáticas, ADR-031).
       - Flyway para migraciones versionadas.
       - Índices compuestos `(id_usuario, fecha, tipo)` en transacciones.
       - Índices en `fincas(id_usuario)`, `lotes(id_finca)`, `cultivos(id_lote)`.
@@ -254,7 +254,7 @@
       - Índices en `estado` y `creado_en` para consultas rápidas de la cola.
       - Transacciones al insertar y actualizar para evitar corrupción.
     - **Caché**:
-      - Redis para resúmenes económicos, mediante Spring Cache (ADR-016).
+      - Resúmenes económicos mediante Spring Cache (ADR-016): en memoria durante el piloto y Memorystore (Redis gestionado) cuando haya varias instancias (ADR-031).
       - TTL de 5 minutos e invalidación al modificar transacciones.
       - Nunca como fuente de verdad.
     - **Pruebas**:

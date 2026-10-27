@@ -1,6 +1,6 @@
 # ADR-021: Implementar monitoreo y observabilidad en backend y frontend
 
-- **Título**: Implementar una estrategia de monitoreo y observabilidad con Spring Boot Actuator + Micrometer + Prometheus + Grafana en el backend, y Firebase Crashlytics + Analytics + React Native DevTools en el frontend móvil, descartando monitoreo manual y herramientas propietarias costosas.
+- **Título**: Implementar una estrategia de monitoreo y observabilidad con Spring Boot Actuator + Micrometer + Cloud Monitoring y Cloud Logging de Google Cloud en el backend, y Firebase Crashlytics + Analytics + React Native DevTools en el frontend móvil, descartando monitoreo manual y herramientas propietarias costosas.
 
 - **Estado**: Propuesto.
 
@@ -134,11 +134,10 @@
       - **Detalles**:
         - **Backend (Spring Boot)**:
           - Spring Boot Actuator expone endpoints de salud y métricas.
-          - Micrometer recolecta métricas y las exporta a Prometheus.
-          - Prometheus almacena las métricas y las consulta.
-          - Grafana visualiza las métricas en dashboards.
-          - Logs del backend en archivos con rotación; Loki queda como evolución futura y no forma parte de esta fase.
-          - Alertmanager para alertas.
+          - Micrometer recolecta métricas y las exporta a Cloud Monitoring.
+          - Cloud Monitoring almacena las métricas, las muestra en paneles y envía las alertas.
+          - Cloud Logging recibe los logs del backend sin configurar archivos ni rotación.
+          - Nota: la primera versión de este ADR usaba Prometheus, Grafana y Alertmanager en el mismo servidor del backend. Al desplegar en Cloud Run (ADR-031) no hay servidor donde instalarlos, así que se usan los servicios equivalentes de Google Cloud.
         - **Frontend (React Native)**:
           - Firebase Crashlytics registra crashes y errores no controlados.
           - Firebase Analytics registra eventos clave de usuario.
@@ -149,7 +148,7 @@
         - **Costo**:
           - Stack open source: sin costo de licencias.
           - Firebase: plan gratuito generoso (Crashlytics ilimitado, Analytics hasta 500 eventos).
-          - Hosting de Prometheus, Grafana y Alertmanager: contenedores en el mismo servidor del backend (ADR-031).
+          - Visualización y alertas: Cloud Monitoring y Cloud Logging de Google Cloud, incluidos con Cloud Run y Cloud SQL (ADR-031); no se instalan ni se administran servidores de Prometheus, Grafana ni Alertmanager.
 
     - **Análisis de costos**:
 
@@ -193,7 +192,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-021 — Validará que Spring Boot Actuator + Micrometer + Prometheus + Grafana y Firebase Crashlytics + Analytics cubren las necesidades de observabilidad — Propuesto.
+    - SPIKE-021 — Validará que Spring Boot Actuator + Micrometer + Cloud Monitoring + Cloud Logging y Firebase Crashlytics + Analytics cubren las necesidades de observabilidad — Propuesto.
     - SPIKE-001 — Validará la sincronización offline que luego se instrumenta; su trazabilidad con `idTraza` se valida en SPIKE-021 — Propuesto.
     - SPIKE-007 — Validará los estados de sincronización (`PENDIENTE`, `SINCRONIZADO`) que luego se exponen como métricas — Propuesto.
     - SPIKE-016 — Validará el backend Spring Boot sobre el que se habilita Actuator; la integración de Actuator se valida en SPIKE-021 — Propuesto.
@@ -231,9 +230,9 @@
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que Spring Boot Actuator + Micrometer + Prometheus + Grafana y Firebase Crashlytics + Analytics cubran las necesidades de observabilidad sin degradar el rendimiento.
+    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que Spring Boot Actuator + Micrometer + Cloud Monitoring + Cloud Logging y Firebase Crashlytics + Analytics cubran las necesidades de observabilidad sin degradar el rendimiento.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las métricas, logs y errores.
-    - **¿Qué tipos de integraciones están involucradas?**: Spring Boot Actuator, Micrometer, Prometheus, Grafana, Alertmanager, Firebase Crashlytics, Firebase Analytics, React Native DevTools y el sistema de logging del backend.
+    - **¿Qué tipos de integraciones están involucradas?**: Spring Boot Actuator, Micrometer, Cloud Monitoring, Cloud Logging, Firebase Crashlytics, Firebase Analytics, React Native DevTools y el sistema de logging del backend.
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Configurar Actuator y Micrometer desde el día 1. Inyectar `idTraza` en todas las solicitudes. Configurar alertas para errores críticos (fallos de sincronización, pérdida de datos, 500). Usar Crashlytics desde la primera versión. No esperar a tener problemas para instrumentar.
 
   - **Anécdotas**:
@@ -245,7 +244,7 @@
 
   - **Resumen**:
 
-    Se recomienda implementar **Spring Boot Actuator + Micrometer + Prometheus + Grafana + Alertmanager** en el backend, y **Firebase Crashlytics + Firebase Analytics + React Native DevTools** en el frontend móvil, con **`idTraza` propagado en todas las solicitudes**, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-03, ESC-CAL-CF-05, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
+    Se recomienda implementar **Spring Boot Actuator + Micrometer + Cloud Monitoring + Cloud Logging** (Google Cloud, ADR-031) en el backend, y **Firebase Crashlytics + Firebase Analytics + React Native DevTools** en el frontend móvil, con **`idTraza` propagado en todas las solicitudes**, cumpliendo con los escenarios ESC-CAL-DP-01, ESC-CAL-DP-03, ESC-CAL-CF-05, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
 
   - **Detalles**:
 
@@ -254,21 +253,22 @@
     La implementación deberá considerar como mínimo:
 
     - **Backend (Spring Boot)**:
-      - Añadir `spring-boot-starter-actuator` y `micrometer-registry-prometheus`.
-      - Exponer endpoints `/actuator/health`, `/actuator/metrics`, `/actuator/prometheus`.
-      - Configurar Prometheus para hacer scraping de las métricas.
-      - Configurar Grafana con dashboards para:
-        - Endpoints (latencia, tasa de errores, throughput).
+      - Añadir `spring-boot-starter-actuator` y `micrometer-registry-stackdriver` para enviar las métricas a Cloud Monitoring.
+      - Exponer `/actuator/health` (usado por Cloud Run para saber si la instancia está sana); `/actuator/metrics` y `/actuator/prometheus` no se exponen a internet.
+      - Escribir los logs en formato JSON para que Cloud Logging los indexe (incluyendo el `idTraza`).
+      - Configurar en Cloud Monitoring paneles para:
+        - Endpoints (latencia, tasa de errores, solicitudes), que Cloud Run entrega sin configuración adicional.
         - JVM (memoria, GC, threads).
-        - Base de datos (conexiones, consultas lentas).
-        - Caché (hit ratio, uso de memoria).
+        - Base de datos (conexiones, CPU y almacenamiento de Cloud SQL).
+        - Caché (hit ratio).
         - Sincronización (operaciones pendientes, reintentos, idempotencia).
-      - Configurar Alertmanager para alertas:
+      - Configurar políticas de alerta en Cloud Monitoring, con aviso por correo:
         - Errores 500 > 1 % en 5 minutos.
         - Latencia p95 > 3 s en consultas productivas.
         - Latencia p95 > 5 s en resúmenes.
         - Fallos de sincronización > 5 % en 10 minutos.
         - Uso de CPU > 80 % por 10 minutos.
+        - Gasto mensual del proyecto por encima del presupuesto definido.
       - Inyectar `idTraza` en logs y respuestas HTTP.
     - **Frontend (React Native)**:
       - Integrar Firebase Crashlytics para crashes y errores no controlados.
@@ -292,4 +292,4 @@
       - Verificar que las alertas se disparan correctamente.
       - Verificar que el `idTraza` se propaga correctamente.
 
-    Se descarta el monitoreo manual por falta de visibilidad y Datadog/New Relic por costo y dependencia de proveedor. El stack open source + Firebase es la opción que garantiza observabilidad, detección temprana y trazabilidad en AgroTrack.
+    Se descarta el monitoreo manual por falta de visibilidad y Datadog/New Relic por costo y dependencia de proveedor. Actuator + Micrometer con Cloud Monitoring y Cloud Logging en el backend, más Firebase en el móvil, es la opción que garantiza observabilidad, detección temprana y trazabilidad en AgroTrack.

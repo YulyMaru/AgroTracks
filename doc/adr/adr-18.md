@@ -4,6 +4,8 @@
 
 - **Estado**: Propuesto.
 
+- **Complementado por**: ADR-032 (Arquitectura hexagonal dentro del monolito modular). Se mantiene el monolito modular de este ADR; dentro de cada módulo, el código se organiza con puertos y adaptadores (`dominio`, `aplicacion`, `infraestructura`) en lugar de capas técnicas.
+
 - **Criterios de evaluación**:
 
   - **Resumen**: Evaluar el estilo arquitectónico que mejor equilibre mantenibilidad, escalabilidad, costo, simplicidad, separación de responsabilidades y evolución, considerando que AgroTrack es una primera versión con un equipo pequeño, dominio relacional, requisitos de transacciones ACID y una arquitectura offline-first con sincronización diferida.
@@ -195,7 +197,7 @@
         - Difícil de probar localmente.
         - Transacciones ACID complejas entre funciones.
         - Spring Boot (ADR-016) tiene un arranque en frío lento para funciones de corta duración; adoptarlo obligaría a cambiar el stack del backend.
-        - Nota: Firebase y Cloudflare (ADR-021, ADR-026, ADR-027, ADR-028) se usan como servicios auxiliares y no almacenan los datos productivos ni económicos del campesino, que permanecen en PostgreSQL en el servidor propio (ADR-031).
+        - Nota: Firebase y Cloudflare (ADR-021, ADR-026, ADR-027, ADR-028) se usan como servicios auxiliares y no almacenan los datos productivos ni económicos del campesino, que permanecen en PostgreSQL en Cloud SQL de Google Cloud (ADR-031).
 
     - **Análisis de costos**:
 
@@ -235,7 +237,7 @@
   - **¿Quién da la opinión?**:
 
     - SPIKE-018 — Validará que el monolito modular por capas con patrón Repository es mantenible, testeable y evolutivo — Propuesto.
-    - SPIKE-016 — Validará que Spring Boot 3 con Spring Data JPA implementa el patrón Repository correctamente — Propuesto.
+    - SPIKE-016 — Validará que Spring Boot 4.1 con Spring Data JPA implementa el patrón Repository correctamente — Propuesto.
     - SPIKE-017 — Validará el stack React Native + TypeScript sobre el que se organizan las capas del cliente; el patrón Repository en el cliente se valida en SPIKE-018 — Propuesto.
     - SPIKE-013 — Validará que SQLite local soporta transacciones ACID y replica el esquema remoto, base de los repositorios locales — Propuesto.
 
@@ -336,7 +338,7 @@
       - Tablas y columnas en `snake_case`; variables y campos JSON en `camelCase`; clases en `PascalCase`.
       - El listado completo de nombres está en `doc/NOMBRES.md`.
     - **Despliegue**:
-      - El backend se empaqueta como una sola unidad desplegable (JAR dentro de un contenedor Docker). Dónde y cómo se publica se decide en ADR-031.
+      - El backend se empaqueta como una sola unidad desplegable (JAR dentro de una imagen de contenedor). Se publica en Cloud Run de Google Cloud (ADR-031).
     - **Correspondencia con el modelo C4**:
       - Backend: componentes C8 a C16 del diagrama de componentes del API Backend.
       - Aplicación móvil: componentes C1 a C7, C17 y C18 del diagrama de componentes de la aplicación móvil.

@@ -5,7 +5,7 @@
 - **ID:** SPIKE-027
 - **Nombre:** Validar protección perimetral con Cloudflare plan gratuito y Spring Security
 - **ADR relacionado:** ADR-027 — Proteger el backend con WAF y defensas perimetrales
-- **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-015 (Usar REST como estilo de comunicación), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions)
+- **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-015 (Usar REST como estilo de comunicación), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -350,7 +350,7 @@ El Spike se considerará **RECHAZADO** si:
 
 - **Cloudflare**: plan gratuito.
 - **Dominio**: registrado y configurado en Cloudflare.
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Seguridad backend**: Spring Security + JWT (ADR-011).
 - **Frontend**: React Native + TypeScript (para pruebas de integración).
 - **CI/CD**: GitHub Actions (ADR-025).

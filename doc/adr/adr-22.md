@@ -235,7 +235,8 @@
     La implementación deberá considerar como mínimo:
 
     - **Tránsito (TLS)**:
-      - Configurar Spring Boot con TLS 1.2+ (certificado SSL/TLS) como servidor de origen; el TLS público lo termina Cloudflare (ADR-027).
+      - El TLS público lo termina Cloudflare (ADR-027) y el tramo entre Cloudflare y el backend también va cifrado: Cloud Run solo acepta HTTPS con certificado gestionado por Google (ADR-031), así que Spring Boot no necesita configurar certificados.
+      - Las conexiones del backend a Cloud SQL van cifradas mediante el conector de Cloud SQL.
       - Configurar Axios para usar HTTPS exclusivamente.
       - Deshabilitar tráfico en texto plano en Android (`android:usesCleartextTraffic="false"`).
       - Opcional: certificate pinning con `react-native-ssl-pinning` o similar.

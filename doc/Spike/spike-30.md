@@ -1,11 +1,14 @@
 # SPIKE-030: Validar gestión de secretos con GitHub Secrets y variables de entorno
 
+
+> **Actualización (ADR-031):** el backend se despliega en Cloud Run de Google Cloud y ya no hay servidor ni archivo `.env`. Donde este spike dice variables de entorno del servidor, debe validarse Secret Manager (secretos entregados por Cloud Run como variables de entorno), según la versión actual de ADR-030. Los nombres de los secretos son los de ADR-030 (`AGROTRACK_DB_CLAVE`, `AGROTRACK_JWT_SECRETO`, ...).
+
 ## Información general
 
 - **ID:** SPIKE-030
 - **Nombre:** Validar gestión de secretos con GitHub Secrets y variables de entorno del servidor
 - **ADR relacionado:** ADR-030 — Gestionar secretos de forma segura en backend y CI/CD
-- **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-021 (Implementar monitoreo y observabilidad en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions), ADR-027 (Proteger el backend con WAF y defensas perimetrales), ADR-028 (Implementar notificaciones locales y push para eventos clave)
+- **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-021 (Implementar monitoreo y observabilidad en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions), ADR-027 (Proteger el backend con WAF y defensas perimetrales), ADR-028 (Implementar notificaciones locales y push para eventos clave)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -314,7 +317,7 @@ El Spike se considerará **RECHAZADO** si:
 - **CI/CD**: GitHub Actions (ADR-025).
 - **GitHub Secrets**: para el pipeline.
 - **Variables de entorno**: para el backend en producción.
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Base de datos**: PostgreSQL 15+.
 - **Herramientas de escaneo**: `git-secrets`, `trufflehog`.
 - **Dispositivos**: no aplica (pruebas de backend y CI/CD).

@@ -5,7 +5,7 @@
 - **ID:** SPIKE-018
 - **Nombre:** Validar monolito modular por capas con módulos por dominio y patrón Repository
 - **ADR relacionado:** ADR-018 — Usar monolito modular por capas con arquitectura offline-first y patrón Repository
-- **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil)
+- **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -358,7 +358,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Persistencia**: Spring Data JPA + PostgreSQL (o H2 en memoria para pruebas).
 - **Seguridad**: Spring Security + JWT (mínimo).
 - **Documentación**: SpringDoc OpenAPI.

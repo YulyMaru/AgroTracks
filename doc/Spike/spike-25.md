@@ -5,7 +5,7 @@
 - **ID:** SPIKE-025
 - **Nombre:** Validar pipeline de CI/CD con GitHub Actions y distribución de APK con Firebase App Distribution
 - **ADR relacionado:** ADR-025 — Automatizar integración continua y despliegue con GitHub Actions
-- **ADR complementarios:** ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-031 (Desplegar el backend en un servidor propio con Docker y docker-compose)
+- **ADR complementarios:** ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-031 (Desplegar el backend en un servidor propio con Docker y docker-compose)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -281,9 +281,10 @@ El Spike no implementará:
 **Objetivo:** Validar que el backend se despliega automáticamente a staging.
 
 #### Procedimiento
-1. Configurar el despliegue del backend a staging en el servidor propio (Docker + docker-compose por SSH, ADR-031).
+1. Configurar el despliegue del backend a staging en Google Cloud (ADR-031): autenticación con Workload Identity Federation, imagen en Artifact Registry y servicio `agrotrack-staging` en Cloud Run conectado a Cloud SQL.
 2. Hacer merge a `main`.
-3. Verificar que el workflow compila y despliega.
+3. Verificar que el workflow construye la imagen, la sube a Artifact Registry y despliega una revisión nueva en Cloud Run.
+3a. Forzar un fallo de `/actuator/health` y verificar que el tráfico vuelve a la revisión anterior.
 4. Consumir un endpoint del backend en staging.
 5. Verificar que el backend está corriendo.
 
@@ -358,13 +359,13 @@ El Spike se considerará **RECHAZADO** si:
 
 - **Repositorio**: GitHub.
 - **CI/CD**: GitHub Actions.
-- **Backend**: Spring Boot 3 + Java 17 + Maven.
+- **Backend**: Spring Boot 4.1 + Java 27 + Maven.
 - **Frontend**: React Native + TypeScript + Gradle.
 - **Pruebas backend**: JUnit, Mockito, Testcontainers.
 - **Pruebas frontend**: Jest, React Native Testing Library.
 - **Cobertura**: JaCoCo, Jest Coverage.
 - **Distribución APK**: Firebase App Distribution.
-- **Despliegue backend**: Docker + docker-compose por SSH en el servidor propio (ADR-031).
+- **Despliegue backend**: Cloud Run + Cloud SQL en Google Cloud, imagen en Artifact Registry (ADR-031).
 - **Gestión de secretos**: GitHub Secrets.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.
 - **Medición**: GitHub Actions UI, tiempo de pipeline.
@@ -381,7 +382,7 @@ El Spike se considerará **RECHAZADO** si:
   - **Mitigación**: Usar GitHub Secrets y evitar imprimir variables sensibles. Revisar los logs del pipeline.
 
 - **Riesgo**: El despliegue del backend a staging puede fallar.
-  - **Mitigación**: Probar el despliegue manualmente antes de automatizarlo. Usar docker-compose para simplificar.
+  - **Mitigación**: Probar el despliegue manualmente con `gcloud run deploy` antes de automatizarlo. Cloud Run conserva la revisión anterior para volver atrás.
 
 - **Riesgo**: El pipeline puede bloquear el merge por cobertura.
   - **Mitigación**: Definir un umbral realista (70 % en dominio). Documentar excepciones.

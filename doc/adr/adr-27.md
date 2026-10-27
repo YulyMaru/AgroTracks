@@ -253,16 +253,19 @@
 
     - **Cloudflare (plan gratuito)**:
       - Registrar el dominio en Cloudflare.
+      - Asociar el dominio (por ejemplo `api.<dominio>`) al servicio de Cloud Run del backend (ADR-031).
       - Configurar DNS con proxy habilitado (naranja).
       - Habilitar TLS estricto (Full Strict).
       - Habilitar WAF con reglas gestionadas (OWASP Top 10).
       - Configurar rate limiting básico (10,000 solicitudes por mes).
       - Habilitar mitigación DDoS (automática).
       - Habilitar protección contra bots.
-      - Ocultar la IP del backend.
+      - Añadir con una regla de transformación (Transform Rule) un encabezado secreto a cada solicitud que va al backend (`AGROTRACK_ORIGEN_SECRETO`, ADR-030).
+      - Nota: en Cloud Run no hay una IP de servidor que ocultar, y la dirección `*.run.app` del servicio sigue siendo pública. Ponerla detrás de un balanceador con Cloud Armor tiene costo mensual fijo, por eso en el piloto se usa el encabezado secreto.
     - **Backend (Spring Boot)**:
       - Configurar Spring Security para autenticación JWT (ADR-011).
       - Validar todas las entradas (ADR-002).
+      - Rechazar con 403 las solicitudes a la API que no traigan el encabezado secreto de Cloudflare (excepto en desarrollo local).
       - Implementar CORS restrictivo.
       - Configurar headers de seguridad (HSTS, X-Content-Type-Options, X-Frame-Options).
       - Implementar rate limiting interno como complemento (opcional).
