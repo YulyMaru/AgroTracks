@@ -55,6 +55,6 @@ public final class SincronizacionModelos {
 	 * Cambios del servidor desde la ultima sincronizacion, por tipo de registro. Incluye los
 	 * eliminados ({@code eliminado = true}) para que el celular tambien los quite.
 	 */
-	public record CambiosVista(Instant fechaServidor, Map<TipoRegistro, List<Object>> cambios) {
+	public record CambiosVista(Instant fechaServidor, Map<TipoRegistro, List<?>> cambios) {
 	}
 }

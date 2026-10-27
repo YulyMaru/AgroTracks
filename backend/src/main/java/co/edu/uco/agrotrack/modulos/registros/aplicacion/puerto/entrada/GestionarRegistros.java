@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.CambioVista;
+import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.VistaRegistro;
 import co.edu.uco.agrotrack.modulos.registros.dominio.Entidad;
 
 /**
@@ -15,7 +16,7 @@ import co.edu.uco.agrotrack.modulos.registros.dominio.Entidad;
 public interface GestionarRegistros {
 
 	/** Resultado de un cambio: el registro como quedo y si ya estaba aplicado de antes. */
-	record Resultado(Object registro, int version, boolean yaAplicado) {
+	record Resultado(VistaRegistro registro, int version, boolean yaAplicado) {
 	}
 
 	/** Crear con un id que ya existe no duplica: devuelve el registro guardado (R3). */
@@ -27,10 +28,10 @@ public interface GestionarRegistros {
 	/** Borrado logico (R5). Repetir un borrado ya hecho no es un error. */
 	Resultado eliminar(UUID idUsuario, Entidad entidad, UUID id, int versionBase);
 
-	List<Object> listar(UUID idUsuario, Entidad entidad);
+	List<VistaRegistro> listar(UUID idUsuario, Entidad entidad);
 
 	/** Todo lo que cambio desde una fecha, incluidos los eliminados, para la copia del celular. */
-	List<Object> modificadosDesde(UUID idUsuario, Entidad entidad, Instant desde);
+	List<VistaRegistro> modificadosDesde(UUID idUsuario, Entidad entidad, Instant desde);
 
 	List<CambioVista> historial(UUID idUsuario, Entidad entidad, UUID id);
 }

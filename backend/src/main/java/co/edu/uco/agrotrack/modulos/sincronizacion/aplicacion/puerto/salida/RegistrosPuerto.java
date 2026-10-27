@@ -16,5 +16,9 @@ public interface RegistrosPuerto {
 
 	CambioAplicado aplicar(UUID idUsuario, OperacionPendiente operacion);
 
-	List<Object> modificadosDesde(UUID idUsuario, TipoRegistro tipo, Instant desde);
+	/**
+	 * Registros que cambiaron, tal como los entrega el modulo de registros. La sincronizacion no los
+	 * lee: solo los pasa al celular, por eso son contenido opaco ({@code List<?>}).
+	 */
+	List<?> modificadosDesde(UUID idUsuario, TipoRegistro tipo, Instant desde);
 }

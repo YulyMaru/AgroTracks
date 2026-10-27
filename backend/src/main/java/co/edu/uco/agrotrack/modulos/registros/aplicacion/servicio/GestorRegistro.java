@@ -2,6 +2,7 @@ package co.edu.uco.agrotrack.modulos.registros.aplicacion.servicio;
 
 import java.util.UUID;
 
+import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.VistaRegistro;
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.salida.RepositorioRegistro;
 import co.edu.uco.agrotrack.modulos.registros.dominio.Entidad;
 import co.edu.uco.agrotrack.modulos.registros.dominio.Registro;
@@ -35,5 +36,5 @@ public interface GestorRegistro<E extends Registro, D> {
 	}
 
 	/** Como se ve hacia afuera; tambien es la copia que se guarda en el historial. */
-	Object vista(E registro);
+	VistaRegistro vista(E registro);
 }

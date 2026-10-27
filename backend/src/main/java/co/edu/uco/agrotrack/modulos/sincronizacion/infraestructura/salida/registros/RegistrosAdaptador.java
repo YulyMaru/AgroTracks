@@ -37,7 +37,7 @@ class RegistrosAdaptador implements RegistrosPuerto {
 	}
 
 	@Override
-	public List<Object> modificadosDesde(UUID idUsuario, TipoRegistro tipo, Instant desde) {
+	public List<?> modificadosDesde(UUID idUsuario, TipoRegistro tipo, Instant desde) {
 		return registros.modificadosDesde(idUsuario, entidad(tipo), desde);
 	}
 

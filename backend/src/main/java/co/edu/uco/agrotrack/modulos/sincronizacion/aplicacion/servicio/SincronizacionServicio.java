@@ -138,7 +138,7 @@ public class SincronizacionServicio implements SincronizarCambios {
 	public CambiosVista cambiosDesde(UUID idUsuario, Instant desde) {
 		Instant fechaServidor = Instant.now();
 		Instant inicio = desde != null ? desde : Instant.EPOCH;
-		Map<TipoRegistro, List<Object>> cambios = new EnumMap<>(TipoRegistro.class);
+		Map<TipoRegistro, List<?>> cambios = new EnumMap<>(TipoRegistro.class);
 		for (TipoRegistro tipo : TipoRegistro.values()) {
 			cambios.put(tipo, registros.modificadosDesde(idUsuario, tipo, inicio));
 		}

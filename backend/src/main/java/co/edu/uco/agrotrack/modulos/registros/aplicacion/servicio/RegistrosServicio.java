@@ -12,6 +12,7 @@ import co.edu.uco.agrotrack.compartido.dominio.CodigoError;
 import co.edu.uco.agrotrack.compartido.dominio.ExcepcionAgroTrack;
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.GestionarRegistros;
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.CambioVista;
+import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.VistaRegistro;
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.salida.HistorialRepositorio;
 import co.edu.uco.agrotrack.modulos.registros.dominio.Entidad;
 import co.edu.uco.agrotrack.modulos.registros.dominio.HistorialCambio;
@@ -63,12 +64,12 @@ public class RegistrosServicio implements GestionarRegistros {
 	}
 
 	@Override
-	public List<Object> listar(UUID idUsuario, Entidad entidad) {
+	public List<VistaRegistro> listar(UUID idUsuario, Entidad entidad) {
 		return transacciones.ejecutar(() -> vigentes(gestores.get(entidad), idUsuario));
 	}
 
 	@Override
-	public List<Object> modificadosDesde(UUID idUsuario, Entidad entidad, Instant desde) {
+	public List<VistaRegistro> modificadosDesde(UUID idUsuario, Entidad entidad, Instant desde) {
 		return transacciones.ejecutar(() -> modificados(gestores.get(entidad), idUsuario, desde));
 	}
 
@@ -139,11 +140,11 @@ public class RegistrosServicio implements GestionarRegistros {
 		historial.guardar(HistorialCambio.de(registro, gestor.entidad(), accion, json.escribir(gestor.vista(registro))));
 	}
 
-	private static <E extends Registro> List<Object> vigentes(GestorRegistro<E, ?> gestor, UUID idUsuario) {
+	private static <E extends Registro> List<VistaRegistro> vigentes(GestorRegistro<E, ?> gestor, UUID idUsuario) {
 		return gestor.repositorio().vigentes(idUsuario).stream().map(gestor::vista).toList();
 	}
 
-	private static <E extends Registro> List<Object> modificados(GestorRegistro<E, ?> gestor, UUID idUsuario,
+	private static <E extends Registro> List<VistaRegistro> modificados(GestorRegistro<E, ?> gestor, UUID idUsuario,
 			Instant desde) {
 		return gestor.repositorio().modificadosDesde(idUsuario, desde).stream().map(gestor::vista).toList();
 	}

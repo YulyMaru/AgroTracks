@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.uco.agrotrack.compartido.infraestructura.seguridad.UsuarioAutenticado;
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.GestionarRegistros;
 import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.CambioVista;
-import co.edu.uco.agrotrack.modulos.registros.dominio.Entidad;
+import co.edu.uco.agrotrack.modulos.registros.aplicacion.puerto.entrada.RegistrosVistas.VistaRegistro;
 
 /**
  * Adaptador de entrada: API directa de los registros (con conexion). {@code {tipo}} es fincas,
@@ -44,32 +44,32 @@ class RegistrosController {
 	}
 
 	@GetMapping
-	List<Object> listar(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo) {
-		return registros.listar(UsuarioAutenticado.id(jwt), Entidad.deRuta(tipo));
+	List<VistaRegistro> listar(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo) {
+		return registros.listar(UsuarioAutenticado.id(jwt), RutasRegistros.entidad(tipo));
 	}
 
 	@PostMapping("/{id}")
-	ResponseEntity<Object> crear(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id,
+	ResponseEntity<VistaRegistro> crear(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id,
 			@RequestBody Map<String, Object> datos) {
-		var resultado = registros.crear(UsuarioAutenticado.id(jwt), Entidad.deRuta(tipo), id, datos);
+		var resultado = registros.crear(UsuarioAutenticado.id(jwt), RutasRegistros.entidad(tipo), id, datos);
 		return ResponseEntity.status(resultado.yaAplicado() ? HttpStatus.OK : HttpStatus.CREATED)
 				.body(resultado.registro());
 	}
 
 	@PutMapping("/{id}")
-	Object editar(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id,
+	VistaRegistro editar(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id,
 			@RequestParam int version, @RequestBody Map<String, Object> datos) {
-		return registros.editar(UsuarioAutenticado.id(jwt), Entidad.deRuta(tipo), id, version, datos).registro();
+		return registros.editar(UsuarioAutenticado.id(jwt), RutasRegistros.entidad(tipo), id, version, datos).registro();
 	}
 
 	@DeleteMapping("/{id}")
-	Object eliminar(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id,
+	VistaRegistro eliminar(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id,
 			@RequestParam int version) {
-		return registros.eliminar(UsuarioAutenticado.id(jwt), Entidad.deRuta(tipo), id, version).registro();
+		return registros.eliminar(UsuarioAutenticado.id(jwt), RutasRegistros.entidad(tipo), id, version).registro();
 	}
 
 	@GetMapping("/{id}/historial")
 	List<CambioVista> historial(@AuthenticationPrincipal Jwt jwt, @PathVariable String tipo, @PathVariable UUID id) {
-		return registros.historial(UsuarioAutenticado.id(jwt), Entidad.deRuta(tipo), id);
+		return registros.historial(UsuarioAutenticado.id(jwt), RutasRegistros.entidad(tipo), id);
 	}
 }
