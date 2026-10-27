@@ -10,4 +10,8 @@ interface UsuarioJpaRepositorio extends JpaRepository<UsuarioJpa, UUID> {
 	Optional<UsuarioJpa> findByCorreoIgnoreCase(String correo);
 
 	boolean existsByCorreoIgnoreCase(String correo);
+
+	Optional<UsuarioJpa> findByNombreUsuario(String nombreUsuario);
+
+	boolean existsByNombreUsuario(String nombreUsuario);
 }

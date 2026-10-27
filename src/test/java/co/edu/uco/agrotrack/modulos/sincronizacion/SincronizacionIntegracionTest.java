@@ -62,7 +62,8 @@ class SincronizacionIntegracionTest {
 	void registrarUsuario() throws Exception {
 		hoy = LocalDate.now().toString();
 		String correo = "campesino-" + UUID.randomUUID() + "@agrotrack.test";
-		String cuerpo = json.writeValueAsString(Map.of("correo", correo, "nombre", "Campesino", "clave", "claveSegura123"));
+		String cuerpo = json.writeValueAsString(Map.of("correo", correo, "nombreUsuario",
+				"campesino_" + UUID.randomUUID().toString().substring(0, 8), "nombre", "Campesino", "clave", "claveSegura123"));
 		String respuesta = mvc.perform(post("/api/v1/autenticacion/registro")
 				.contentType(MediaType.APPLICATION_JSON).content(cuerpo))
 				.andExpect(status().isCreated())

@@ -10,7 +10,11 @@ public interface UsuarioRepositorio {
 
 	boolean existeCorreo(String correo);
 
+	boolean existeNombreUsuario(String nombreUsuario);
+
 	Optional<Usuario> buscarPorCorreo(String correo);
+
+	Optional<Usuario> buscarPorNombreUsuario(String nombreUsuario);
 
 	Optional<Usuario> buscarPorId(UUID id);
 

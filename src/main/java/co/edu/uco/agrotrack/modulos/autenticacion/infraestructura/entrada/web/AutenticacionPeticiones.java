@@ -12,11 +12,13 @@ final class AutenticacionPeticiones {
 
 	record RegistroPeticion(
 			@NotBlank @Email @Size(max = 150) String correo,
+			@NotBlank @Size(min = 3, max = 30) String nombreUsuario,
 			@NotBlank @Size(max = 120) String nombre,
 			@NotBlank @Size(min = 8, max = 72, message = "La clave debe tener entre 8 y 72 caracteres") String clave) {
 	}
 
-	record InicioSesionPeticion(@NotBlank @Email String correo, @NotBlank String clave) {
+	/** {@code usuario}: el nombre de usuario o el correo. */
+	record InicioSesionPeticion(@NotBlank @Size(max = 150) String usuario, @NotBlank String clave) {
 	}
 
 	record RenovacionPeticion(@NotBlank String refreshToken) {

@@ -14,6 +14,9 @@ class UsuarioJpa extends EntidadJpa {
 	@Column(nullable = false, unique = true, length = 150)
 	private String correo;
 
+	@Column(name = "nombre_usuario", nullable = false, unique = true, length = 150)
+	private String nombreUsuario;
+
 	@Column(nullable = false, length = 120)
 	private String nombre;
 
@@ -33,12 +36,13 @@ class UsuarioJpa extends EntidadJpa {
 
 	void copiarDe(Usuario usuario) {
 		correo = usuario.getCorreo();
+		nombreUsuario = usuario.getNombreUsuario();
 		nombre = usuario.getNombre();
 		claveHash = usuario.getClaveHash();
 		activo = usuario.isActivo();
 	}
 
 	Usuario aDominio() {
-		return new Usuario(getId(), correo, nombre, claveHash, activo);
+		return new Usuario(getId(), correo, nombreUsuario, nombre, claveHash, activo);
 	}
 }

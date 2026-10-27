@@ -28,12 +28,12 @@ class AutenticacionController {
 	@PostMapping("/registro")
 	@ResponseStatus(HttpStatus.CREATED)
 	SesionEmitida registrar(@Valid @RequestBody RegistroPeticion peticion) {
-		return sesiones.registrar(peticion.correo(), peticion.nombre(), peticion.clave());
+		return sesiones.registrar(peticion.correo(), peticion.nombreUsuario(), peticion.nombre(), peticion.clave());
 	}
 
 	@PostMapping("/inicio-sesion")
 	SesionEmitida iniciarSesion(@Valid @RequestBody InicioSesionPeticion peticion) {
-		return sesiones.iniciarSesion(peticion.correo(), peticion.clave());
+		return sesiones.iniciarSesion(peticion.usuario(), peticion.clave());
 	}
 
 	@PostMapping("/renovacion")

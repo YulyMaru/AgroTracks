@@ -24,6 +24,16 @@ class UsuarioAdaptadorJpa implements UsuarioRepositorio {
 	}
 
 	@Override
+	public boolean existeNombreUsuario(String nombreUsuario) {
+		return repositorio.existsByNombreUsuario(nombreUsuario);
+	}
+
+	@Override
+	public Optional<Usuario> buscarPorNombreUsuario(String nombreUsuario) {
+		return repositorio.findByNombreUsuario(nombreUsuario).map(UsuarioJpa::aDominio);
+	}
+
+	@Override
 	public Optional<Usuario> buscarPorCorreo(String correo) {
 		return repositorio.findByCorreoIgnoreCase(correo).map(UsuarioJpa::aDominio);
 	}

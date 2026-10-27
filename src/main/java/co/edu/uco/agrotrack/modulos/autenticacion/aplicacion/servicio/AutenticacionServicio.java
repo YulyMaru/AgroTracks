@@ -48,24 +48,32 @@ public class AutenticacionServicio implements GestionarSesiones {
 	}
 
 	@Override
-	public SesionEmitida registrar(String correo, String nombre, String clave) {
+	public SesionEmitida registrar(String correo, String nombreUsuario, String nombre, String clave) {
+		String usuarioNormalizado = Usuario.normalizar(nombreUsuario);
 		return transacciones.ejecutar(() -> {
 			if (usuarios.existeCorreo(correo)) {
 				throw new ExcepcionAgroTrack(CodigoError.CONFLICTO, "Ya existe una cuenta con ese correo.");
 			}
-			Usuario usuario = usuarios.guardar(Usuario.nuevo(correo, nombre, cifrador.cifrar(clave)));
+			if (usuarios.existeNombreUsuario(usuarioNormalizado)) {
+				throw new ExcepcionAgroTrack(CodigoError.CONFLICTO,
+						"Ese nombre de usuario ya lo tiene otra persona. Pruebe con otro, por ejemplo agregando un número.");
+			}
+			Usuario usuario = usuarios.guardar(Usuario.nuevo(correo, usuarioNormalizado, nombre, cifrador.cifrar(clave)));
 			return emitir(usuario);
 		});
 	}
 
 	@Override
-	public SesionEmitida iniciarSesion(String correo, String clave) {
+	public SesionEmitida iniciarSesion(String usuarioOCorreo, String clave) {
+		String buscado = usuarioOCorreo.trim();
 		return transacciones.ejecutar(() -> {
-			Usuario usuario = usuarios.buscarPorCorreo(correo)
+			var encontrado = Usuario.esCorreo(buscado) ? usuarios.buscarPorCorreo(buscado)
+					: usuarios.buscarPorNombreUsuario(buscado.toLowerCase(java.util.Locale.ROOT));
+			Usuario usuario = encontrado
 					.filter(Usuario::isActivo)
 					.filter(u -> cifrador.coincide(clave, u.getClaveHash()))
 					.orElseThrow(() -> new ExcepcionAgroTrack(CodigoError.AUTENTICACION_REQUERIDA,
-							"Correo o clave incorrectos."));
+							"Usuario o clave incorrectos."));
 			return emitir(usuario);
 		});
 	}
