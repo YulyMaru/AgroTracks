@@ -110,7 +110,7 @@
     - **Análisis de costos**:
       - **Resumen**: Costo de implementación medio-alto, pero el mayor retorno en rendimiento y satisfacción del usuario.
       - **Ejemplos**:
-        - **Licencias**: Redis es open source; se ejecuta como contenedor en el servidor del backend (ADR-031), sin costo de licencia.
+        - **Licencias**: Spring Cache en memoria no tiene costo durante el piloto; Memorystore (Redis gestionado en Google Cloud, ADR-031) tiene un costo mensual fijo y se incorpora solo si se necesita caché compartida.
         - **Capacitación**: el equipo debe aprender a configurar caché e invalidación, y a optimizar consultas SQL.
         - **Operación**: requiere monitoreo de la caché (hit ratio, memoria usada) y de los tiempos de respuesta.
         - **Medición**: se pueden medir tiempos con y sin caché, y el porcentaje de consultas servidas desde caché.
@@ -197,7 +197,7 @@
     - **Implementación de paginación** en todas las consultas de listado, con un límite de 20 a 50 registros por página.
     - **Cálculo de agregaciones en el servidor**: todas las sumas de ingresos/gastos deben calcularse en PostgreSQL mediante `SUM` y `GROUP BY`, evitando transferir datos crudos al cliente.
     - **Caché de resúmenes económicos**:
-      - Implementar la caché con Spring Cache sobre Redis (ADR-013, ADR-016).
+      - Implementar la caché con Spring Cache. Durante el piloto, en memoria de cada instancia de Cloud Run (ADR-031); si el backend crece a varias instancias con caché compartida, sobre Memorystore (Redis gestionado de Google Cloud), sin cambiar el código de negocio (ADR-013, ADR-016).
       - Para períodos comunes (mes actual, mes anterior), almacenar el resultado en caché con TTL de 5 minutos.
       - Invalidar la caché automáticamente al crear, modificar o eliminar una transacción en el período cacheado.
       - En el cliente, mostrar un indicador de carga y usar caché local (ADR-006) para escenarios offline.

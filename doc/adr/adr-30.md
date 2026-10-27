@@ -1,6 +1,8 @@
 # ADR-030: Gestionar secretos de forma segura en backend y CI/CD
 
-- **Título**: Usar GitHub Secrets y variables de entorno del servidor para gestionar secretos del backend y del pipeline de CI/CD, descartando secretos hardcodeados, archivos `.env` versionados y servicios de Key Vault de pago.
+- **Título**: Usar GitHub Secrets para los secretos del pipeline de CI/CD y Secret Manager de Google Cloud para los secretos del backend, descartando secretos hardcodeados, archivos `.env` versionados y gestores de secretos de otros proveedores o autoalojados.
+
+- **Historial**: La primera versión de este ADR guardaba los secretos del backend en un archivo `.env` del servidor propio. Al desplegar el backend en Cloud Run (ADR-031) ya no hay servidor, por lo que los secretos del backend pasan a Secret Manager.
 
 - **Estado**: Propuesto.
 
@@ -28,8 +30,8 @@
   - **Enumerar todos los candidatos y opciones relacionadas**:
 
     1. **Secretos hardcodeados o en archivos `.env` versionados**: los secretos se incluyen en el código o en archivos `.env` que se suben al repositorio.
-    2. **GitHub Secrets + variables de entorno del servidor**: los secretos del pipeline se gestionan en GitHub Secrets; los secretos del backend en producción se inyectan como variables de entorno del servidor.
-    3. **Key Vault gestionado (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault)**: servicio dedicado para almacenar, rotar y auditar secretos, con integración con el backend y el pipeline.
+    2. **GitHub Secrets + Secret Manager de Google Cloud**: los secretos del pipeline se gestionan en GitHub Secrets; los secretos del backend se guardan en Secret Manager y Cloud Run los entrega al backend como variables de entorno.
+    3. **Gestor de secretos de otro proveedor o autoalojado (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault)**: servicio dedicado para almacenar, rotar y auditar secretos, fuera de Google Cloud.
 
 - **Investigación y análisis de cada candidato**:
 
@@ -71,65 +73,59 @@
       - "Hardcodear secretos es la peor práctica posible."
       - "Un secreto en el repositorio es un secreto comprometido."
 
-  - **2. GitHub Secrets + variables de entorno del servidor**:
+
+  - **2. GitHub Secrets + Secret Manager de Google Cloud**:
 
     - **Cumple/no cumple con los criterios y por qué**:
 
-      - **Resumen**: Cumple plenamente con todos los criterios. Es la opción más equilibrada para el presupuesto y el contexto de AgroTrack.
+      - **Resumen**: Cumple plenamente con todos los criterios. Es la opción más equilibrada para el presupuesto y para el despliegue en Google Cloud (ADR-031).
 
       - **Detalles**:
-        - **GitHub Secrets** para el pipeline de CI/CD: almacena secretos cifrados, accesibles solo por workflows autorizados.
-        - **Variables de entorno del servidor** para el backend en producción: los secretos se inyectan al arrancar la aplicación (ej. `DB_PASSWORD`, `JWT_SECRET`).
-        - Los secretos nunca están en el código ni en archivos versionados.
-        - GitHub Secrets no expone los secretos en los logs (los enmascara).
-        - Permite separar secretos por entorno (usando environments de GitHub).
-        - Rotación manual: cambiar el secreto en GitHub Secrets y en el servidor.
-        - Trazabilidad: GitHub registra quién cambió un secreto y cuándo.
-        - Acceso restringido: solo administradores del repositorio pueden ver/gestionar secretos.
-        - Costo cero.
+        - **GitHub Secrets** para el pipeline de CI/CD: almacena secretos cifrados, accesibles solo por workflows autorizados, y los enmascara en los logs.
+        - **Secret Manager** para el backend: cada secreto (por ejemplo `AGROTRACK_DB_CLAVE`, `AGROTRACK_JWT_SECRETO`) se guarda cifrado y Cloud Run lo entrega al backend como variable de entorno al arrancar. El código del backend no cambia: sigue leyendo variables de entorno.
+        - Los secretos nunca están en el código ni en archivos versionados, y no hay archivos `.env` en ningún servidor.
+        - Separación por entorno: secretos distintos para staging y producción (por ejemplo `agrotrack-staging-db-clave` y `agrotrack-prod-db-clave`).
+        - Rotación: se crea una versión nueva del secreto y se despliega una revisión nueva de Cloud Run; la versión anterior queda disponible para volver atrás.
+        - Trazabilidad: Cloud Audit Logs registra quién creó, leyó o cambió cada secreto y cuándo.
+        - Acceso restringido con IAM: solo la cuenta de servicio del backend puede leer los secretos.
+        - GitHub Actions se autentica en Google Cloud con Workload Identity Federation, por lo que no hace falta guardar una llave JSON de Google en GitHub.
 
     - **Análisis de costos**:
 
-      - **Resumen**: Costo cero.
+      - **Resumen**: Costo prácticamente nulo.
 
       - **Ejemplos**:
-        - **Licencias**: GitHub Secrets y variables de entorno son gratuitos.
-        - **Capacitación**: mínima; el equipo debe aprender a configurar secretos en GitHub.
+        - **Licencias**: GitHub Secrets es gratuito; Secret Manager cobra por versión activa de cada secreto y por accesos, centavos de dólar al mes para el número de secretos de AgroTrack.
+        - **Capacitación**: mínima; configurar secretos en GitHub y en la consola de Google Cloud.
         - **Operación**: rotación manual documentada.
-        - **Medición**: GitHub registra cambios en secretos.
+        - **Medición**: GitHub y Cloud Audit Logs registran los cambios.
 
     - **Análisis FODA**:
 
       - **Fortalezas**:
-        - Sin costo.
-        - Integración nativa con GitHub Actions (ADR-025).
-        - Secretos enmascarados en logs.
-        - Separación por entorno.
-        - Trazabilidad de cambios.
-        - Fácil de implementar.
+        - Costo casi nulo.
+        - Sin servidores ni archivos `.env` que proteger.
+        - Integración nativa con Cloud Run y con GitHub Actions (ADR-025).
+        - Auditoría de accesos y control con IAM.
+        - Versionado de secretos.
       - **Debilidades**:
         - Rotación manual.
-        - Sin auditoría avanzada.
-        - Sin rotación automática.
-        - El backend en producción depende de variables de entorno del servidor.
+        - Dos lugares donde hay secretos (GitHub para el pipeline, Google Cloud para el backend).
       - **Oportunidades**:
-        - Migrar a un Key Vault gestionado si el proyecto crece.
-        - Automatizar la rotación con scripts.
+        - Automatizar la rotación si el proyecto crece.
       - **Amenazas**:
-        - Si un administrador del repositorio se compromete, los secretos quedan expuestos.
-        - Si el servidor se compromete, las variables de entorno quedan expuestas.
+        - Si una cuenta con permisos de administrador en GitHub o en Google Cloud se compromete, los secretos quedan expuestos; se mitiga con verificación en dos pasos y permisos mínimos.
 
     - **Opiniones y comentarios internos**:
 
       - "GitHub Secrets es el estándar para CI/CD en GitHub."
-      - "Las variables de entorno del servidor son suficientes para el backend en producción."
-      - "Podemos migrar a un Key Vault si el proyecto crece."
+      - "Si el backend corre en Google Cloud, sus secretos deben estar en Google Cloud."
 
-  - **3. Key Vault gestionado (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault)**:
+  - **3. Gestor de secretos de otro proveedor o autoalojado (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault)**:
 
     - **Cumple/no cumple con los criterios y por qué**:
 
-      - **Resumen**: Cumple técnicamente, pero no con los criterios de costo y simplicidad.
+      - **Resumen**: Cumple técnicamente, pero no con los criterios de costo y simplicidad, y no tiene sentido si el backend se ejecuta en Google Cloud.
 
       - **Detalles**:
         - **AWS Secrets Manager**: ~$0.40 por secreto por mes + $0.05 por 10,000 llamadas.
@@ -139,7 +135,7 @@
         - Requieren integrar el backend con el servicio (SDK, configuración).
         - Requieren configurar el pipeline para leer secretos del vault.
         - Añaden complejidad operativa.
-        - No aportan beneficios significativos sobre GitHub Secrets para el volumen de AgroTrack.
+        - Obligan a conectar Google Cloud con otro proveedor, o a administrar un servidor de Vault.
 
     - **Análisis de costos**:
 
@@ -172,7 +168,7 @@
     - **Opiniones y comentarios internos**:
 
       - "Un Key Vault gestionado es sobre-ingeniería para el piloto."
-      - "GitHub Secrets es suficiente para nuestra escala."
+      - "Usar el gestor de secretos de otro proveedor añade una dependencia sin beneficio."
 
 - **Opiniones y comentarios externos**:
 
@@ -180,7 +176,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-030 — Validará que GitHub Secrets y variables de entorno del servidor gestionan los secretos sin exponerlos — Propuesto.
+    - SPIKE-030 — Validará que el backend en Cloud Run lee sus secretos desde Secret Manager y que el pipeline usa GitHub Secrets sin exponerlos — Propuesto.
     - SPIKE-025 — Validará que el pipeline lee los secretos de GitHub Secrets sin exponerlos en logs — Propuesto.
     - SPIKE-011 — Validará la autenticación con JWT cuya clave de firma se gestiona como secreto; la gestión de la clave se valida en SPIKE-030 — Propuesto.
     - SPIKE-027 — Validará que el API Token de Cloudflare se gestiona en GitHub Secrets — Propuesto.
@@ -189,8 +185,8 @@
 
     - Secretos hardcodeados — descartados por inseguros.
     - Archivos `.env` versionados — descartados por exponer secretos en el repositorio.
-    - AWS Secrets Manager — descartado por costo recurrente.
-    - Azure Key Vault — descartado por costo recurrente.
+    - Variables de entorno en un archivo `.env` de un servidor propio — descartado al no haber servidor (ADR-031); era la propuesta de la primera versión de este ADR.
+    - AWS Secrets Manager y Azure Key Vault — descartados por ser de otro proveedor de nube y por costo recurrente.
     - HashiCorp Vault autoalojado — descartado por complejidad de configuración.
 
   - **¿Qué estás creando?**:
@@ -208,21 +204,22 @@
 
   - **¿Por qué elegiste al ganador?**:
 
-    Se seleccionó **GitHub Secrets + variables de entorno del servidor** porque:
-    - No tiene costo.
+    Se seleccionó **GitHub Secrets + Secret Manager de Google Cloud** porque:
+    - Su costo es prácticamente nulo.
+    - Es el servicio nativo de Google Cloud, donde se ejecuta el backend (ADR-031).
     - Se integra nativamente con GitHub Actions (ADR-025).
     - Los secretos se enmascaran en los logs.
     - Permite separar secretos por entorno.
     - Tiene trazabilidad de cambios.
     - Es fácil de implementar y mantener.
     - Es suficiente para el volumen y la escala de AgroTrack.
-    - Se puede migrar a un Key Vault gestionado si el proyecto crece.
+    - No requiere servidores ni archivos `.env`.
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que GitHub Secrets y las variables de entorno del servidor gestionen los secretos sin exponerlos, y que el pipeline los lea sin problemas.
+    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que GitHub Secrets y Secret Manager gestionen los secretos sin exponerlos, y que el pipeline los lea sin problemas.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de los secretos.
-    - **¿Qué tipos de integraciones están involucradas?**: GitHub Secrets (CI/CD), variables de entorno del servidor (backend Spring Boot), GitHub Actions (ADR-025), Spring Boot (ADR-016) y Cloudflare API Token (ADR-027).
+    - **¿Qué tipos de integraciones están involucradas?**: GitHub Secrets (CI/CD), Secret Manager y Cloud Run (backend Spring Boot), GitHub Actions (ADR-025), Spring Boot (ADR-016) y Cloudflare API Token (ADR-027).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Nunca hardcodear secretos. Configurar GitHub Secrets desde el día 1. Separar secretos por entorno (dev, staging, prod). Documentar el procedimiento de rotación. Nunca imprimir secretos en logs. Usar el enmascaramiento automático de GitHub Actions. Migrar a un Key Vault si el proyecto crece mucho.
 
   - **Anécdotas**:
@@ -234,44 +231,46 @@
 
   - **Resumen**:
 
-    Se recomienda implementar **GitHub Secrets + variables de entorno del servidor** como estrategia de gestión de secretos, cumpliendo con los escenarios ESC-CAL-SEG-01 y ESC-CAL-ESC-01.
+    Se recomienda implementar **GitHub Secrets (pipeline) + Secret Manager de Google Cloud (backend)** como estrategia de gestión de secretos, cumpliendo con los escenarios ESC-CAL-SEG-01 y ESC-CAL-ESC-01.
 
   - **Detalles**:
 
-    Esta alternativa ofrece el mejor equilibrio entre seguridad, costo, simplicidad y mantenibilidad.
+    Esta alternativa ofrece el mejor equilibrio entre seguridad, costo, simplicidad y mantenibilidad para un backend desplegado en Google Cloud (ADR-031).
 
     La implementación deberá considerar como mínimo:
 
     - **GitHub Secrets (CI/CD)**:
       - Configurar los secretos en la configuración del repositorio.
-      - Usar environments de GitHub para separar dev, staging y prod.
+      - Usar environments de GitHub para separar staging y prod (con aprobación manual para prod).
       - Referenciar los secretos en los workflows con `${{ secrets.NOMBRE }}`.
       - Verificar que los secretos se enmascaran en los logs.
-    - **Variables de entorno del servidor (backend en producción)**:
-      - Inyectar los secretos como variables de entorno al arrancar la aplicación.
-      - Usar un archivo `.env` **no versionado** en el servidor (incluido en `.gitignore`).
-      - El mismo archivo `.env` alimenta los contenedores definidos en `docker-compose` (ADR-031).
-      - Configurar Spring Boot para leer las variables de entorno.
-      - Documentar el procedimiento de despliegue con las variables.
-    - **Secretos a gestionar**:
-      - `DB_PASSWORD`: contraseña de PostgreSQL.
-      - `JWT_SECRET`: clave para firmar tokens JWT.
-      - `JWT_REFRESH_SECRET`: clave para refresh tokens.
-      - `FIREBASE_SERVICE_ACCOUNT`: credencial (JSON) de la cuenta de servicio que usa Firebase Admin SDK para enviar notificaciones push (ADR-028).
-      - `CLOUDFLARE_API_TOKEN`: token de API de Cloudflare.
-      - `DEPLOY_SSH_KEY`: clave SSH con la que GitHub Actions despliega en el servidor (ADR-031).
-      - `GRAFANA_PASSWORD`: contraseña de administrador de Grafana (ADR-021).
-      - `REDIS_PASSWORD`: contraseña de Redis (ADR-013).
+    - **Secret Manager (backend en Cloud Run)**:
+      - Crear un secreto por valor y por entorno (staging y prod).
+      - Entregar los secretos al backend como variables de entorno al desplegar en Cloud Run (`--set-secrets`).
+      - Dar permiso de lectura (`Secret Manager Secret Accessor`) solo a la cuenta de servicio del backend.
+      - En desarrollo local los secretos siguen siendo variables de entorno de cada persona; nunca se versiona un archivo `.env` (incluirlo en `.gitignore`).
+    - **Secretos a gestionar** (los nombres coinciden con los que ya lee el backend):
+      - En Secret Manager:
+        - `AGROTRACK_DB_CLAVE`: contraseña del usuario de PostgreSQL en Cloud SQL.
+        - `AGROTRACK_JWT_SECRETO`: clave para firmar los access tokens JWT (mínimo 32 caracteres). Los refresh tokens son valores aleatorios guardados como hash en la base de datos, por lo que no necesitan una clave propia.
+        - `AGROTRACK_ORIGEN_SECRETO`: valor del encabezado que Cloudflare añade a cada solicitud para que el backend acepte solo tráfico que pasó por Cloudflare (ADR-027).
+        - `FIREBASE_SERVICE_ACCOUNT`: credencial (JSON) de la cuenta de servicio que usa Firebase Admin SDK para enviar notificaciones push (ADR-028).
+      - En GitHub Secrets:
+        - `GCP_WORKLOAD_IDENTITY_PROVIDER` y `GCP_CUENTA_DESPLIEGUE`: identifican cómo se autentica el pipeline en Google Cloud (no son llaves, pero se guardan como secretos para no publicarlos).
+        - `FIREBASE_APP_DISTRIBUTION`: credencial para subir el APK a Firebase App Distribution (ADR-025).
+        - `CLOUDFLARE_API_TOKEN`: token de API de Cloudflare (ADR-027).
+      - Ya no se necesitan `DEPLOY_SSH_KEY`, `REDIS_PASSWORD` ni `GRAFANA_PASSWORD`: no hay servidor por SSH, ni Redis, ni Grafana (ADR-031, ADR-021).
     - **Rotación**:
       - Documentar el procedimiento de rotación por secreto.
       - Rotar secretos periódicamente (ej. cada 6 meses).
       - Rotar inmediatamente si se sospecha compromiso.
     - **Acceso**:
       - Solo administradores del repositorio pueden gestionar GitHub Secrets.
-      - Solo administradores del servidor pueden acceder a las variables de entorno.
+      - Solo administradores del proyecto de Google Cloud pueden crear o cambiar secretos; solo la cuenta de servicio del backend puede leerlos.
+      - Verificación en dos pasos obligatoria en GitHub y en Google Cloud.
     - **Pruebas**:
       - Verificar que los secretos se enmascaran en los logs del pipeline.
-      - Verificar que el backend lee las variables de entorno correctamente.
+      - Verificar que el backend lee los secretos correctamente desde Secret Manager.
       - Verificar que la rotación de un secreto no afecta el servicio.
       - Verificar que no hay secretos en el código ni en archivos versionados.
     - **Documentación**:
@@ -279,8 +278,5 @@
       - Procedimiento de configuración inicial.
       - Procedimiento de rotación.
       - Procedimiento de recuperación ante fuga.
-    - **Evolución futura**:
-      - Si el proyecto crece mucho, migrar a un Key Vault gestionado (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault).
-      - Considerar rotación automática con scripts.
 
-    Se descartan los secretos hardcodeados o en archivos `.env` versionados por inseguros, y los Key Vaults gestionados por costo y complejidad. GitHub Secrets + variables de entorno del servidor es la opción que garantiza seguridad, simplicidad y costo cero para AgroTrack.
+    Se descartan los secretos hardcodeados o en archivos `.env` versionados por inseguros, y los gestores de secretos de otros proveedores o autoalojados por costo y complejidad. GitHub Secrets + Secret Manager es la opción que garantiza seguridad, simplicidad y un costo casi nulo para AgroTrack.

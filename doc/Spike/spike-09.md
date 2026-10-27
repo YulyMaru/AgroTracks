@@ -199,7 +199,7 @@ El Spike se considerará **RECHAZADO** si:
 ## 9. Entorno técnico del spike
 
 - **Base de datos**: PostgreSQL 15+.
-- **Backend**: Spring Boot 3 + Java 17 (ADR-016) con consultas optimizadas.
+- **Backend**: Spring Boot 4.1 + Java 27 (ADR-016) con consultas optimizadas.
 - **Caché**: Redis en un contenedor Docker local, mediante Spring Cache (ADR-013, ADR-016).
 - **Datos de prueba**: script de generación de 10,000 transacciones, 500 fincas, 2,000 lotes.
 - **Medición**: `EXPLAIN ANALYZE`, logs de tiempo, métricas de hit ratio.

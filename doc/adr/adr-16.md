@@ -1,6 +1,6 @@
-# ADR-016: Usar Spring Boot 3 con Java 17 como stack del backend
+# ADR-016: Usar Spring Boot 4.1 con Java 27 como stack del backend
 
-- **Título**: Usar Spring Boot 3 con Java 17, PostgreSQL, Flyway, Spring Security, JWT y Spring Data JPA como stack tecnológico del backend, descartando Node.js/NestJS, Django y .NET Core.
+- **Título**: Usar Spring Boot 4.1 con Java 27, PostgreSQL, Flyway, Spring Security, JWT y Spring Data JPA como stack tecnológico del backend, descartando Node.js/NestJS, Django y .NET Core.
 
 - **Estado**: Propuesto.
 
@@ -26,7 +26,7 @@
 
   - **Enumerar todos los candidatos y opciones relacionadas**:
 
-    1. **Spring Boot 3 + Java 17**: framework maduro con inyección de dependencias, Spring Data JPA, Spring Security, SpringDoc, Flyway y ecosistema empresarial.
+    1. **Spring Boot 4.1 + Java 27**: framework maduro con inyección de dependencias, Spring Data JPA, Spring Security, SpringDoc, Flyway y ecosistema empresarial.
     2. **Node.js + NestJS + TypeScript**: framework progresivo con arquitectura modular, TypeORM/Prisma, Passport JWT y documentación Swagger.
     3. **Django + Python**: framework con ORM, migraciones, autenticación y panel administrativo integrados.
     4. **.NET Core + C#**: framework multiplataforma con Entity Framework Core, ASP.NET Identity y ecosistema Microsoft.
@@ -35,7 +35,7 @@
 
   - **Resumen**: Se investigaron patrones de backend para aplicaciones móviles offline-first con dominio relacional, considerando transacciones ACID, seguridad JWT, migraciones versionadas, documentación OpenAPI y disponibilidad de talento en el contexto de AgroTrack.
 
-  - **1. Spring Boot 3 + Java 17**:
+  - **1. Spring Boot 4.1 + Java 27**:
 
     - **Cumple/no cumple con los criterios y por qué**:
 
@@ -233,7 +233,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-016 — Validará que Spring Boot 3 con PostgreSQL, Flyway, Spring Security y JWT cubre todos los requisitos del backend — Propuesto.
+    - SPIKE-016 — Validará que Spring Boot 4.1 con PostgreSQL, Flyway, Spring Security y JWT cubre todos los requisitos del backend — Propuesto.
     - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple los tiempos definidos — Propuesto.
     - SPIKE-011 — Validará en la app móvil el manejo de sesión con JWT (401, refresco y redirección) contra un backend simulado; la protección de endpoints con Spring Security se valida en SPIKE-016 — Propuesto.
     - SPIKE-015 — Validará que los endpoints REST se documentan con OpenAPI — Propuesto.
@@ -260,7 +260,7 @@
 
   - **¿Por qué elegiste al ganador?**:
 
-    Se seleccionó **Spring Boot 3 + Java 17** porque:
+    Se seleccionó **Spring Boot 4.1 + Java 27** porque:
     - Es el stack más maduro para aplicaciones empresariales con transacciones ACID.
     - Spring Security ofrece seguridad robusta y configurable.
     - Flyway, SpringDoc, Spring Data JPA y Spring Cache cubren todas las necesidades.
@@ -272,7 +272,7 @@
 
   - **¿Qué está pasando desde entonces?**:
 
-    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que Spring Boot 3 con PostgreSQL, Flyway, Spring Security y JWT cubra todos los requisitos funcionales y no funcionales del backend.
+    - **¿Cómo se desempeña el ganador?**: Pendiente de ejecución del spike. Se espera que Spring Boot 4.1 con PostgreSQL, Flyway, Spring Security y JWT cubra todos los requisitos funcionales y no funcionales del backend.
     - **¿Qué porcentaje del tráfico de usuarios de producción fluye a través del ganador?**: El 100 % de las operaciones del backend.
     - **¿Qué tipos de integraciones están involucradas?**: PostgreSQL (base de datos), Flyway (migraciones), Spring Security + JWT (autenticación), SpringDoc (OpenAPI), Redis (caché), Spring Data JPA (persistencia), Actuator y Micrometer (monitoreo) y el cliente móvil React Native (consumo REST).
     - **Sabiendo lo que sabes ahora, ¿qué aconsejarías a las personas que hicieran de manera diferente?**: Definir la estructura modular por dominio desde el día 1 (fincas, cultivos, transacciones, sincronización, usuarios). Usar Flyway desde el inicio. Configurar Spring Security y JWT antes de implementar la primera funcionalidad. Aprovechar Spring Boot Actuator para monitoreo. Escribir pruebas con Testcontainers para validar PostgreSQL real.
@@ -286,7 +286,7 @@
 
   - **Resumen**:
 
-    Se recomienda implementar **Spring Boot 3 + Java 17** con **PostgreSQL 15+**, **Flyway**, **Spring Security + JWT**, **Spring Data JPA**, **SpringDoc OpenAPI** y **Redis (caché)** como stack del backend, cumpliendo con los escenarios ESC-CAL-CF-03, ESC-CAL-CF-04, ESC-CAL-CF-05, ESC-CAL-CF-08, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
+    Se recomienda implementar **Spring Boot 4.1 + Java 27** con **PostgreSQL 15+**, **Flyway**, **Spring Security + JWT**, **Spring Data JPA**, **SpringDoc OpenAPI** y **Redis (caché)** como stack del backend, cumpliendo con los escenarios ESC-CAL-CF-03, ESC-CAL-CF-04, ESC-CAL-CF-05, ESC-CAL-CF-08, ESC-CAL-RN-02, ESC-CAL-RN-04, ESC-CAL-SEG-01, ESC-CAL-ESC-01 y ESC-CAL-INT-03.
 
   - **Detalles**:
 
@@ -294,13 +294,13 @@
 
     La implementación deberá considerar como mínimo:
 
-    - **Framework**: Spring Boot 3 sobre Java 17 (LTS).
+    - **Framework**: Spring Boot 4.1 sobre Java 27.
     - **Build**: Maven (o Gradle).
     - **Persistencia**: Spring Data JPA + Hibernate sobre PostgreSQL 15+.
     - **Migraciones**: Flyway para versionar el esquema.
     - **Seguridad**: Spring Security + JWT con access token y refresh token.
     - **Documentación**: SpringDoc OpenAPI (Swagger UI).
-    - **Caché**: Spring Cache + Redis.
+    - **Caché**: Spring Cache, en memoria durante el piloto y sobre Redis (Memorystore) si se necesita caché compartida (ADR-009, ADR-031).
     - **Validación**: reglas de formularios con el esquema JSON compartido (ADR-002) mediante `json-schema-validator`; Jakarta Validation (Bean Validation) solo para la estructura de los DTO.
     - **Manejo de errores**: `@ControllerAdvice` con respuestas estructuradas (`codigo`, `mensaje`, `detalles`).
     - **Idempotencia**: verificación de `idLocal` en endpoints de sincronización.
@@ -308,4 +308,4 @@
     - **Pruebas**: JUnit 5, Mockito, Spring Boot Test y Testcontainers.
     - **Estructura modular**: paquetes por dominio (fincas, cultivos, transacciones, sincronización, usuarios) dentro de un monolito modular (ADR-018).
 
-    Se descarta Node.js/NestJS por menor robustez transaccional y tipificación débil en runtime, Django por rendimiento inferior y tipificación dinámica, y .NET Core por menor ecosistema open source y disponibilidad de talento. Spring Boot 3 es la opción que garantiza robustez, seguridad y mantenibilidad en AgroTrack.
+    Se descarta Node.js/NestJS por menor robustez transaccional y tipificación débil en runtime, Django por rendimiento inferior y tipificación dinámica, y .NET Core por menor ecosistema open source y disponibilidad de talento. Spring Boot 4.1 es la opción que garantiza robustez, seguridad y mantenibilidad en AgroTrack.

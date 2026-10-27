@@ -13,9 +13,9 @@
     - **Automatización**: cada PR a la rama principal debe disparar la compilación y las pruebas automáticamente.
     - **Feedback rápido**: el pipeline debe ejecutarse en menos de 15 minutos para no ralentizar el desarrollo.
     - **Calidad**: el pipeline debe bloquear el merge si las pruebas fallan o si la cobertura baja del umbral (ADR-020).
-    - **Artefactos**: cada build debe generar artefactos (JAR del backend, APK del frontend) versionados y descargables.
+    - **Artefactos**: cada build debe generar artefactos versionados (imagen de contenedor del backend en Artifact Registry, APK del frontend descargable).
     - **Distribución**: los APK de prueba deben distribuirse a testers mediante Firebase App Distribution.
-    - **Despliegue del backend**: el backend debe desplegarse automáticamente a un entorno de staging tras merge a `main`.
+    - **Despliegue del backend**: el backend debe desplegarse automáticamente a un entorno de staging en Cloud Run (ADR-031) tras merge a `main`.
     - **Seguridad**: las credenciales y secretos deben gestionarse con GitHub Secrets, nunca en el código.
     - **Trazabilidad**: cada build debe estar asociado a un commit, una rama y un autor.
     - **Costo de implementación y operación**: la solución debe ser viable con el presupuesto de AgroTrack (preferiblemente gratuito o de bajo costo).
@@ -255,19 +255,23 @@
       - Bloquear merge si las pruebas fallan o la cobertura baja del umbral (70 % en dominio).
       - Tiempo máximo del pipeline: 15 minutos.
     - **Pipeline de merge a `main`**:
-      - Compilar el JAR del backend con Maven.
-      - Compilar el APK de release del frontend.
-      - Publicar artefactos versionados en GitHub Releases.
-      - Desplegar el backend a staging en el servidor propio con Docker + docker-compose por SSH (ADR-031).
+      - Compilar el JAR del backend con Maven y construir su imagen de contenedor.
+      - Autenticarse en Google Cloud con Workload Identity Federation (sin llaves JSON guardadas en GitHub).
+      - Subir la imagen a Artifact Registry, etiquetada con el commit.
+      - Desplegar una revisión nueva del servicio `agrotrack-staging` en Cloud Run (ADR-031).
+      - Verificar `/actuator/health`; si falla, devolver el tráfico a la revisión anterior.
+      - Compilar el APK de release del frontend y publicarlo en GitHub Releases.
       - Subir el APK a Firebase App Distribution.
       - Notificar a testers.
     - **Pipeline de release**:
       - Ejecutar pruebas E2E (Detox o Maestro).
       - Firmar el APK de release.
       - Publicar en Google Play (futuro).
+      - Desplegar en el servicio `agrotrack-prod` de Cloud Run la misma imagen ya probada en staging, con aprobación manual (environment `prod` de GitHub).
       - Etiquetar el commit con la versión.
     - **Gestión de secretos**:
-      - GitHub Secrets para credenciales de Firebase, JWT, base de datos, etc.
+      - GitHub Secrets solo para lo que necesita el pipeline (identificador del proveedor de Workload Identity, cuenta de servicio de despliegue, credenciales de Firebase App Distribution).
+      - Los secretos del backend (base de datos, JWT) viven en Secret Manager de Google Cloud y no pasan por GitHub (ADR-030).
       - Nunca hardcodear secretos en el código.
     - **Trazabilidad**:
       - Cada build asociado a commit, rama, autor.

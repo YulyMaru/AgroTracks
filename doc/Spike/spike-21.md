@@ -1,11 +1,14 @@
 # SPIKE-021: Validar monitoreo y observabilidad con Spring Boot Actuator, Prometheus, Grafana y Firebase
 
+
+> **Actualización (ADR-031):** el backend se despliega en Cloud Run de Google Cloud, donde no hay servidor para instalar Prometheus, Grafana ni Alertmanager. Donde este spike dice Prometheus, Grafana o Alertmanager, debe validarse lo equivalente en Cloud Monitoring (métricas, paneles y políticas de alerta) y Cloud Logging (logs), según la versión actual de ADR-021.
+
 ## Información general
 
 - **ID:** SPIKE-021
 - **Nombre:** Validar monitoreo y observabilidad en backend y frontend con stack open source + Firebase
 - **ADR relacionado:** ADR-021 — Implementar monitoreo y observabilidad en backend y frontend
-- **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend)
+- **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -370,7 +373,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Métricas backend**: Spring Boot Actuator + Micrometer.
 - **Almacenamiento de métricas**: Prometheus.
 - **Visualización**: Grafana.

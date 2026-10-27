@@ -327,7 +327,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Manejo de errores backend**: manejador global de excepciones con estructura única.
 - **Frontend**: React Native + TypeScript.
 - **HTTP**: Axios con interceptor.

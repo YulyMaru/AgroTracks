@@ -262,7 +262,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Base de datos**: PostgreSQL 15+ (con datos de prueba) o H2 en memoria para simplificar.
 - **Documentación**: SpringDoc OpenAPI.
 - **Autenticación**: JWT con access token y refresh token.

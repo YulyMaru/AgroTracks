@@ -319,7 +319,7 @@ El Spike se considerará **RECHAZADO** si:
 - **Frontend**: React Native + TypeScript.
 - **Notificaciones locales**: `@notifee/react-native` o `react-native-push-notification`.
 - **Notificaciones push**: `@react-native-firebase/messaging`.
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Envío de push**: Firebase Admin SDK en el backend.
 - **Firebase Console**: proyecto configurado.
 - **Dispositivos**: Samsung Galaxy A12, Xiaomi Redmi Note 10, Samsung Galaxy S22.

@@ -5,7 +5,7 @@
 - **ID:** SPIKE-019
 - **Nombre:** Validar migraciones versionadas automáticas en backend (Flyway) y cliente móvil (SQLite)
 - **ADR relacionado:** ADR-019 — Versionar el esquema de base de datos con migraciones automáticas
-- **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 3 con Java 17 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository)
+- **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository)
 - **Tipo:** Spike / Proof of Concept (PoC)
 - **Estado:** Propuesto
 - **Prioridad:** Alta
@@ -68,7 +68,7 @@ Entonces:
 El Spike incluirá:
 
 - **Backend (Spring Boot + Flyway)**:
-  - Proyecto Spring Boot 3 con PostgreSQL 15+.
+  - Proyecto Spring Boot 4.1 con PostgreSQL 15+.
   - Dependencias: `flyway-core`, `flyway-database-postgresql`.
   - Migración `V1__inicial.sql`: crear tablas `fincas`, `lotes`, `cultivos`, `transacciones`, `usuarios`.
   - Migración `V2__agregar_notas_a_transacciones.sql`: añadir columna `notas` a `transacciones`.
@@ -340,7 +340,7 @@ El Spike se considerará **RECHAZADO** si:
 
 ## 9. Entorno técnico del spike
 
-- **Backend**: Spring Boot 3 + Java 17.
+- **Backend**: Spring Boot 4.1 + Java 27.
 - **Base de datos backend**: PostgreSQL 15+ (local o en contenedor Docker).
 - **Migraciones backend**: Flyway Community.
 - **Persistencia backend**: Spring Data JPA + Hibernate con `ddl-auto=validate`.
