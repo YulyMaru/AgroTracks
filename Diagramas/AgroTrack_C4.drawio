@@ -1,0 +1,778 @@
+<mxfile host="app.diagrams.net" agent="AgroTrack C4" pages="5">
+  <diagram id="ctx" name="Nivel 1. Contexto">
+    <mxGraphModel dx="1710" dy="935" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="940" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ctx-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontColor=#1F1F1F;" value="&lt;b&gt;AgroTrack – Diagrama de contexto&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1200" x="20" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#555555;" value="Modelo C4 · Nivel 1" vertex="1">
+          <mxGeometry height="22" width="1200" x="20" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-gplay" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Google Play&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Tienda oficial de Android. Canal de distribución en producción (fase futura).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="40" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-campesino" parent="1" style="shape=mxgraph.c4.person2;dashed=0;whiteSpace=wrap;html=1;fillColor=#08427B;strokeColor=#052E56;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];" value="&lt;b style=&quot;font-size:15px&quot;&gt;Campesino&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Person]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Propietario de una pequeña finca. Realiza las labores agrícolas y lleva el control de sus cultivos y lotes.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="220" x="590" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-github" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;GitHub&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Repositorio y CI/CD con GitHub Actions. Publica el APK en GitHub Releases y la imagen del backend en Artifact Registry.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="40" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-agrotrack" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#1168BD;strokeColor=#0B4884;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;AgroTrack&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Permite gestionar fincas, producción, ingresos, gastos y resultados económicos desde el celular, incluso sin conexión a internet.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="180" width="300" x="550" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-cloudflare" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Cloudflare&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;WAF, mitigación DDoS, terminación TLS y rate limiting. Protege el backend: solo le pasa tráfico con el encabezado secreto de origen.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1100" y="395" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-firebase" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Firebase&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Crashlytics (crashes), Analytics (eventos de uso), Cloud Messaging (push) y App Distribution (APK a testers).&lt;br&gt;&lt;i&gt;(Planeado en ADR-021, ADR-025 y ADR-028: todavía no está en el código.)&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1100" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-monitoreo" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Monitoreo&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System: Google Cloud Monitoring + Cloud Logging]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Recibe métricas y logs del backend, los muestra en paneles y envía alertas (también de presupuesto).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="570" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-e1" edge="1" parent="1" source="ctx-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ctx-agrotrack" value="Registra y consulta fincas, producción,&lt;br&gt;ingresos y gastos">
+          <mxGeometry relative="1" x="0.36" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-e2" edge="1" parent="1" source="ctx-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="ctx-gplay" value="Descarga e instala&lt;br&gt;la app (producción)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-e3" edge="1" parent="1" source="ctx-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ctx-github" value="Descarga el APK&lt;br&gt;durante el piloto">
+          <mxGeometry relative="1" x="-0.031" as="geometry">
+            <Array as="points">
+              <mxPoint x="645" y="345" />
+              <mxPoint x="170" y="345" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctx-e4" edge="1" parent="1" source="ctx-github" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ctx-agrotrack" value="Compila, prueba&lt;br&gt;y despliega&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[GitHub Actions]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-e5" edge="1" parent="1" source="ctx-agrotrack" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ctx-cloudflare" value="Enruta el tráfico entre&lt;br&gt;la app y el backend&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-e6" edge="1" parent="1" source="ctx-agrotrack" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="ctx-firebase" value="(planeado) Reporta crashes y eventos;&lt;br&gt;envía notificaciones push&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="975" y="555" />
+              <mxPoint x="975" y="730" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctx-e7" edge="1" parent="1" source="ctx-agrotrack" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;" target="ctx-monitoreo" value="Envía métricas y logs&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Micrometer · HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-legend" parent="1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#999999;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fontSize=12;fontColor=#1F1F1F;" value="&lt;b&gt;Leyenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="146" width="270" x="40" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lg0" parent="1" style="ellipse;html=1;fillColor=#08427B;strokeColor=#052E56;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="59" y="772" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lgt0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Persona" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lg1" parent="1" style="rounded=1;html=1;fillColor=#1168BD;strokeColor=#0B4884;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="52" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lgt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Sistema de software (AgroTrack)" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="798" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lg2" parent="1" style="rounded=1;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="52" y="828" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lgt2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Sistema externo" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="826" as="geometry" />
+        </mxCell>
+        <mxCell id="ctx-lg3" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;strokeColor=#404040;strokeWidth=1.3;endSize=6;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="52" y="866" as="sourcePoint" />
+            <mxPoint x="86" y="866" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ctx-lgt3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Relación [tecnología]" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="854" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="cont" name="Nivel 2. Contenedores">
+    <mxGraphModel dx="2094" dy="1145" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1880" pageHeight="1160" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cont-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontColor=#1F1F1F;" value="&lt;b&gt;AgroTrack – Diagrama de contenedores&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1200" x="20" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#555555;" value="Modelo C4 · Nivel 2" vertex="1">
+          <mxGeometry height="22" width="1200" x="20" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-b" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#444444;strokeWidth=1.5;fontColor=#1F1F1F;align=left;verticalAlign=bottom;spacingLeft=12;spacingBottom=8;fontSize=12;" value="&lt;b style=&quot;font-size:15px&quot;&gt;AgroTrack&lt;/b&gt;&lt;br&gt;[Software System]" vertex="1">
+          <mxGeometry height="520" width="1500" x="350" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-gplay" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Google Play&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Tienda oficial de Android. Canal de distribución en producción (fase futura).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="220" x="20" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-campesino" parent="1" style="shape=mxgraph.c4.person2;dashed=0;whiteSpace=wrap;html=1;fillColor=#08427B;strokeColor=#052E56;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];" value="&lt;b style=&quot;font-size:15px&quot;&gt;Campesino&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Person]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Propietario de una pequeña finca. Realiza las labores agrícolas y lleva el control de sus cultivos y lotes.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="220" x="410" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-cloudflare" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Cloudflare&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;WAF, mitigación DDoS, terminación TLS y rate limiting. Protege el backend: solo le pasa tráfico con el encabezado secreto de origen.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="300" x="720" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-github" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;GitHub&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Repositorio y CI/CD con GitHub Actions. Publica el APK en GitHub Releases y la imagen del backend en Artifact Registry.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1080" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-app" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Aplicación móvil&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: React Native + TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;App Android offline-first para registrar, consultar y analizar fincas, cultivos, producción, ingresos y gastos.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="390" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-api" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;API Backend&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: Spring Boot 4.1 + Java 27]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Monolito modular en Google Cloud Run. Expone la API REST, aplica reglas de negocio, seguridad JWT, sincronización y cálculos. Caché en memoria (Caffeine).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1080" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-pg" parent="1" style="shape=cylinder3;size=14;boundedLbl=1;backgroundOutline=1;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Base de datos&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: PostgreSQL 16 · Cloud SQL]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Información sincronizada de AgroTrack. Fuente de verdad del backend. Copias de seguridad automáticas.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="240" x="1570" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-dblocal" parent="1" style="shape=cylinder3;size=14;boundedLbl=1;backgroundOutline=1;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Base de datos local&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: SQLite + SQLCipher]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Datos de la finca, catálogo de parámetros y cola de operaciones pendientes. Cifrada.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="240" x="400" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-firebase" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Firebase&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Crashlytics (crashes), Analytics (eventos de uso), Cloud Messaging (push) y App Distribution (APK a testers).&lt;br&gt;&lt;i&gt;(Planeado en ADR-021, ADR-025 y ADR-028: todavía no está en el código.)&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="730" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-secretos" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;dashed=0;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Secret Manager&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System: Google Cloud]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Guarda la clave de la base de datos, el secreto JWT y el de origen. Cloud Run se los entrega al backend al arrancar.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1570" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-monitoreo" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Monitoreo&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System: Google Cloud Monitoring + Cloud Logging]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Recibe métricas y logs del backend, los muestra en paneles y envía alertas (también de presupuesto).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1170" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e1" edge="1" parent="1" source="cont-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="cont-app" value="Registra y consulta la&lt;br&gt;información de su finca">
+          <mxGeometry relative="1" x="-0.4" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e2" edge="1" parent="1" source="cont-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="cont-gplay" value="Descarga e instala&lt;br&gt;la app (producción)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e3" edge="1" parent="1" source="cont-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="cont-github" value="Descarga el APK durante el piloto&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[GitHub Releases]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0385" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="90" />
+              <mxPoint x="1210" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cont-e4" edge="1" parent="1" source="cont-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0.2;entryY=1;entryDx=0;entryDy=0;" target="cont-cloudflare" value="Sincroniza datos&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS / REST + JSON]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.6777" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="502" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cont-e5" edge="1" parent="1" source="cont-cloudflare" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" target="cont-api" value="Reenvía tráfico&lt;br&gt;legítimo&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.668" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="502" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cont-e6" edge="1" parent="1" source="cont-github" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="cont-api" value="Despliega el backend&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[GitHub Actions → Artifact Registry → Cloud Run]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.4" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e7" edge="1" parent="1" source="cont-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="cont-dblocal" value="Lee y escribe&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e8" edge="1" parent="1" source="cont-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0.3462;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="cont-firebase" value="(planeado) Reporta crashes y eventos;&lt;br&gt;recibe notificaciones push&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Firebase SDK]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.1389" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="558" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cont-e9" edge="1" parent="1" source="cont-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.7308;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="cont-firebase" value="(planeado) Solicita envío de push&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Firebase Admin SDK]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.4767" as="geometry">
+            <Array as="points">
+              <mxPoint x="1132" y="950" />
+              <mxPoint x="920" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cont-e10" edge="1" parent="1" source="cont-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.85;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="cont-monitoreo" value="Envía métricas y logs&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Micrometer · Cloud Logging]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e11" edge="1" parent="1" source="cont-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="cont-pg" value="Lee y escribe&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[JPA / SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-e13" edge="1" parent="1" source="cont-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.85;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="cont-secretos" value="Lee sus secretos&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[variables de entorno]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1450" y="579" /><mxPoint x="1450" y="775" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="cont-legend" parent="1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#999999;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fontSize=12;fontColor=#1F1F1F;" value="&lt;b&gt;Leyenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="202" width="270" x="20" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lg0" parent="1" style="ellipse;html=1;fillColor=#08427B;strokeColor=#052E56;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="39" y="722" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lgt0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Persona" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lg1" parent="1" style="rounded=1;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lgt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="748" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lg2" parent="1" style="shape=cylinder3;size=4;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="778" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lgt2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor: base de datos" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="776" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lg3" parent="1" style="rounded=1;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="806" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lgt3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Sistema externo" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="804" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lg4" parent="1" style="rounded=1;html=1;dashed=1;dashPattern=4 3;fillColor=none;strokeColor=#444444;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="834" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lgt4" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Límite del sistema / contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="832" as="geometry" />
+        </mxCell>
+        <mxCell id="cont-lg5" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;strokeColor=#404040;strokeWidth=1.3;endSize=6;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="32" y="872" as="sourcePoint" />
+            <mxPoint x="66" y="872" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cont-lgt5" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Relación [tecnología]" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="860" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="mov" name="Nivel 3. Componentes - Móvil">
+    <mxGraphModel dx="2631" dy="1438" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1960" pageHeight="1460" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="mov-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontColor=#1F1F1F;" value="&lt;b&gt;AgroTrack – Diagrama de componentes: Aplicación móvil&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1200" x="20" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#555555;" value="Modelo C4 · Nivel 3" vertex="1">
+          <mxGeometry height="22" width="1200" x="20" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-b" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#444444;strokeWidth=1.5;fontColor=#1F1F1F;align=left;verticalAlign=bottom;spacingLeft=12;spacingBottom=8;fontSize=12;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Aplicación móvil&lt;/b&gt;&lt;br&gt;[Container: React Native + TypeScript]" vertex="1">
+          <mxGeometry height="890" width="1580" x="340" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-firebase" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Firebase&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Crashlytics (crashes), Analytics (eventos de uso), Cloud Messaging (push) y App Distribution (APK a testers).&lt;br&gt;&lt;i&gt;(Planeado en ADR-021, ADR-025 y ADR-028: todavía no está en el código.)&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="380" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-campesino" parent="1" style="shape=mxgraph.c4.person2;dashed=0;whiteSpace=wrap;html=1;fillColor=#08427B;strokeColor=#052E56;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];" value="&lt;b style=&quot;font-size:15px&quot;&gt;Campesino&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Person]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Propietario de una pequeña finca. Realiza las labores agrícolas y lleva el control de sus cultivos y lotes.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="220" x="810" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c6" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C6 – Caché de parámetros&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: TypeScript + SQLite]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Mantiene el catálogo de parámetros no sensibles (categorías, unidades, tipos) para uso offline.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="380" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c1" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C1 – Interfaz de usuario&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: React Native + TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Pantallas para registrar, consultar y analizar fincas, cultivos, producción, ingresos y gastos. Funciona offline-first.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="790" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c17" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C17 – Validación de formularios&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: TypeScript (reglas del dominio)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Revisa cada campo antes de guardar y muestra el mensaje junto al campo. Funciona sin conexión.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1200" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c4" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C4 – Almacén seguro&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: react-native-keychain]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Guarda los tokens JWT y la clave de la base cifrada (SQLCipher) en el Keystore de Android.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1610" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c2" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C2 – Repositorios locales&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: TypeScript (patrón Repository)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Abstraen el acceso a la base local por dominio (fincas, lotes, cultivos, transacciones) y la cola de operaciones pendientes.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="380" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c20" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C20 – Sesión&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Entrar, crear cuenta y salir. Una cuenta por celular: no deja salir con registros sin enviar.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1610" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c19" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C19 – Análisis «¿Cómo voy?»&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;La plata del mes, la cosecha y la ficha de cada cultivo, en palabras sencillas. Se calcula en el celular, sin internet.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="380" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c7" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C7 – Notificaciones locales&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: @notifee/react-native (planeado)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Avisaría de pendientes por enviar y del resultado de la sincronización (HU-43, ADR-028). &lt;i&gt;Todavía no está en el código.&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="790" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c5" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C5 – NetInfo&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: @react-native-community/netinfo]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Detecta cambios de conectividad y activa la sincronización automática al recuperar la red.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1200" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c3" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C3 – Motor de sincronización&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Gestiona la cola de operaciones pendientes, reintentos con backoff exponencial e idempotencia con idLocal.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="790" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-c18" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C18 – Cliente HTTP&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Axios (interceptores)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Envía las solicitudes REST, adjunta el JWT, refresca el token ante un 401 y traduce los errores.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1610" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-dblocal" parent="1" style="shape=cylinder3;size=14;boundedLbl=1;backgroundOutline=1;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Base de datos local&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: SQLite + SQLCipher]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Datos de la finca, catálogo de parámetros y cola de operaciones pendientes. Cifrada.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="170" width="230" x="20" y="685" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-api" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;API Backend&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: Spring Boot 4.1 + Java 27]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Monolito modular en Google Cloud Run. Expone la API REST, seguridad JWT, sincronización y cálculos.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1200" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-cloudflare" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Cloudflare&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;WAF, mitigación DDoS, terminación TLS y rate limiting. Protege el backend: solo le pasa tráfico con el encabezado secreto de origen.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1610" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e1" edge="1" parent="1" source="mov-campesino" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mov-c1" value="Registra y consulta la&lt;br&gt;información de su finca">
+          <mxGeometry relative="1" x="-0.52" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e2" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.2;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="mov-firebase" value="(planeado) Envía crashes y eventos de uso&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Firebase SDK]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.2255" as="geometry">
+            <Array as="points">
+              <mxPoint x="842" y="355" />
+              <mxPoint x="510" y="355" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e3" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.8;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mov-c4" value="Verifica la sesión (token JWT)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="998" y="355" />
+              <mxPoint x="1740" y="355" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e4" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="mov-c6" value="Lee parámetros&lt;br&gt;cacheados">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e5" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="mov-c17" value="Valida&lt;br&gt;formularios">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e6" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mov-c2" value="Consulta y almacena información">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="855" y="620" />
+              <mxPoint x="510" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e21" edge="1" parent="1" source="mov-c20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="mov-c18" value="Inicia sesión">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e20" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.75;entryX=0.5;entryY=0;" target="mov-c20" value="Entra, crea cuenta y sale">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1740" y="590" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e19" edge="1" parent="1" source="mov-c19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" target="mov-c2" value="Lee movimientos,&lt;br&gt;cosechas y labores">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e18" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.9;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="mov-c19" value="Muestra «¿Cómo voy?»">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="715" y="526" /><mxPoint x="715" y="1070" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e7" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="mov-c7" value="Muestra&lt;br&gt;notificaciones">
+          <mxGeometry relative="1" x="0.5" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e8" edge="1" parent="1" source="mov-c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mov-c5" value="Se suscribe a cambios&lt;br&gt;de conectividad">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="985" y="620" />
+              <mxPoint x="1330" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e9" edge="1" parent="1" source="mov-c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="mov-c2" value="Lee y actualiza la&lt;br&gt;cola de pendientes">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="855" y="920" />
+              <mxPoint x="510" y="920" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e10" edge="1" parent="1" source="mov-c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="mov-c7" value="Notifica el&lt;br&gt;resultado">
+          <mxGeometry relative="1" x="0.5" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e11" edge="1" parent="1" source="mov-c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="mov-c5" value="Consulta el estado&lt;br&gt;de conectividad">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="985" y="920" />
+              <mxPoint x="1330" y="920" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e12" edge="1" parent="1" source="mov-c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="mov-c18" value="Envía operaciones pendientes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e13" edge="1" parent="1" source="mov-c18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="mov-c4" value="Lee y renueva&lt;br&gt;el token JWT">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1900" y="1070" /><mxPoint x="1900" y="470" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e14" edge="1" parent="1" source="mov-c6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mov-dblocal" value="Guarda el catálogo&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.5207" as="geometry">
+            <Array as="points">
+              <mxPoint x="135" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-e15" edge="1" parent="1" source="mov-c2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="mov-dblocal" value="Lee y&lt;br&gt;escribe&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e16" edge="1" parent="1" source="mov-c18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mov-cloudflare" value="Solicitudes de sincronización&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS / REST + JSON]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.44" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-e17" edge="1" parent="1" source="mov-cloudflare" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="mov-api" value="Reenvía tráfico&lt;br&gt;legítimo&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-legend" parent="1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#999999;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fontSize=12;fontColor=#1F1F1F;" value="&lt;b&gt;Leyenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="230" width="270" x="20" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg0" parent="1" style="ellipse;html=1;fillColor=#08427B;strokeColor=#052E56;" value="" vertex="1">
+          <mxGeometry height="20" width="20" x="39" y="1032" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lgt0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Persona" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg1" parent="1" style="rounded=1;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lgt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Componente" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1058" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg2" parent="1" style="rounded=1;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="1088" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lgt2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1086" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg3" parent="1" style="shape=cylinder3;size=4;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="1116" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lgt3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor: base de datos" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1114" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg4" parent="1" style="rounded=1;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="1144" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lgt4" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Sistema externo" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1142" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg5" parent="1" style="rounded=1;html=1;dashed=1;dashPattern=4 3;fillColor=none;strokeColor=#444444;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="32" y="1172" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lgt5" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Límite del sistema / contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="mov-lg6" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;strokeColor=#404040;strokeWidth=1.3;endSize=6;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="32" y="1210" as="sourcePoint" />
+            <mxPoint x="66" y="1210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mov-lgt6" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Relación [tecnología]" vertex="1">
+          <mxGeometry height="24" width="210" x="76" y="1198" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="bk" name="Nivel 3. Componentes - Backend">
+    <mxGraphModel dx="2631" dy="1438" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2060" pageHeight="1430" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bk-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontColor=#1F1F1F;" value="&lt;b&gt;AgroTrack – Diagrama de componentes: API Backend&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1200" x="20" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#555555;" value="Modelo C4 · Nivel 3" vertex="1">
+          <mxGeometry height="22" width="1200" x="20" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-b" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#444444;strokeWidth=1.5;fontColor=#1F1F1F;align=left;verticalAlign=bottom;spacingLeft=12;spacingBottom=8;fontSize=12;" value="&lt;b style=&quot;font-size:15px&quot;&gt;API Backend&lt;/b&gt;&lt;br&gt;[Container: Spring Boot 4.1 + Java 27]" vertex="1">
+          <mxGeometry height="880" width="1650" x="30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-monitoreo" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Monitoreo&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System: Google Cloud Monitoring + Cloud Logging]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Recibe métricas y logs del backend, los muestra en paneles y envía alertas (también de presupuesto).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="80" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-app" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Aplicación móvil&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: React Native + TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;App Android offline-first para registrar, consultar y analizar fincas, cultivos, producción, ingresos y gastos.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="510" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-cloudflare" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Cloudflare&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;WAF, mitigación DDoS, terminación TLS y rate limiting. Protege el backend: solo le pasa tráfico con el encabezado secreto de origen.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="940" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-firebase" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Firebase&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Crashlytics (crashes), Analytics (eventos de uso), Cloud Messaging (push) y App Distribution (APK a testers).&lt;br&gt;&lt;i&gt;(Planeado en ADR-021, ADR-025 y ADR-028: todavía no está en el código.)&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1370" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c15" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C15 – Observabilidad&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Spring Boot Actuator + Micrometer]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Envía métricas (endpoints, JVM, BD, sincronización) a Cloud Monitoring y logs JSON con idTraza a Cloud Logging. /actuator/health para Cloud Run.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="80" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c14" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C14 – Manejo de errores&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: @ControllerAdvice]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Estructura única de error con codigo, mensaje, detalles, fechaHora e idTraza.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="510" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c8" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C8 – API REST&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Spring Boot (controladores REST)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Endpoints versionados (/api/v1/...). Recibe las solicitudes, valida la entrada y delega en los módulos.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="940" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c16" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C16 – Notificaciones push&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Firebase Admin SDK (planeado)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Enviaría push cuando ocurran eventos relevantes (ADR-028). &lt;i&gt;Todavía no está en el código.&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1370" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c11" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C11 – Catálogo de parámetros&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Spring Boot + JPA]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;GET /api/v1/parametros: categorías, unidades y tipos. Soporta sincronización incremental (parámetro desde).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="80" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c10" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C10 – Seguridad&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Spring Security + JWT]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Autenticación, autorización y refresco de tokens. Valida el JWT en cada solicitud. FiltroOrigen: solo acepta tráfico que llega por Cloudflare.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="510" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c13" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C13 – Caché&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Spring Cache + Caffeine]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Caché en memoria de cada instancia, con TTL de 5 minutos. Memorystore (Redis) solo si se necesita caché compartida.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1370" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c9" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C9 – Módulos de dominio&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Spring Boot (monolito modular hexagonal)]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;autenticacion, catalogo, registros y sincronizacion. Cada módulo con dominio, aplicación (puertos) e infraestructura (adaptadores), ADR-032.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="940" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-c12" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;fontColor=#000000;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;C12 – Migraciones&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Component: Flyway]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Versiona el esquema de PostgreSQL y aplica las migraciones al arrancar el backend.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1370" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-pg" parent="1" style="shape=cylinder3;size=14;boundedLbl=1;backgroundOutline=1;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Base de datos&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: PostgreSQL 16 · Cloud SQL]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Información sincronizada de AgroTrack. Fuente de verdad del backend.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="240" x="950" y="1245" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e1" edge="1" parent="1" source="bk-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bk-cloudflare" value="Envía solicitudes&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS / REST]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e2" edge="1" parent="1" source="bk-cloudflare" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.6;exitY=1;exitDx=0;exitDy=0;entryX=0.6;entryY=0;entryDx=0;entryDy=0;" target="bk-c8" value="Reenvía tráfico legítimo&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.52" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e3" edge="1" parent="1" source="bk-c15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;" target="bk-monitoreo" value="Envía métricas y logs&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Micrometer · HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.52" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e4" edge="1" parent="1" source="bk-c16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="bk-firebase" value="Envía push&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[FCM]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.52" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e5" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.2;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" target="bk-c15" value="Registra métricas de cada solicitud">
+          <mxGeometry relative="1" x="-0.0356" as="geometry">
+            <Array as="points">
+              <mxPoint x="992" y="345" />
+              <mxPoint x="262" y="345" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e6" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="bk-c14" value="Delega el manejo&lt;br&gt;de excepciones">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e7" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="bk-c16" value="Solicita&lt;br&gt;notificaciones">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e8" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="bk-c10" value="Valida el JWT">
+          <mxGeometry relative="1" x="0.5231" as="geometry">
+            <Array as="points">
+              <mxPoint x="1018" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e9" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.12;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bk-c11" value="Expone el catálogo de parámetros">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="971.2" y="605" />
+              <mxPoint x="210" y="605" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e10" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bk-c9" value="Delega casos&lt;br&gt;de uso">
+          <mxGeometry relative="1" x="0.68" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e11" edge="1" parent="1" source="bk-c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bk-c13" value="Lee y escribe&lt;br&gt;resúmenes">
+          <mxGeometry relative="1" x="0.4913" as="geometry">
+            <Array as="points">
+              <mxPoint x="1122" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e12" edge="1" parent="1" source="bk-c10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" target="bk-c9" value="Autoriza operaciones">
+          <mxGeometry relative="1" x="0.4512" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="1012" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e13" edge="1" parent="1" source="bk-c9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" target="bk-c11" value="Consulta parámetros">
+          <mxGeometry relative="1" x="-0.2678" as="geometry">
+            <Array as="points">
+              <mxPoint x="262" y="1068" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e14" edge="1" parent="1" source="bk-c9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.8;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" target="bk-c13" value="Invalida la caché">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1148" y="895" />
+              <mxPoint x="1448" y="895" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e15" edge="1" parent="1" source="bk-c9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bk-pg" value="Lee y escribe&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[JDBC · conector Cloud SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.44" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-e16" edge="1" parent="1" source="bk-c11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bk-pg" value="Lee parámetros&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[JPA / SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.4504" as="geometry">
+            <Array as="points">
+              <mxPoint x="158" y="1325" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-e17" edge="1" parent="1" source="bk-c12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="bk-pg" value="Ejecuta migraciones&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.4095" as="geometry">
+            <Array as="points">
+              <mxPoint x="1500" y="1325" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-legend" parent="1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#999999;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fontSize=12;fontColor=#1F1F1F;" value="&lt;b&gt;Leyenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="202" width="270" x="1770" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lg0" parent="1" style="rounded=1;html=1;fillColor=#85BBF0;strokeColor=#5D82A8;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="1782" y="1012" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lgt0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Componente" vertex="1">
+          <mxGeometry height="24" width="210" x="1826" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lg1" parent="1" style="rounded=1;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="1782" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lgt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="1826" y="1038" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lg2" parent="1" style="shape=cylinder3;size=4;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="1782" y="1068" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lgt2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor: base de datos" vertex="1">
+          <mxGeometry height="24" width="210" x="1826" y="1066" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lg3" parent="1" style="rounded=1;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="1782" y="1096" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lgt3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Sistema externo" vertex="1">
+          <mxGeometry height="24" width="210" x="1826" y="1094" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lg4" parent="1" style="rounded=1;html=1;dashed=1;dashPattern=4 3;fillColor=none;strokeColor=#444444;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="1782" y="1124" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lgt4" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Límite del sistema / contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="1826" y="1122" as="geometry" />
+        </mxCell>
+        <mxCell id="bk-lg5" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;strokeColor=#404040;strokeWidth=1.3;endSize=6;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1782" y="1162" as="sourcePoint" />
+            <mxPoint x="1816" y="1162" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bk-lgt5" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Relación [tecnología]" vertex="1">
+          <mxGeometry height="24" width="210" x="1826" y="1150" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="dep" name="5. Despliegue">
+    <mxGraphModel dx="1936" dy="1058" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1840" pageHeight="1110" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dep-title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontColor=#1F1F1F;" value="&lt;b&gt;AgroTrack – Diagrama de despliegue&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="420" x="150" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#555555;" value="Modelo C4 · Vista de despliegue&amp;nbsp;" vertex="1">
+          <mxGeometry height="22" width="200" x="140" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-n1" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#444444;strokeWidth=1.5;fontColor=#1F1F1F;align=left;verticalAlign=bottom;spacingLeft=12;spacingBottom=8;fontSize=12;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Celular del campesino&lt;/b&gt;&lt;br&gt;[Deployment Node: Android 8.0+]" vertex="1">
+          <mxGeometry height="510" width="380" x="40" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-n2" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#444444;strokeWidth=1.5;fontColor=#1F1F1F;align=left;verticalAlign=bottom;spacingLeft=12;spacingBottom=8;fontSize=12;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Google Cloud · proyecto AgroTrack&lt;/b&gt;&lt;br&gt;[Deployment Node: Google Cloud, región us-east1]" vertex="1">
+          <mxGeometry height="760" width="830" x="960" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-github" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;GitHub&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Repositorio y CI/CD con GitHub Actions. Publica el APK en GitHub Releases y la imagen del backend en Artifact Registry.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1020" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-app" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Aplicación móvil&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: React Native + TypeScript]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;App Android offline-first para registrar, consultar y analizar fincas, cultivos, producción, ingresos y gastos.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="100" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-dblocal" parent="1" style="shape=cylinder3;size=14;boundedLbl=1;backgroundOutline=1;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Base de datos local&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: SQLite + SQLCipher]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Datos de la finca, catálogo de parámetros y cola de operaciones pendientes. Cifrada.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="240" x="110" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-cloudflare" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Cloudflare&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;WAF, mitigación DDoS, terminación TLS y rate limiting. Protege el backend: solo le pasa tráfico con el encabezado secreto de origen.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="560" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-api" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;API Backend&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: Spring Boot 4.1 + Java 27]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Servicio agrotrack-prod en Cloud Run: escala de 0 a 3 instancias. Solo responde al tráfico que llega por Cloudflare.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1020" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-pg" parent="1" style="shape=cylinder3;size=14;boundedLbl=1;backgroundOutline=1;whiteSpace=wrap;html=1;fillColor=#2874BA;strokeColor=#1D5A91;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Base de datos&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Container: PostgreSQL 16 · Cloud SQL]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Copias de seguridad diarias y recuperación a un punto en el tiempo. Sin acceso abierto a internet.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="240" x="1480" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-redis" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Secret Manager&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Google Cloud]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Clave de la base, secreto JWT y secreto de origen. Cloud Run los entrega como variables de entorno.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="240" x="1480" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-registro" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Artifact Registry&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Google Cloud]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Imágenes del backend, una por commit.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="260" x="1480" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-monitoreo" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Cloud Monitoring + Cloud Logging&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Google Cloud]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Métricas, logs con idTraza, paneles y alertas (también de presupuesto).&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="1020" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-firebase" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;fontColor=#FFFFFF;align=center;verticalAlign=middle;spacing=8;fontSize=11;dashed=1;dashPattern=6 4;" value="&lt;b style=&quot;font-size:15px&quot;&gt;Firebase&lt;/b&gt;&lt;div style=&quot;font-size:11px&quot;&gt;[Software System]&lt;/div&gt;&lt;div style=&quot;font-size:6px&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size:11px&quot;&gt;Crashlytics (crashes), Analytics (eventos de uso), Cloud Messaging (push) y App Distribution (APK a testers).&lt;br&gt;&lt;i&gt;(Planeado en ADR-021, ADR-025 y ADR-028: todavía no está en el código.)&lt;/i&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="260" x="560" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e1" edge="1" parent="1" source="dep-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="dep-dblocal" value="Lee y escribe&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[SQL]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e2" edge="1" parent="1" source="dep-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="dep-cloudflare" value="Sincroniza datos&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS / REST + JSON]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e3" edge="1" parent="1" source="dep-cloudflare" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="dep-api" value="Reenvía tráfico&lt;br&gt;legítimo&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e4" edge="1" parent="1" source="dep-github" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="dep-api" value="Despliega una revisión nueva&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[GitHub Actions · gcloud run deploy]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.5" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e12" edge="1" parent="1" source="dep-github" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="dep-registro" value="Sube la imagen&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Docker]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.8" as="geometry"><Array as="points"><mxPoint x="1810" y="117" /><mxPoint x="1810" y="960" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="dep-e5" edge="1" parent="1" source="dep-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="dep-pg" value="Lee y escribe&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[JDBC · conector Cloud SQL (IAM + TLS)]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e11" edge="1" parent="1" source="dep-registro" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.9;entryY=1;entryDx=0;entryDy=0;" target="dep-api" value="Imagen del contenedor">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1310" y="960" /><mxPoint x="1310" y="600" /><mxPoint x="1254" y="600" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="dep-e10" edge="1" parent="1" source="dep-redis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.9;entryDx=0;entryDy=0;" target="dep-api" value="Entrega secretos&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[variables de entorno]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1380" y="710" /><mxPoint x="1380" y="506" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="dep-e7" edge="1" parent="1" source="dep-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;" target="dep-monitoreo" value="Envía métricas y logs&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Micrometer · HTTPS]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-e8" edge="1" parent="1" source="dep-app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="dep-firebase" value="(planeado) Reporta crashes y eventos;&lt;br&gt;recibe notificaciones push&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Firebase SDK]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0692" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="492" />
+              <mxPoint x="480" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep-e9" edge="1" parent="1" source="dep-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#404040;strokeWidth=1.3;fontSize=11;fontColor=#1F1F1F;labelBackgroundColor=#FFFFFF;jettySize=auto;orthogonalLoop=1;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=6 4;" target="dep-firebase" value="(planeado) Solicita envío de push&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Firebase Admin SDK]&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0692" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="492" />
+              <mxPoint x="900" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep-legend" parent="1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#999999;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fontSize=12;fontColor=#1F1F1F;" value="&lt;b&gt;Leyenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="174" width="270" x="40" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lg0" parent="1" style="rounded=1;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="52" y="892" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lgt0" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lg1" parent="1" style="shape=cylinder3;size=4;html=1;fillColor=#2874BA;strokeColor=#1D5A91;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="52" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lgt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Contenedor: base de datos" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="918" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lg2" parent="1" style="rounded=1;html=1;fillColor=#6B6B6B;strokeColor=#4D4D4D;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="52" y="948" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lgt2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Sistema externo" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="946" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lg3" parent="1" style="rounded=1;html=1;dashed=1;dashPattern=4 3;fillColor=none;strokeColor=#444444;" value="" vertex="1">
+          <mxGeometry height="20" width="34" x="52" y="976" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lgt3" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Nodo de despliegue" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="974" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-lg4" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;strokeColor=#404040;strokeWidth=1.3;endSize=6;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="52" y="1014" as="sourcePoint" />
+            <mxPoint x="86" y="1014" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep-lgt4" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#1F1F1F;" value="Relación [tecnología]" vertex="1">
+          <mxGeometry height="24" width="210" x="96" y="1002" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
