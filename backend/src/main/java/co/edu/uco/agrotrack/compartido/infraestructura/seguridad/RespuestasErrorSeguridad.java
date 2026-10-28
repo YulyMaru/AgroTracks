@@ -35,6 +35,11 @@ public class RespuestasErrorSeguridad {
 				"No tienes permiso para realizar esta acción.");
 	}
 
+	/** La peticion no llego por Cloudflare (FiltroOrigen). */
+	public void origenNoPermitido(HttpServletResponse response) throws IOException {
+		escribir(response, CodigoError.ACCESO_DENEGADO, "No tienes permiso para realizar esta acción.");
+	}
+
 	private void escribir(HttpServletResponse response, CodigoError codigo, String mensaje) throws IOException {
 		response.setStatus(RespuestaError.estadoHttp(codigo).value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

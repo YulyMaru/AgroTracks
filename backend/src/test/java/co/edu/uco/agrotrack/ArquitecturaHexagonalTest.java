@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 /**
- * Reglas del monolito modular hexagonal (docs/adr/ADR-031). Revisa los imports del codigo fuente:
+ * Reglas del monolito modular hexagonal (doc/adr/adr-32.md). Revisa los imports del codigo fuente:
  * si alguien rompe una regla, esta prueba falla y dice en que archivo.
  * <ol>
  * <li>El dominio es Java puro: no usa Spring, JPA, Jackson ni la web, ni las capas de afuera.</li>

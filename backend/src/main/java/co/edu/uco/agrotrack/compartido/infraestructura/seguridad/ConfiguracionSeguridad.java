@@ -38,7 +38,7 @@ public class ConfiguracionSeguridad {
 				.authorizeHttpRequests(a -> a
 						.requestMatchers(HttpMethod.POST, "/api/v1/autenticacion/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/sincronizacion/estado").permitAll()
-						.requestMatchers("/actuator/health/**", "/actuator/info", "/actuator/prometheus").permitAll()
+						.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/h2-console/**").permitAll()
 						.requestMatchers("/error").permitAll()

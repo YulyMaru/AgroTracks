@@ -1,6 +1,7 @@
-# Infraestructura para el perfil prod (ADR-013, ADR-031). Uso:
+# Solo para DESARROLLO LOCAL: PostgreSQL 16, la misma version de Cloud SQL (ADR-013).
+# En produccion la base es Cloud SQL de Google Cloud (ADR-031), no este archivo. Uso:
 #   docker compose up -d
-#   AGROTRACK_DB_CLAVE=agrotrack AGROTRACK_JWT_SECRETO=<32+ caracteres> SPRING_PROFILES_ACTIVE=prod ./mvnw spring-boot:run
+#   AGROTRACK_DB_USUARIO=agrotrack AGROTRACK_DB_CLAVE=agrotrack ./mvnw spring-boot:run   (perfil postgres)
 services:
   postgres:
     image: postgres:16
@@ -9,14 +10,9 @@ services:
       POSTGRES_USER: agrotrack
       POSTGRES_PASSWORD: ${AGROTRACK_DB_CLAVE:-agrotrack}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - agrotrack-datos:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
 
 volumes:
   agrotrack-datos:

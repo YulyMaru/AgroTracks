@@ -34,3 +34,7 @@ build/
 
 ### Base de datos H2 de desarrollo ###
 datos/
+
+### Secretos locales: nunca se versionan (ADR-030) ###
+.env
+*.env
