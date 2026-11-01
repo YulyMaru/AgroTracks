@@ -1,0 +1,7 @@
+Fuente Inter (Inter-Regular.otf, Inter-SemiBold.otf)
+Copyright (c) The Inter Project Authors (https://github.com/rsms/inter)
+Licencia: SIL Open Font License 1.1 (https://openfontlicense.org). Se puede incluir y
+distribuir dentro de la aplicacion.
+
+Se incluye en la app para que el texto sea siempre legible, aunque el celular use un tema
+con otra letra (por ejemplo, las fuentes decorativas de MIUI en Xiaomi).
