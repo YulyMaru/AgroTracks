@@ -28,6 +28,12 @@
 	</scm>
 	<properties>
 		<java.version>27</java.version>
+		<!-- DevSecOps (ADR-033). JaCoCo 0.8.16 es la primera version con soporte oficial de Java 27 -->
+		<jacoco.version>0.8.16</jacoco.version>
+		<sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
+		<!-- SonarCloud: organizacion y clave del proyecto llegan desde el pipeline (variables de GitHub) -->
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -167,7 +173,38 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- Cobertura de pruebas (ADR-020, ADR-033): "mvnw verify" deja el reporte en target/site/jacoco -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>preparar-agente</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>reporte</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!-- Analisis de calidad y seguridad en SonarCloud: "mvnw sonar:sonar" (lo corre el pipeline) -->
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${sonar-maven-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>

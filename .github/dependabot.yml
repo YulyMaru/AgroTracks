@@ -1,0 +1,31 @@
+# Actualizacion de dependencias (ADR-033, OWASP A06): Dependabot abre un PR semanal por ecosistema
+# y el pipeline (pruebas, SonarCloud, Trivy) valida cada actualizacion antes de aceptarla.
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      menores:
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: npm
+    directory: /agrotrack-movil
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      menores:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

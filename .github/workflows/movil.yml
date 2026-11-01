@@ -1,0 +1,70 @@
+# CI de la app movil (ADR-025) con controles DevSecOps (ADR-033)
+# En cada PR y push a main que toque agrotrack-movil/:
+#   lint (ESLint) -> tipos (TypeScript) -> pruebas + cobertura (Jest) -> SonarCloud -> Trivy (dependencias y secretos)
+# La distribucion del APK (ADR-026) sigue siendo manual.
+#
+# Configurar en GitHub (Settings > Secrets and variables > Actions):
+#   Variables: SONAR_ORGANIZACION, SONAR_PROYECTO_MOVIL (ver doc/devsecops.md)
+#   Secretos:  SONAR_TOKEN (sin el, el analisis de SonarCloud se salta y el resto sigue)
+#
+# Las acciones de terceros nuevas se fijan por SHA de commit, no por etiqueta (OWASP A08, ADR-033).
+name: Movil
+
+on:
+  push:
+    branches: [main]
+    paths: ['agrotrack-movil/**', '.github/workflows/movil.yml']
+  pull_request:
+    paths: ['agrotrack-movil/**', '.github/workflows/movil.yml']
+
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    defaults:
+      run:
+        working-directory: agrotrack-movil
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # SonarCloud necesita la historia completa para saber que codigo es nuevo
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: agrotrack-movil/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Tipos
+        run: npx tsc --noEmit
+      - name: Pruebas y cobertura (Jest)
+        run: npm run test:cobertura
+      - name: Guardar reporte de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-movil
+          path: agrotrack-movil/coverage/
+          if-no-files-found: ignore
+      - name: Analisis de calidad y seguridad (SonarCloud)
+        if: env.SONAR_TOKEN != ''
+        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
+        with:
+          projectBaseDir: agrotrack-movil
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZACION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROYECTO_MOVIL }}
+      - name: Dependencias vulnerables y secretos expuestos (Trivy)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: agrotrack-movil
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
