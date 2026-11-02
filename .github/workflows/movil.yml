@@ -27,7 +27,7 @@ jobs:
       run:
         working-directory: agrotrack-movil
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # SonarCloud necesita la historia completa para saber que codigo es nuevo
           fetch-depth: 0
