@@ -112,7 +112,7 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_CUENTA_DESPLIEGUE }}
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
       - name: Construir la imagen
         run: docker build -t "$IMAGEN_BASE:$GITHUB_SHA" backend
       - name: Vulnerabilidades de la imagen (Trivy, informe)
@@ -156,7 +156,7 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_CUENTA_DESPLIEGUE }}
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
       - name: Desplegar en Cloud Run (produccion)
         env:
           GCP_PROYECTO: ${{ vars.GCP_PROYECTO }}
