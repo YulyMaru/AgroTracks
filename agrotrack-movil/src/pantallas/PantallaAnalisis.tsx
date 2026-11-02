@@ -10,7 +10,7 @@ import type {
   VistaCosecha,
 } from '../modulos/analisis/aplicacion/casosDeUso';
 import type { Totales } from '../modulos/analisis/dominio/analisis';
-import { Barra, COLORES, estilos, Subtitulo, Tarjeta, TarjetaMovimiento, Texto } from './componentes';
+import { Barra, COLORES, estilos, registrarFallo, Subtitulo, Tarjeta, TarjetaMovimiento, Texto } from './componentes';
 
 type Vista = 'plata' | 'cosecha' | 'cultivos';
 
@@ -52,7 +52,7 @@ function useCargar<T>(cargar: () => Promise<T>, dependencias: unknown[]): T | nu
   useEffect(() => {
     let vigente = true;
     setDatos(null);
-    cargar().then(d => vigente && setDatos(d));
+    cargar().then(d => vigente && setDatos(d)).catch(registrarFallo('analisis'));
     return () => { vigente = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencias);

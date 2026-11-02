@@ -10,6 +10,7 @@ import {
   CajaAviso,
   COLORES,
   estilos,
+  registrarFallo,
   Subtitulo,
   Tarjeta,
   TarjetaMovimiento,
@@ -36,7 +37,7 @@ export function PantallaInicio(props: {
 }) {
   const [vista, setVista] = useState<VistaAnalisis | null>(null);
   useEffect(() => {
-    app.analisis.analizar(app.analisis.mesActual()).then(setVista);
+    app.analisis.analizar(app.analisis.mesActual()).then(setVista).catch(registrarFallo('inicio'));
   }, [props.version]);
 
   const porEnviar = props.conteo.PENDIENTE;

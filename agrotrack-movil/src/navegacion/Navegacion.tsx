@@ -5,7 +5,9 @@ import { app } from '../composicion';
 import type { Tokens } from '../modulos/autenticacion/dominio/sesion';
 import type { Entidad } from '../modulos/registros/dominio/modelo';
 import type { EstadoLocal, EstadoMotor } from '../modulos/sincronizacion/dominio/operacion';
-import { BarraInferior, BarraSuperior, estilos, useConfirmacion, type Aviso, type Pestana } from '../pantallas/componentes';
+import {
+  BarraInferior, BarraSuperior, estilos, registrarFallo, useConfirmacion, type Aviso, type Pestana,
+} from '../pantallas/componentes';
 import { PantallaAnalisis } from '../pantallas/PantallaAnalisis';
 import { PantallaAnotar } from '../pantallas/PantallaAnotar';
 import { PantallaEnvios } from '../pantallas/PantallaEnvios';
@@ -58,11 +60,11 @@ export function Navegacion({ sesion, alCerrarSesion }: { sesion: Tokens; alCerra
   }, []);
 
   useEffect(() => {
-    refrescar();
+    refrescar().catch(registrarFallo('navegacion'));
     const desuscribir = app.motor.suscribirse(nuevo => {
       setMotor(nuevo);
       if (!nuevo.sincronizando) {
-        refrescar();
+        refrescar().catch(registrarFallo('navegacion'));
       }
     });
     const detenerRed = app.motor.iniciarAutomatica(setConectado);
@@ -130,7 +132,7 @@ export function Navegacion({ sesion, alCerrarSesion }: { sesion: Tokens; alCerra
       mensaje: conectado ? 'Se está enviando al servidor.' : 'Se enviará solo cuando haya internet.',
     });
     if (conectado) {
-      app.motor.sincronizar();
+      app.motor.sincronizar().catch(registrarFallo('sincronizacion'));
     }
   };
 

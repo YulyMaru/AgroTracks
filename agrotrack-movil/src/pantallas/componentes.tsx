@@ -82,6 +82,14 @@ export function Tarjeta({ children, estilo }: { children: React.ReactNode; estil
 }
 
 // --- Avisos -------------------------------------------------------------------------------------
+/**
+ * Para las promesas que se lanzan sin esperar (cargas de pantalla, sincronizar): si fallan, el
+ * error queda en el registro en lugar de perderse en silencio.
+ */
+export const registrarFallo = (donde: string) => (error: unknown) => {
+  console.error(`[${donde}] fallo`, error);
+};
+
 export type TipoAviso = 'exito' | 'error' | 'info';
 
 export interface Aviso {

@@ -10,6 +10,7 @@ import {
   Encabezado,
   estilos,
   IndicadorEnvio,
+  registrarFallo,
   Tarjeta,
   Texto,
   type Aviso,
@@ -28,7 +29,7 @@ export function PantallaLista({ entidad, version, aviso, alCerrarAviso, alVolver
       setRegistros(lista.map(r => {
         const [titulo, detalle] = describir(entidad, r.datos, etiquetas);
         return { ...r, titulo, detalle };
-      })));
+      }))).catch(registrarFallo('lista'));
   }, [entidad, version]);
   const { plural, nuevo, singular } = REGISTROS[entidad];
 

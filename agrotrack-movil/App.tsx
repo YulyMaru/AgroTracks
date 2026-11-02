@@ -10,7 +10,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { app } from './src/composicion';
 import type { Tokens } from './src/modulos/autenticacion/dominio/sesion';
 import { Navegacion } from './src/navegacion/Navegacion';
-import { COLORES, estilos } from './src/pantallas/componentes';
+import { COLORES, estilos, registrarFallo } from './src/pantallas/componentes';
 import { PantallaSesion } from './src/pantallas/PantallaSesion';
 
 export default function App() {
@@ -23,7 +23,7 @@ export default function App() {
       await app.iniciar();
       setSesion(await app.sesion.sesionGuardada());
       setListo(true);
-    })();
+    })().catch(registrarFallo('inicio'));
   }, []);
 
   return (

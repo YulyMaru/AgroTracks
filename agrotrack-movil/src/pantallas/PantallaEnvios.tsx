@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { app } from '../composicion';
 import type { Accion, OperacionPendiente } from '../modulos/sincronizacion/dominio/operacion';
-import { Boton, COLORES, estilos, IndicadorEnvio, Tarjeta, Texto, useConfirmacion } from './componentes';
+import { Boton, COLORES, estilos, IndicadorEnvio, registrarFallo, Tarjeta, Texto, useConfirmacion } from './componentes';
 import { REGISTROS } from './tiposDeRegistro';
 
 const ACCIONES: Record<Accion, string> = { CREAR: 'nuevo', EDITAR: 'corregido', ELIMINAR: 'eliminado' };
@@ -12,7 +12,7 @@ const ACCIONES: Record<Accion, string> = { CREAR: 'nuevo', EDITAR: 'corregido', 
 export function PantallaEnvios({ version, alCambiar }: { version: number; alCambiar: () => Promise<void> }) {
   const [recientes, setRecientes] = useState<OperacionPendiente[]>([]);
   useEffect(() => {
-    app.cola.recientes().then(setRecientes);
+    app.cola.recientes().then(setRecientes).catch(registrarFallo('envios'));
   }, [version]);
   const conError = recientes.filter(r => r.estado === 'ERROR').length;
   const [ventana, confirmar] = useConfirmacion();
@@ -29,7 +29,7 @@ export function PantallaEnvios({ version, alCambiar }: { version: number; alCamb
     if (seguro) {
       await app.registros.descartarCambio(r);
       await alCambiar();
-      app.motor.sincronizar();
+      app.motor.sincronizar().catch(registrarFallo('sincronizacion'));
     }
   };
 
@@ -40,7 +40,7 @@ export function PantallaEnvios({ version, alCambiar }: { version: number; alCamb
           <Boton texto="Volver a intentar los que tienen problema" alPresionar={async () => {
             await app.cola.reintentarErrores();
             await alCambiar();
-            app.motor.sincronizar();
+            app.motor.sincronizar().catch(registrarFallo('sincronizacion'));
           }} />
         )}
         <View>

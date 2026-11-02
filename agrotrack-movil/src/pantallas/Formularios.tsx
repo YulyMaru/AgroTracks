@@ -45,6 +45,7 @@ import {
   COLORES,
   estilos,
   MensajeError,
+  registrarFallo,
   Selector,
   Sugerencias,
   Texto,
@@ -92,7 +93,7 @@ function useLista<T>(cargar: () => Promise<T[]>, dependencias: unknown[]): T[] {
   const [lista, setLista] = useState<T[]>([]);
   useEffect(() => {
     let vigente = true;
-    cargar().then(r => vigente && setLista(r));
+    cargar().then(r => vigente && setLista(r)).catch(registrarFallo('formulario'));
     return () => {
       vigente = false;
     };
@@ -129,7 +130,7 @@ function useRecordado(clave: string, opciones: Opcion[], valor: string | undefin
       } else if (opciones.length === 1) {
         fijar(opciones[0].valor);
       }
-    });
+    }).catch(registrarFallo('formulario'));
   }, [activo, clave, opciones, valor, fijar]);
 }
 
@@ -235,7 +236,7 @@ function CampoDinero(props: {
 function PadreFijo({ etiqueta, entidad, id }: { etiqueta: string; entidad: 'FINCA' | 'LOTE' | 'CULTIVO'; id: string }) {
   const [nombre, setNombre] = useState('');
   useEffect(() => {
-    nombreDe(entidad, id).then(setNombre);
+    nombreDe(entidad, id).then(setNombre).catch(registrarFallo('formulario'));
   }, [entidad, id]);
   return (
     <View style={estilos.campo}>

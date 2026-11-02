@@ -7,7 +7,7 @@ import {
   nombreUsuarioValido,
   type Tokens,
 } from '../modulos/autenticacion/dominio/sesion';
-import { CajaAviso, Campo, Desplazable, estilos, Texto, type Aviso, type EntradaTexto } from './componentes';
+import { CajaAviso, Campo, Desplazable, estilos, registrarFallo, Texto, type Aviso, type EntradaTexto } from './componentes';
 
 type Modo = 'entrar' | 'crear';
 
@@ -102,7 +102,7 @@ function FormularioEntrar({ alIniciar, mostrarAviso, alCrear }: {
     };
     setErrores(nuevos);
     if (!faltanDatos(nuevos, mostrarAviso)) {
-      enviar(() => app.sesion.iniciarSesion(usuario.trim(), clave));
+      enviar(() => app.sesion.iniciarSesion(usuario.trim(), clave)).catch(registrarFallo('sesion'));
     }
   };
 
@@ -157,7 +157,7 @@ function FormularioCrear({ alIniciar, mostrarAviso, alEntrar }: {
     if (!faltanDatos(nuevos, mostrarAviso)) {
       enviar(() => app.sesion.registrarse({
         nombre: nombre.trim(), nombreUsuario: nombreUsuario.trim(), correo: correo.trim(), clave,
-      }));
+      })).catch(registrarFallo('sesion'));
     }
   };
 
