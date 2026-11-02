@@ -31,13 +31,14 @@ abstract class RegistroJpa<D extends Registro> extends EntidadJpa {
 		this.idUsuario = idUsuario;
 	}
 
-	final void copiarDe(D registro) {
+	// Sin "final": Hibernate genera proxies de las entidades y necesita poder sobrescribir sus metodos
+	void copiarDe(D registro) {
 		version = registro.getVersion();
 		eliminado = registro.isEliminado();
 		copiarDatos(registro);
 	}
 
-	final D aDominio() {
+	D aDominio() {
 		D registro = crearDominio();
 		registro.restaurar(version, eliminado, getActualizadoEn());
 		return registro;
