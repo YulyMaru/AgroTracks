@@ -8,7 +8,7 @@
  *   o, cuando haya dominio con Cloudflare, https://api.<dominio>.
  */
 const URL_DESARROLLO = 'http://localhost:8080';
-const URL_PRODUCCION = 'https://agrotrack-prod-CAMBIAR.us-east1.run.app';
+const URL_PRODUCCION = 'https://agrotrack-prod-126803478598.us-east1.run.app';
 
 export const URL_BACKEND = __DEV__ ? URL_DESARROLLO : URL_PRODUCCION;
 
