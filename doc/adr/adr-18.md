@@ -2,7 +2,7 @@
 
 - **Título**: Usar un monolito modular por capas (presentación, aplicación, dominio, infraestructura) con módulos por dominio (fincas, lotes, cultivos, transacciones, sincronización, usuarios y parámetros) y patrón Repository, descartando microservicios, monolito tradicional y serverless.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Complementado por**: ADR-032 (Arquitectura hexagonal dentro del monolito modular). Se mantiene el monolito modular de este ADR; dentro de cada módulo, el código se organiza con puertos y adaptadores (`dominio`, `aplicacion`, `infraestructura`) en lugar de capas técnicas.
 
@@ -236,10 +236,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-018 — Validará que el monolito modular por capas con patrón Repository es mantenible, testeable y evolutivo — Propuesto.
-    - SPIKE-016 — Validará que Spring Boot 4.1 con Spring Data JPA implementa el patrón Repository correctamente — Propuesto.
-    - SPIKE-017 — Validará el stack React Native + TypeScript sobre el que se organizan las capas del cliente; el patrón Repository en el cliente se valida en SPIKE-018 — Propuesto.
-    - SPIKE-013 — Validará que SQLite local soporta transacciones ACID y replica el esquema remoto, base de los repositorios locales — Propuesto.
+    - SPIKE-018 — Validará que el monolito modular por capas con patrón Repository es mantenible, testeable y evolutivo — Aprobado con cambios el 2026-10-26.
+    - SPIKE-016 — Validará que Spring Boot 4.1 con Spring Data JPA implementa el patrón Repository correctamente — Aprobado con cambios el 2026-10-26.
+    - SPIKE-017 — Validará el stack React Native + TypeScript sobre el que se organizan las capas del cliente; el patrón Repository en el cliente se valida en SPIKE-018 — Aprobado con cambios el 2026-10-29.
+    - SPIKE-013 — Validará que SQLite local soporta transacciones ACID y replica el esquema remoto, base de los repositorios locales — Aprobado con cambios el 2026-10-28.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -348,3 +348,16 @@
       - Pruebas de UI y E2E (frontend).
 
     Se descarta el monolito tradicional por falta de separación de responsabilidades, los microservicios por complejidad y costo desproporcionados, y serverless por dependencia de proveedor y problemas de residencia de datos. El monolito modular por capas con patrón Repository es la opción que garantiza mantenibilidad, escalabilidad y evolución en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-018: aprobado con cambios el 2026-10-26. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Monolito modular con puertos y adaptadores en backend y móvil; las pruebas de arquitectura lo hacen cumplir.
+    - Cobertura alta por capa (dominio y aplicación sobre 95 % en los dos lados).
+  - **Cambios respecto a lo propuesto**:
+    - Hexagonal en lugar de capas clásicas (ADR-032).
+    - Módulos reales: backend `autenticacion`, `catalogo`, `registros`, `sincronizacion`; móvil `autenticacion`, `registros`, `sincronizacion`, `analisis`.
+    - El repositorio del móvil siempre lee de SQLite; solo el motor de sincronización usa la red.

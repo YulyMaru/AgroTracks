@@ -2,7 +2,7 @@
 
 - **Título**: Validar el funcionamiento de la app en los dispositivos Android oficialmente soportados utilizando exclusivamente dispositivos físicos propios y pruebas manuales, descartando Firebase Test Lab por su costo y las herramientas autoalojadas por su complejidad.
 
-- **Estado**: Propuesto.
+- **Estado**: Propuesto (revisado el 2026-10-30: la validación sigue pendiente). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -173,7 +173,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-012 — Validará que la app se instala, ejecuta y permite las funciones principales en 3 dispositivos Android representativos, y que Crashlytics detecta crashes en producción — Propuesto.
+    - SPIKE-012 — Validará que la app se instala, ejecuta y permite las funciones principales en 3 dispositivos Android representativos, y que Crashlytics detecta crashes en producción — Pendiente (revisado el 2026-10-30).
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -255,3 +255,13 @@
       - Appetize.io: 100 minutos gratis al mes para pruebas en navegador, si se requiere validar algún dispositivo específico sin comprarlo.
 
     Se descarta la prueba únicamente en emuladores por su baja fiabilidad. Se descarta Firebase Test Lab por su costo ($5/hora por dispositivo físico). Se descartan las herramientas autoalojadas (GADS, Phone Farm, etc.) por su complejidad de configuración y la desviación del foco del desarrollo. La estrategia de pruebas manuales en dispositivos físicos propios con Crashlytics es la opción más simple, económica y alineada con el alcance actual de AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Propuesto
+  - **Spikes**: SPIKE-012: pendiente (revisado el 2026-10-30). El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Cambios respecto a lo propuesto**:
+    - Firebase Crashlytics y App Distribution no están integrados en el piloto.
+  - **Pendiente**:
+    - Prueba manual en los 3 dispositivos (SPIKE-012), con las mediciones de NetInfo, FPS, `fontScale` y tamaño del APK que dejaron pendientes otros spikes.

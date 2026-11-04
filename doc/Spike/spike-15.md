@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-015 — Usar REST como estilo de comunicación entre cliente y servidor
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-013 (Base de datos relacional SQL)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-26
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles
 
@@ -145,7 +146,6 @@ El Spike no implementará:
 - Redirección a login si el refresco falla.
 - Sin múltiples solicitudes de refresco simultáneas.
 
----
 
 ### 7.2 Prueba 2 — Sincronización idempotente con `idLocal`
 
@@ -164,7 +164,6 @@ El Spike no implementará:
 - No hay duplicados.
 - El estado local pasa a `SINCRONIZADO` una sola vez.
 
----
 
 ### 7.3 Prueba 3 — Consultas paginadas y filtradas
 
@@ -183,8 +182,6 @@ El Spike no implementará:
 - Los filtros se aplican correctamente.
 - La respuesta incluye metadatos de paginación (`pagina`, `limite`, `total`).
 
----
-
 ### 7.4 Prueba 4 — Resumen económico agregado
 
 **Objetivo:** Medir el tiempo de respuesta del endpoint de resumen económico.
@@ -200,7 +197,6 @@ El Spike no implementará:
 - Los cálculos son correctos (ingresos, gastos, resultado).
 - La respuesta incluye los datos necesarios para las tarjetas (ADR-003).
 
----
 
 ### 7.5 Prueba 5 — Manejo de errores HTTP
 
@@ -219,7 +215,6 @@ El Spike no implementará:
 - Los errores transitorios se reintentan.
 - Los errores de autenticación redirigen a login.
 
----
 
 ### 7.6 Prueba 6 — Documentación OpenAPI
 
@@ -313,31 +308,34 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas del cliente mostrando mensajes de error.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-26
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿La autenticación JWT y el refresco silencioso funcionaron?
-  - ✅ / ❌ ¿La sincronización idempotente generó 1 solo registro tras 5 reintentos?
-  - ✅ / ❌ ¿Las consultas productivas cumplieron ≤ 3 s?
-  - ✅ / ❌ ¿El resumen económico cumplió ≤ 5 s?
-  - ✅ / ❌ ¿El manejo de errores HTTP fue correcto?
-  - ✅ / ❌ ¿OpenAPI se generó correctamente?
-  - ✅ / ❌ ¿Se confirmó que no se necesitan GraphQL, gRPC, WebSockets ni SSE?
+  - ✅ Autenticación: registro, inicio de sesión, token en `Authorization: Bearer`, renovación con rotación y cierre de sesión funcionan.
+  - ✅ Idempotencia: 5 envíos de la misma operación = 1 registro.
+  - ✅ Consultas productivas ≤ 3 s con el volumen máximo: la más lenta, 393 ms (10.000 gastos).
+  - ✅ Resumen económico ≤ 5 s: 113 ms en SQL; en la app se calcula en el celular (100 ms).
+  - ✅ Manejo de errores: 7 tipos de error (400, 401, 404, 405) responden con la misma estructura y el cliente los clasifica para reintentar o no.
+  - ✅ OpenAPI: `/v3/api-docs` se genera (OpenAPI 3) con las rutas de autenticación, sincronización, parámetros y registros.
+  - ✅ Sin estilos alternativos: ningún caso de uso necesitó GraphQL, gRPC, WebSockets ni SSE.
+
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/autenticacion/SesionJwtIntegracionTest.java`, `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/IdempotenciaIntegracionTest.java`, `backend/src/test/java/co/edu/uco/agrotrack/modulos/registros/RendimientoConsultasIntegracionTest.java`, `backend/src/test/java/co/edu/uco/agrotrack/compartido/infraestructura/web/ErroresYTrazaIntegracionTest.java`, `backend/src/test/java/co/edu/uco/agrotrack/PlataformaIntegracionTest.java`.
+  - `agrotrack-movil/__tests__/clienteHttp.test.ts` — clasificación de cada error del envío.
+
+- **Cambios respecto a lo propuesto**:
+  - Rutas reales: `/api/v1/autenticacion/*`, `/api/v1/registros/{tipo}` (genérica para los 8 tipos), `/api/v1/sincronizacion/operaciones`, `/api/v1/sincronizacion/transacciones` (solo gastos e ingresos), `/api/v1/sincronizacion/cambios?desde=` y `/api/v1/parametros?desde=`.
+  - No hay paginación ni filtros por query params, ni ETag / Cache-Control: el celular descarga los cambios incrementales una vez y consulta su SQLite.
+  - En producción la documentación OpenAPI está apagada (`application-prod.properties`); solo se publica en desarrollo.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El interceptor de Axios debe manejar el refresco de forma atómica para evitar múltiples solicitudes simultáneas.")
-  - (Ejemplo: "Los endpoints de sincronización deben verificar `idLocal` antes de insertar para garantizar idempotencia.")
-  - (Ejemplo: "La paginación con `pagina` y `limite` es suficiente; no se necesita cursor-based pagination para este volumen.")
+  - Un endpoint de sincronización por lotes es más eficiente con mala señal que un POST por registro.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir los endpoints REST desde el inicio con OpenAPI.")
-  - (Ejemplo: "Usar versionado en la URL (`/api/v1/`).")
-  - (Ejemplo: "Diseñar endpoints idempotentes para sincronización.")
-  - (Ejemplo: "No introducir GraphQL ni WebSockets sin un caso de uso claro.")
-  - (Ejemplo: "Mantener las respuestas JSON simples y paginadas.")
+  - Publicar el `openapi.json` como artefacto del pipeline para el equipo móvil.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios**.

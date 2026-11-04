@@ -2,7 +2,7 @@
 
 - **Título**: Consultar datos offline y detectar conectividad para sincronización automática.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -153,8 +153,8 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-006 — Validará que la consulta offline responde en < 2 s, que los datos persisten al cerrar y reabrir la app, y que el monitor de conectividad detecta cambios de red — Propuesto.
-    - SPIKE-007 — Validará que los cálculos se actualizan correctamente cuando se modifican datos locales — Propuesto.
+    - SPIKE-006 — Validará que la consulta offline responde en < 2 s, que los datos persisten al cerrar y reabrir la app, y que el monitor de conectividad detecta cambios de red — Aprobado con cambios el 2026-10-29.
+    - SPIKE-007 — Validará que los cálculos se actualizan correctamente cuando se modifican datos locales — Aprobado el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -211,3 +211,19 @@
     - Pruebas de persistencia al cerrar y reabrir la app.
 
     Se descarta la consulta siempre remota por su inutilidad en el contexto rural, y la caché en memoria por su falta de persistencia. El repositorio local persistente con monitor de conectividad es la opción que garantiza el funcionamiento offline real de AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-006: aprobado con cambios el 2026-10-29; SPIKE-007: aprobado el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - SQLite es la fuente de todas las consultas: 100 fincas en 2 ms sin conexión.
+    - Sincronización automática al reconectar y tolerancia a red intermitente: 11 reconexiones seguidas = 1 sola sincronización.
+    - Píldora "En línea" / "Sin internet" en la barra superior.
+  - **Cambios respecto a lo propuesto**:
+    - En lugar de debounce, el motor ignora una sincronización nueva si ya hay otra en curso.
+    - La fecha de la última sincronización se guarda pero no se muestra.
+  - **Pendiente**:
+    - Mostrar la fecha de la última sincronización.
+    - Medir NetInfo en los celulares.

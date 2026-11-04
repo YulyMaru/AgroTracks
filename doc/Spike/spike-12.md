@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-012 — Validar el funcionamiento de la app en dispositivos Android soportados mediante pruebas manuales en dispositivos físicos propios
 - **ADR complementarios:** ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend), ADR-021 (Implementar monitoreo y observabilidad en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Pendiente — no ejecutado
+- **Fecha de revisión:** 2026-10-30
 - **Prioridad:** Media
 - **Timebox estimado:** 3 días hábiles
 
@@ -131,7 +132,6 @@ El Spike no implementará:
 - No hay mensajes de error relacionados con compatibilidad.
 - El tiempo de arranque es aceptable (< 5 s en gama baja, < 3 s en gama media y alta).
 
----
 
 ### 7.2 Prueba 2 — Navegación y funciones principales en los 3 dispositivos
 
@@ -154,7 +154,6 @@ El Spike no implementará:
 - No hay bloqueos, crashes o errores visibles.
 - El rendimiento es aceptable (no hay congelamientos prolongados).
 
----
 
 ### 7.3 Prueba 3 — Adaptación de UI a resoluciones y densidades
 
@@ -174,8 +173,6 @@ El Spike no implementará:
 - No hay elementos cortados o superpuestos.
 - Los textos son legibles en todos los dispositivos.
 - Los controles táctiles tienen dimensiones adecuadas (≥ 48x48 dp).
-
----
 
 ### 7.4 Prueba 4 — Integración con Crashlytics
 
@@ -198,7 +195,6 @@ El Spike no implementará:
 - No hay errores de integración.
 - El envío de crashes no afecta el rendimiento.
 
----
 
 ### 7.5 Prueba 5 — Comparación de resultados entre dispositivos
 
@@ -289,29 +285,25 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Actualización de la política de dispositivos soportados (si se encuentra que algún dispositivo no funciona bien).
 7. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de revisión**: 2026-10-30
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿La app se instaló en el 100 % de los dispositivos físicos?
-  - ✅ / ❌ ¿La app no crasheó en el 100 % de los dispositivos físicos?
-  - ✅ / ❌ ¿Las funciones principales funcionaron en el 100 % de los dispositivos?
-  - ✅ / ❌ ¿La UI se adaptó correctamente a todas las resoluciones?
-  - ✅ / ❌ ¿Crashlytics registró crashes y errores en los 3 dispositivos?
-  - ✅ / ❌ ¿El comportamiento fue consistente entre dispositivos?
+  - ⏳ Instalación y funciones principales en 3 dispositivos: pendiente. No hay registro de la prueba en Samsung Galaxy A12, Xiaomi Redmi Note 10 y Samsung Galaxy S22.
+  - ⏳ Adaptación de la UI a resoluciones y densidades: pendiente.
+  - ❌ Crashlytics: no está integrado en la app (no hay dependencias de Firebase).
+  - ⏳ Consistencia entre dispositivos e incidencias: pendiente.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "Los dispositivos de gama baja tienen menos memoria, por lo que la carga de datos debe optimizarse.")
-  - (Ejemplo: "Android 8.0 tiene algunas limitaciones en animaciones que no se ven en versiones superiores.")
-  - (Ejemplo: "Crashlytics es suficiente para detectar problemas en dispositivos no cubiertos por el laboratorio.")
+- **Evidencia**:
+  - Lo automatizado (lógica, SQLite, sincronización, reglas) está cubierto por las 209 pruebas del móvil, pero no reemplaza la prueba en celulares reales.
+
+- **Cambios respecto a lo propuesto**:
+  - Sin Firebase en el piloto: no hay Crashlytics ni App Distribution. El APK se instala a mano.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Reducir el uso de sombras y efectos visuales en dispositivos de gama baja para mejorar el rendimiento.")
-  - (Ejemplo: "Adquirir un cuarto dispositivo si el mercado objetivo cambia.")
-  - (Ejemplo: "Mantener Crashlytics activo y monitorear crashes semanalmente.")
-  - (Ejemplo: "Documentar la política de compatibilidad en Google Play.")
+  - Instalar el APK de release en los 3 celulares, recorrer el flujo de `appCompleta.test.ts` (entrar, anotar sin señal, ver cuentas, reconectar) y anotar las incidencias en la plantilla de este spike.
+  - En esa misma prueba medir: tiempo de NetInfo al reconectar (SPIKE-001/006), FPS de las listas (SPIKE-014), `fontScale` al 200 % (SPIKE-023) y tamaño del APK de release (SPIKE-017).
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⏳ **Pendiente**: requiere los dispositivos físicos.

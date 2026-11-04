@@ -2,7 +2,7 @@
 
 - **Título**: Implementar protección perimetral con Cloudflare (plan gratuito) como WAF, mitigación DDoS, terminación TLS y rate limiting, complementado con Spring Security en el backend, descartando WAFs de pago y soluciones autoalojadas complejas.
 
-- **Estado**: Propuesto.
+- **Estado**: Propuesto (revisado el 2026-10-30: la validación sigue pendiente). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -188,9 +188,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-027 — Validará que Cloudflare plan gratuito protege el backend contra ataques comunes sin degradar el rendimiento — Propuesto.
-    - SPIKE-016 — Validará que el backend rechaza accesos no autorizados con Spring Security + JWT — Propuesto.
-    - SPIKE-025 — Validará el pipeline de CI/CD que despliega el backend que queda detrás de Cloudflare; la configuración de Cloudflare se valida en SPIKE-027 — Propuesto.
+    - SPIKE-027 — Validará que Cloudflare plan gratuito protege el backend contra ataques comunes sin degradar el rendimiento — Pendiente (revisado el 2026-10-30).
+    - SPIKE-016 — Validará que el backend rechaza accesos no autorizados con Spring Security + JWT — Aprobado con cambios el 2026-10-26.
+    - SPIKE-025 — Validará el pipeline de CI/CD que despliega el backend que queda detrás de Cloudflare; la configuración de Cloudflare se valida en SPIKE-027 — Aprobado parcialmente el 2026-10-28.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -280,3 +280,13 @@
       - Procedimiento para escalar a plan de pago si es necesario.
 
     Se descarta Spring Security solo por falta de mitigación DDoS, AWS WAF y Azure WAF por costo recurrente, y ModSecurity por complejidad de configuración. Cloudflare plan gratuito + Spring Security es la opción que garantiza seguridad, simplicidad y costo cero para AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Propuesto
+  - **Spikes**: SPIKE-027: pendiente (revisado el 2026-10-30). El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - El backend ya exige el encabezado secreto de Cloudflare cuando está configurado (`FiltroOrigenTest`).
+  - **Pendiente**:
+    - Registrar el dominio y configurar Cloudflare (SPIKE-027).

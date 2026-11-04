@@ -2,7 +2,7 @@
 
 - **Título**: Implementar un catálogo de parámetros no sensibles (categorías de gastos, unidades de medida, tipos de cultivo, tipos de actividad, tipos de recurso) gestionado en el backend y consumido por el frontend mediante REST, con caché local en SQLite para funcionamiento offline, descartando parámetros hardcodeados en el cliente.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -167,10 +167,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-029 — Validará que el catálogo centralizado funciona con caché local y sincronización — Propuesto.
-    - SPIKE-005 — Validará el registro offline que consume los parámetros cacheados; el uso del catálogo se valida en SPIKE-029 — Propuesto.
-    - SPIKE-006 — Validará la consulta offline que consume los parámetros cacheados; el uso del catálogo se valida en SPIKE-029 — Propuesto.
-    - SPIKE-019 — Validará las migraciones versionadas con las que se crea la tabla `parametros`; la tabla en sí se valida en SPIKE-029 — Propuesto.
+    - SPIKE-029 — Validará que el catálogo centralizado funciona con caché local y sincronización — Aprobado el 2026-10-28.
+    - SPIKE-005 — Validará el registro offline que consume los parámetros cacheados; el uso del catálogo se valida en SPIKE-029 — Aprobado con cambios el 2026-10-29.
+    - SPIKE-006 — Validará la consulta offline que consume los parámetros cacheados; el uso del catálogo se valida en SPIKE-029 — Aprobado con cambios el 2026-10-29.
+    - SPIKE-019 — Validará las migraciones versionadas con las que se crea la tabla `parametros`; la tabla en sí se valida en SPIKE-029 — Aprobado con cambios el 2026-10-26.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -267,3 +267,15 @@
       - Procedimiento para añadir un nuevo parámetro.
 
     Se descartan los parámetros hardcodeados por falta de consistencia y los múltiples endpoints por ineficiencia. El catálogo centralizado con API única y caché local es la opción que garantiza consistencia, actualización sin recompilar y funcionamiento offline en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado
+  - **Spikes**: SPIKE-029: aprobado el 2026-10-28. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - `GET /api/v1/parametros` con `?desde`, caché en SQLite, copia de respaldo en la app y desactivación sin romper datos históricos.
+  - **Cambios respecto a lo propuesto**:
+    - Tipos reales: `UNIDAD_AREA`, `UNIDAD`, `TIPO_CULTIVO`, `CATEGORIA_GASTO`, `TIPO_INGRESO`, `TIPO_LABOR` y `TIPO_INSUMO` (50 parámetros iniciales).
+  - **Pendiente**:
+    - Vaciar la caché `parametros-existentes` al cambiar el catálogo (hoy puede tardar hasta 5 minutos).

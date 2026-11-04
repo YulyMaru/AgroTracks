@@ -2,7 +2,7 @@
 
 - **Título**: Distribuir la aplicación móvil Android mediante GitHub Releases para el piloto y Firebase App Distribution para testers, dejando Google Play como canal oficial para producción futura, descartando tiendas alternativas como Uptodown en la primera versión.
 
-- **Estado**: Propuesto.
+- **Estado**: Propuesto (revisado el 2026-10-30: la validación sigue pendiente). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -223,9 +223,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-026 — Validará que GitHub Releases y Firebase App Distribution son suficientes para el piloto y que los testers pueden instalar la app sin fricción — Propuesto.
-    - SPIKE-012 — Validará que la app se instala en 3 dispositivos Android físicos — Propuesto.
-    - SPIKE-025 — Validará que el pipeline distribuye el APK con Firebase App Distribution — Propuesto.
+    - SPIKE-026 — Validará que GitHub Releases y Firebase App Distribution son suficientes para el piloto y que los testers pueden instalar la app sin fricción — Pendiente (revisado el 2026-10-30).
+    - SPIKE-012 — Validará que la app se instala en 3 dispositivos Android físicos — Pendiente (revisado el 2026-10-30).
+    - SPIKE-025 — Validará que el pipeline distribuye el APK con Firebase App Distribution — Aprobado parcialmente el 2026-10-28.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -300,3 +300,13 @@
       - No invertir tiempo en tiendas alternativas.
 
     Se descartan las tiendas alternativas (Uptodown, Aptoide, F-Droid) porque no generan confianza en el campesino promedio, no ofrecen actualizaciones automáticas y añaden un canal que mantener sin aportar valor claro. La estrategia en dos fases es la opción que garantiza distribución efectiva en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Propuesto
+  - **Spikes**: SPIKE-026: pendiente (revisado el 2026-10-30). El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Cambios respecto a lo propuesto**:
+    - El APK se instala a mano durante el desarrollo.
+  - **Pendiente**:
+    - Publicar el primer APK en GitHub Releases con la guía de instalación (SPIKE-026).

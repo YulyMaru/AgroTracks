@@ -6,7 +6,8 @@
 - **Nombre:** Validar reglas centralizadas de validación en cliente y servidor
 - **ADR relacionado:** ADR-002 — Validar formularios con reglas centralizadas
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles.
 
@@ -112,7 +113,6 @@ Se utilizará un formulario de ejemplo de AgroTrack (similar al registro de "Gas
 - Una vez corregido todo, el envío debe ser exitoso (o quedar pendiente en la cola de sincronización).
 - El tiempo de validación debe ser < 50 ms.
 
----
 
 ### 7.2 Prueba 2 — Consistencia servidor/cliente (reglas centralizadas)
 
@@ -130,7 +130,6 @@ Se utilizará un formulario de ejemplo de AgroTrack (similar al registro de "Gas
 - El servidor devuelve un error HTTP 400 con el mismo mensaje (o uno estructuralmente idéntico): *"El valor debe ser un número"*.
 - **Éxito crítico**: No hay discrepancia entre el mensaje del cliente y el del servidor.
 
----
 
 ### 7.3 Prueba 3 — Evolución de reglas (cambio de requisito)
 
@@ -198,26 +197,32 @@ Al finalizar el timebox, el equipo deberá entregar:
    - La respuesta del servidor al cambio de regla.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada (qué funcionó, qué no, y recomendaciones para la implementación final).
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿La validación en cliente se ejecutó en < 50 ms?
-  - ✅ / ❌ ¿El cliente y el servidor usaron el mismo archivo JSON?
-  - ✅ / ❌ ¿Los mensajes de error fueron idénticos en cliente y servidor?
-  - ✅ / ❌ ¿Los datos válidos se conservaron al corregir errores?
-  - ✅ / ❌ ¿La validación funcionó sin conexión?
+  - ✅ ¿La validación en cliente se ejecutó en < 50 ms? Sí. Validar 3 campos tarda 0,005 ms en promedio (1.000 repeticiones).
+  - ❌ ¿El cliente y el servidor usaron el mismo archivo JSON? No. Se cambió el enfoque (ver cambios): cada lado tiene sus reglas y una prueba de contrato verifica que sean las mismas.
+  - ⚠️ ¿Los mensajes de error fueron idénticos en cliente y servidor? No son idénticos: el móvil muestra mensajes para el campesino ("Escribe el nombre de la finca.") y el backend devuelve el campo y la regla en `detalles`. El campesino solo ve el mensaje del backend en Envíos, si un dato llega mal.
+  - ✅ ¿Los datos válidos se conservaron al corregir errores? Sí. Cada regla mira solo su campo; al corregir uno se borra solo su error y los demás valores siguen en el formulario.
+  - ✅ ¿La validación funcionó sin conexión? Sí. Las reglas son funciones puras en `src/compartido/dominio/validacion.ts`, sin red.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesValidacion.test.ts` — mensajes por regla, tiempo y contrato con `RegistrosDatos.java` (largos máximos y decimales).
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/SincronizacionIntegracionTest.java` — el backend rechaza vacíos, fechas futuras, códigos fuera del catálogo, centavos y campos desconocidos.
+
+- **Cambios respecto a lo propuesto**:
+  - No se usa JSON Schema ni `ajv`/`json-schema-validator`. Las reglas están en TypeScript (`validacion.ts`) y en Java con Jakarta Validation (`RegistrosDatos.java`).
+  - Para que no se separen, la prueba de contrato lee el código Java y falla si un largo máximo o un número de decimales del móvil no coincide con el backend.
+  - Las reglas se sacaron de `Formularios.tsx` a `src/compartido/dominio/validacion.ts` para poder probarlas.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El uso de `ajv` en React Native requiere polyfills específicos.")
-  - (Ejemplo: "El versionado de esquemas es necesario si las reglas cambian con frecuencia.")
+  - Para 8 formularios sencillos, dos copias pequeñas de reglas con una prueba de contrato salen más baratas que un esquema compartido con su librería en cada lado.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Empaquetar el esquema en la app y usar un mecanismo de actualización por API.")
-  - (Ejemplo: "Definir un sistema de versionado de esquemas desde el inicio.")
-  - (Ejemplo: "Automatizar pruebas que verifiquen consistencia entre cliente y servidor.")
+  - Si las reglas empiezan a cambiar seguido o sin publicar la app, retomar el esquema compartido de la propuesta original.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (validación duplicada y verificada por prueba de contrato, en vez de esquema JSON compartido).

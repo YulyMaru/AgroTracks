@@ -2,7 +2,7 @@
 
 - **Título**: Implementar notificaciones locales y push con Firebase Cloud Messaging (plan gratuito) para informar al usuario sobre sincronización, confirmaciones y eventos clave, descartando notificaciones por email, SMS o WhatsApp en la primera versión.
 
-- **Estado**: Propuesto.
+- **Estado**: Propuesto (revisado el 2026-10-30: la validación sigue pendiente). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -186,9 +186,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-028 — Validará que las notificaciones locales y push con FCM funcionan correctamente en los 3 dispositivos Android, sin ser intrusivas — Propuesto.
-    - SPIKE-006 — Validará que NetInfo detecta los cambios de conectividad que disparan el aviso de sincronización; el aviso en sí se valida en SPIKE-028 — Propuesto.
-    - SPIKE-001 — Validará que la sincronización offline funciona con retry y backoff — Propuesto.
+    - SPIKE-028 — Validará que las notificaciones locales y push con FCM funcionan correctamente en los 3 dispositivos Android, sin ser intrusivas — Pendiente (revisado el 2026-10-30).
+    - SPIKE-006 — Validará que NetInfo detecta los cambios de conectividad que disparan el aviso de sincronización; el aviso en sí se valida en SPIKE-028 — Aprobado con cambios el 2026-10-29.
+    - SPIKE-001 — Validará que la sincronización offline funciona con retry y backoff — Aprobado con cambios el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -287,3 +287,13 @@
       - Verificar en los 3 dispositivos Android.
 
     Se descarta "sin notificaciones" por no cumplir HU-43, y las notificaciones multicanal (email, SMS, WhatsApp) por costo y complejidad. Las notificaciones locales + push con FCM son la opción que garantiza utilidad, simplicidad y costo cero para AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Propuesto
+  - **Spikes**: SPIKE-028: pendiente (revisado el 2026-10-30). El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Cambios respecto a lo propuesto**:
+    - Aplazado para después del piloto: las confirmaciones se muestran como avisos dentro de la app y en la pestaña Envíos.
+  - **Pendiente**:
+    - Volver a evaluar con lo que pidan los campesinos en el piloto.

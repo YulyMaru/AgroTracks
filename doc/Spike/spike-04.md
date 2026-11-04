@@ -6,7 +6,8 @@
 - **Nombre:** Validar estados vacíos y mensajes de ausencia de información
 - **ADR relacionado:** ADR-004 — Comunicar ausencia de datos con estados vacíos
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-30
 - **Prioridad:** Media-Alta
 - **Timebox estimado:** 2 días hábiles.
 
@@ -105,7 +106,6 @@ Se utilizarán dos módulos de ejemplo:
 - La transición entre ambos estados debe ser clara.
 - El `EstadoVacio` solo aparece cuando el arreglo de datos está vacío.
 
----
 
 ### 7.2 Prueba 2 — Distinción entre estado vacío y estado de error
 
@@ -124,7 +124,6 @@ Se utilizarán dos módulos de ejemplo:
 - El `EstadoError` debe tener un mensaje diferente (ej. "Error de conexión") y un botón de "Reintentar".
 - En el paso 5, debe recuperarse el estado correcto (datos o vacío).
 
----
 
 ### 7.3 Prueba 3 — Comprensión del estado vacío (Usabilidad)
 
@@ -140,8 +139,6 @@ Se utilizarán dos módulos de ejemplo:
 #### Resultado esperado
 - El 100 % de los participantes debe identificar que la pantalla de `EstadoVacio` significa que no hay registros (no que la app está dañada).
 - Al menos el 90 % debe mencionar la acción sugerida (ej. "Darle a registrar gasto") o expresar que debe agregar información.
-
----
 
 ### 7.4 Prueba 4 — Diferenciación entre estado vacío y estado de error (Usabilidad)
 
@@ -220,27 +217,31 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Video (máx 2 minutos) mostrando los diferentes estados en acción y las respuestas de los usuarios.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada, incluyendo recomendaciones sobre los mensajes y acciones para cada módulo en la implementación definitiva.
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-30
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El sistema diferenció correctamente `EstadoVacio` y `EstadoError`?
-  - ✅ / ❌ ¿El componente se integró en 2 pantallas con < 5 líneas?
-  - ✅ / ❌ ¿El 100 % de los participantes identificó "sin datos"?
-  - ✅ / ❌ ¿El 100 % de los participantes identificó "problema técnico"?
-  - ✅ / ❌ ¿Al menos el 90 % entendió la acción sugerida?
-  - ✅ / ❌ ¿El componente base se desarrolló en < 4 horas?
+  - ✅ ¿El sistema diferenció "sin datos" de "error"? Sí. Una lista vacía muestra un texto de ayuda dentro de la pantalla y un error se muestra como aviso rojo (`CajaAviso`). Son dos componentes diferentes, revisados en el código.
+  - ✅ ¿Se integró en 2 pantallas con < 5 líneas? Sí. El mensaje vacío ocupa 1 a 3 líneas en Lista, Análisis, Envíos y en los selectores de los formularios.
+  - ⏳ ¿El 100 % identificó "sin datos"? Pendiente (prueba con usuarios).
+  - ⏳ ¿El 100 % identificó "problema técnico"? Pendiente (prueba con usuarios).
+  - ⏳ ¿Al menos el 90 % entendió la acción sugerida? Pendiente (prueba con usuarios).
+  - ✅ ¿El componente base se hizo en < 4 horas? Sí. Son textos dentro de cada pantalla; no hubo un componente aparte que desarrollar.
+
+- **Evidencia**:
+  - `agrotrack-movil/src/pantallas/PantallaLista.tsx` — "Todavía no hay fincas. Toca "+ Nueva finca" para anotar el primero."
+  - `agrotrack-movil/src/pantallas/componentes.tsx` — `CajaAviso` (éxito, error, información) y `Selector` con su texto vacío.
+
+- **Cambios respecto a lo propuesto**:
+  - No se crearon los componentes `EstadoVacio` y `EstadoError`. Cada pantalla tiene su mensaje vacío con la acción ("Primero registra una finca.") y los errores van en `CajaAviso` dentro de la pantalla.
+  - No hay botón "Reintentar" en cada consulta: las consultas leen del celular y no fallan por red; los envíos con error se reintentan desde la pestaña Envíos.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El icono de lupa se interpretó como 'buscar', no como 'sin resultados'.")
-  - (Ejemplo: "El lenguaje coloquial ('No hay gastos') funciona mejor que el técnico ('Sin transacciones').")
+  - Como todo se lee del SQLite local, el error de red casi no aparece en las consultas; el caso común es "todavía no ha anotado nada".
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir un set de mensajes estandarizados por módulo desde el inicio.")
-  - (Ejemplo: "Incluir la referencia al período y filtros en los mensajes.")
-  - (Ejemplo: "Ampliar las pruebas de usabilidad a al menos 10 participantes.")
+  - Hacer la prueba con usuarios; si confunden los mensajes, recién ahí unificarlos en un componente.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: la parte técnica pasa con cambios; falta la prueba con usuarios.

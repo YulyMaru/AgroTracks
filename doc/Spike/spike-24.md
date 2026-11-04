@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-024 — Estandarizar manejo de errores y recuperación en backend y frontend
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-002 (Validar formularios con reglas centralizadas), ADR-004 (Comunicar ausencia de datos con estados vacíos), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-021 (Implementar monitoreo y observabilidad)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado
+- **Fecha de ejecución:** 2026-10-27
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles
 
@@ -161,7 +162,6 @@ Cada respuesta de error del backend debe contener:
 - Los mensajes están en español y son claros.
 - Cada error incluye el identificador de traza.
 
----
 
 ### 7.2 Prueba 2 — Interceptor de Axios en frontend
 
@@ -185,7 +185,7 @@ Cada respuesta de error del backend debe contener:
 - No hay errores no manejados.
 - Funciona en los tres dispositivos.
 
----
+
 
 ### 7.3 Prueba 3 — Reintentos con backoff
 
@@ -204,7 +204,6 @@ Cada respuesta de error del backend debe contener:
 - Los intervalos crecen exponencialmente.
 - No hay ráfagas.
 
----
 
 ### 7.4 Prueba 4 — Refresco de token ante 401
 
@@ -223,7 +222,6 @@ Cada respuesta de error del backend debe contener:
 - Si el refresco falla, se redirige a login.
 - No hay múltiples refrescos simultáneos.
 
----
 
 ### 7.5 Prueba 5 — Conservación de datos ante interrupción
 
@@ -242,7 +240,6 @@ Cada respuesta de error del backend debe contener:
 - No hay duplicados.
 - No hay corrupción.
 
----
 
 ### 7.6 Prueba 6 — Idempotencia ante reintentos
 
@@ -260,8 +257,6 @@ Cada respuesta de error del backend debe contener:
 - El estado local se actualiza una sola vez.
 - No hay duplicados.
 
----
-
 ### 7.7 Prueba 7 — Mensajes claros y accionables
 
 **Objetivo:** Validar que los mensajes son claros y accionables.
@@ -278,8 +273,6 @@ Cada respuesta de error del backend debe contener:
 - Son claros y accionables.
 - No tienen tecnicismos.
 - Los usuarios los comprenden.
-
----
 
 ### 7.8 Prueba 8 — Trazabilidad con identificador de traza
 
@@ -386,33 +379,28 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Video del flujo completo.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-27
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El 100 % de los errores tuvo estructura única?
-  - ✅ / ❌ ¿El interceptor interpretó correctamente cada código?
-  - ✅ / ❌ ¿Los errores transitorios se reintentaron con backoff?
-  - ✅ / ❌ ¿Los 401 dispararon refresco o redirección?
-  - ✅ / ❌ ¿Los datos se conservaron ante interrupciones?
-  - ✅ / ❌ ¿Los reintentos no generaron duplicados?
-  - ✅ / ❌ ¿Los mensajes fueron claros y accionables?
-  - ✅ / ❌ ¿Cada error incluyó identificador de traza?
+  - ✅ ¿Estructura única? Sí. 7 errores distintos (401 sin sesión, 400 datos inválidos, 400 JSON roto, 404 ruta, 404 registro, 405 método, 401 clave incorrecta) devuelven `{ codigo, mensaje, detalles, fechaHora, idTraza }`.
+  - ✅ ¿El interceptor interpreta cada código? Sí. 401 → renovar; 4xx → rechazo sin reintento; 408, 429, 5xx y sin red → reintento con backoff.
+  - ✅ ¿Reintentos con backoff ≤ 10 en el primer minuto? Sí (6).
+  - ✅ ¿Los 401 disparan refresco o redirección? Sí.
+  - ✅ ¿Los datos se conservan ante interrupciones? Sí.
+  - ✅ ¿Los reintentos no duplican? Sí.
+  - ✅ ¿Mensajes claros? Sí, en español y sin nombres de excepciones ("El servidor no está disponible en este momento. Tus datos siguen guardados en el celular.").
+  - ✅ ¿Cada error lleva `idTraza`? Sí, el mismo del encabezado `X-Trace-Id`.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "El interceptor debe manejar el refresco de token de forma atómica para evitar múltiples solicitudes simultáneas.")
-  - (Ejemplo: "Tratar la idempotencia como éxito evita confusión en el frontend.")
-  - (Ejemplo: "El backoff debe tener límite máximo para no esperar demasiado.")
-  - (Ejemplo: "El identificador de traza debe generarse en el frontend y propagarse en todas las solicitudes.")
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/compartido/infraestructura/web/ErroresYTrazaIntegracionTest.java`.
+  - `agrotrack-movil/__tests__/clienteHttp.test.ts` — mensajes para el campesino y clasificación de errores.
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — backoff y conservación.
 
-- **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Estandarizar la estructura de error desde el día 1.")
-  - (Ejemplo: "Incluir identificador de traza en todas las respuestas de error.")
-  - (Ejemplo: "Documentar los códigos de error y sus estrategias.")
-  - (Ejemplo: "Probar cada tipo de error en los tres dispositivos.")
-  - (Ejemplo: "Considerar Circuit Breaker en el futuro si el backend se sobrecarga.")
+- **Cambios respecto a lo propuesto**:
+  - Un reintento de algo ya guardado no responde 409: la respuesta de sincronización trae `YA_REGISTRADO` por operación y el móvil lo trata como éxito.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado**.

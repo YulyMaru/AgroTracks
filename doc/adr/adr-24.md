@@ -2,7 +2,7 @@
 
 - **Título**: Definir un esquema único de errores con códigos estructurados, mensajes claros y estrategias de recuperación (reintentos, idempotencia, conservación de datos) en backend y frontend.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -182,11 +182,11 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-024 — Validará que el manejo centralizado de errores funciona en backend y frontend, que los datos se conservan ante interrupciones y que los reintentos no generan duplicados — Propuesto.
-    - SPIKE-001 — Validará retry y backoff en sincronización — Propuesto.
-    - SPIKE-007 — Validará idempotencia y conservación ante interrupción — Propuesto.
-    - SPIKE-011 — Validará refresco de token ante 401 — Propuesto.
-    - SPIKE-021 — Validará que el `idTraza` se propaga en errores — Propuesto.
+    - SPIKE-024 — Validará que el manejo centralizado de errores funciona en backend y frontend, que los datos se conservan ante interrupciones y que los reintentos no generan duplicados — Aprobado el 2026-10-27.
+    - SPIKE-001 — Validará retry y backoff en sincronización — Aprobado con cambios el 2026-10-27.
+    - SPIKE-007 — Validará idempotencia y conservación ante interrupción — Aprobado el 2026-10-27.
+    - SPIKE-011 — Validará refresco de token ante 401 — Aprobado con cambios el 2026-10-27.
+    - SPIKE-021 — Validará que el `idTraza` se propaga en errores — Aprobado parcialmente el 2026-10-30.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -283,3 +283,15 @@
       - Guía de mensajes para el equipo.
 
     Se descarta el manejo ad-hoc por inconsistencia y el manejo distribuido con Circuit Breaker y Sagas por sobre-ingeniería para el monolito modular. El manejo centralizado es la opción que garantiza consistencia, recuperación y trazabilidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado
+  - **Spikes**: SPIKE-024: aprobado el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Estructura única `{ codigo, mensaje, detalles, fechaHora, idTraza }` en 7 tipos de error, con mensajes en español.
+    - El cliente decide por código: renovar ante 401, no reintentar 4xx, reintentar con backoff 408, 429, 5xx y sin red.
+    - Sin pérdida de datos ni duplicados ante interrupciones.
+  - **Cambios respecto a lo propuesto**:
+    - Un reintento de algo ya guardado vuelve como `YA_REGISTRADO` dentro de la respuesta (200), no como 409.

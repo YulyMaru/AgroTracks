@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-028 — Implementar notificaciones locales y push para eventos clave
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-006 (Consultar datos offline y detectar conectividad), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-021 (Implementar monitoreo y observabilidad en backend y frontend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Pendiente — no ejecutado
+- **Fecha de revisión:** 2026-10-30
 - **Prioridad:** Media-Alta
 - **Timebox estimado:** 3 días hábiles 
 
@@ -174,7 +175,7 @@ El Spike no implementará:
 - La notificación de prueba llega al dispositivo.
 - No hay errores de configuración.
 
----
+
 
 ### 7.2 Prueba 2 — Notificaciones locales sin conexión
 
@@ -195,7 +196,6 @@ El Spike no implementará:
 - Las notificaciones aparecen en el momento correcto.
 - No hay errores.
 
----
 
 ### 7.3 Prueba 3 — Notificaciones push con conexión
 
@@ -216,7 +216,6 @@ El Spike no implementará:
 - No exponen datos sensibles.
 - El tiempo de entrega es aceptable (< 10 s).
 
----
 
 ### 7.4 Prueba 4 — No intrusividad
 
@@ -235,7 +234,6 @@ El Spike no implementará:
 - Las notificaciones solo se envían para eventos relevantes.
 - El usuario no se siente molestado.
 
----
 
 ### 7.5 Prueba 5 — Privacidad de datos
 
@@ -252,7 +250,6 @@ El Spike no implementará:
 - Los mensajes son genéricos pero útiles.
 - La privacidad se respeta.
 
----
 
 ### 7.6 Prueba 6 — Permisos de notificación
 
@@ -272,7 +269,6 @@ El Spike no implementará:
 - Al rechazar, la app respeta la decisión.
 - La app sigue funcionando sin notificaciones.
 
----
 
 ### 7.7 Prueba 7 — Comportamiento en los 3 dispositivos
 
@@ -369,32 +365,23 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Video del flujo completo.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de revisión**: 2026-10-30
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Firebase y FCM se configuraron correctamente?
-  - ✅ / ❌ ¿Las notificaciones locales funcionaron sin conexión?
-  - ✅ / ❌ ¿Las notificaciones push llegaron al dispositivo?
-  - ✅ / ❌ ¿Las notificaciones fueron no intrusivas?
-  - ✅ / ❌ ¿Las notificaciones no expusieron datos sensibles?
-  - ✅ / ❌ ¿Se solicitaron permisos con contexto?
-  - ✅ / ❌ ¿Las notificaciones funcionaron en los 3 dispositivos?
-  - ✅ / ❌ ¿El consumo de batería y datos fue aceptable?
+  - ❌ Firebase y FCM: no configurados.
+  - ❌ Notificaciones locales con `@notifee/react-native`: no implementadas.
+  - ✅ No intrusividad y privacidad: la app no envía ninguna notificación.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "Las notificaciones locales son ideales para eventos sin conexión.")
-  - (Ejemplo: "No se deben incluir montos ni datos personales en las notificaciones.")
-  - (Ejemplo: "Solicitar permisos con contexto aumenta la tasa de aceptación.")
+- **Evidencia**:
+  - `agrotrack-movil/src/pantallas/componentes.tsx` — los avisos van dentro de la app (`CajaAviso`): "¡Guardado!", errores y estado de los envíos.
+
+- **Cambios respecto a lo propuesto**:
+  - Las confirmaciones (guardado, sincronizado, con error) se muestran como avisos dentro de la app y en la pestaña Envíos (con su contador), no como notificaciones del sistema.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar notificaciones locales para eventos sin conexión y push para eventos que requieren conexión.")
-  - (Ejemplo: "No exponer datos sensibles en la notificación.")
-  - (Ejemplo: "Respetar la autonomía del campesino (no alertas automáticas no solicitadas).")
-  - (Ejemplo: "Permitir al usuario desactivar las notificaciones desde la configuración de la app.")
-  - (Ejemplo: "Medir la tasa de aceptación de permisos y ajustar el mensaje si es bajo.")
+  - Volver a evaluar las notificaciones después del piloto, según lo que pidan los campesinos.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⏳ **Pendiente**: no implementado en el piloto.

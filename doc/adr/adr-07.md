@@ -2,7 +2,7 @@
 
 - **Título**: Garantizar idempotencia, consistencia de cálculos y conservación ante interrupción.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -187,7 +187,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-007 — Validará que los cálculos se actualizan tras modificar un dato, que 5 reintentos con el mismo `idLocal` generan 1 solo registro, y que los registros no confirmados permanecen en `PENDIENTE` tras una interrupción — Propuesto.
+    - SPIKE-007 — Validará que los cálculos se actualizan tras modificar un dato, que 5 reintentos con el mismo `idLocal` generan 1 solo registro, y que los registros no confirmados permanecen en `PENDIENTE` tras una interrupción — Aprobado el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -246,3 +246,16 @@
     - Pruebas de consistencia de cálculos, idempotencia y conservación ante interrupción.
 
     Se descartan los cálculos sin invalidación de caché por mostrar datos obsoletos, y la sincronización sin idempotencia por generar duplicados. La combinación de servicios centralizados, `idLocal` y cola persistente es la opción que garantiza consistencia y confiabilidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado
+  - **Spikes**: SPIKE-007: aprobado el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Los cálculos leen siempre de SQLite: crear, editar y eliminar un gasto se refleja al instante.
+    - `idOperacion` como clave de idempotencia en el backend: 5 envíos = 1 registro.
+    - Una edición con versión vieja se rechaza con `CONFLICTO` y no pisa el cambio de otro celular.
+  - **Cambios respecto a lo propuesto**:
+    - No hay caché de cálculos que invalidar en el móvil.
+    - No hay Circuit Breaker (ver ADR-001).

@@ -2,7 +2,7 @@
 
 - **Título**: Usar Flyway en el backend y un mecanismo de migraciones versionadas en SQLite local para evolucionar el esquema de base de datos de forma controlada, reproducible y sin pérdida de datos, descartando migraciones manuales y esquemas sin versionado.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -190,9 +190,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-019 — Validará que Flyway en backend y `PRAGMA user_version` en SQLite aplican migraciones sin pérdida de datos y con atomicidad — Propuesto.
-    - SPIKE-013 — Validará que SQLite local soporta migraciones versionadas y transacciones ACID — Propuesto.
-    - SPIKE-016 — Validará que Flyway se integra correctamente con Spring Boot — Propuesto.
+    - SPIKE-019 — Validará que Flyway en backend y `PRAGMA user_version` en SQLite aplican migraciones sin pérdida de datos y con atomicidad — Aprobado con cambios el 2026-10-26.
+    - SPIKE-013 — Validará que SQLite local soporta migraciones versionadas y transacciones ACID — Aprobado con cambios el 2026-10-28.
+    - SPIKE-016 — Validará que Flyway se integra correctamente con Spring Boot — Aprobado con cambios el 2026-10-26.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -278,3 +278,17 @@
       - Documentar el procedimiento para crear una nueva migración.
 
     Se descartan las migraciones manuales por falta de reproducibilidad y trazabilidad, y `ddl-auto=update` por riesgo de pérdida de datos. Las migraciones versionadas automáticas son la opción que garantiza evolución controlada y confiable en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-019: aprobado con cambios el 2026-10-26. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Flyway aplicó V1 a V5, no deja pendientes, no repite migraciones y Hibernate valida el esquema.
+    - El móvil usa `PRAGMA user_version` (versión 5) y no vuelve a migrar al reabrir.
+  - **Cambios respecto a lo propuesto**:
+    - En el móvil hubo un salto único a la versión 5 que recrea las tablas (antes de tener usuarios reales), en lugar de funciones de migración por versión.
+  - **Pendiente**:
+    - Desde ahora, migraciones incrementales que conserven los datos y la cola, con prueba "con datos".
+    - Probar el rollback contra PostgreSQL 16.

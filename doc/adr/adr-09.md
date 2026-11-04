@@ -2,7 +2,7 @@
 
 - **Título**: Optimizar consultas y resúmenes económicos con índices, agregaciones en servidor y caché.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -141,7 +141,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-009 — Validará que índices + agregaciones en servidor + caché cumplen ≤ 3 s y ≤ 5 s con 10,000 registros — Propuesto.
+    - SPIKE-009 — Validará que índices + agregaciones en servidor + caché cumplen ≤ 3 s y ≤ 5 s con 10,000 registros — Aprobado con cambios el 2026-10-28.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -206,3 +206,19 @@
     - **Monitoreo continuo**: registrar tiempos de respuesta de las consultas críticas, hit ratio de caché, y uso de índices en producción.
 
     Se descartan las consultas sin optimización (por su baja escalabilidad) y la optimización básica (insuficiente para agregaciones complejas). La optimización avanzada es la opción que garantiza un rendimiento sostenible a largo plazo y una experiencia de usuario fluida, incluso con el crecimiento histórico de datos.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-009: aprobado con cambios el 2026-10-28. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Con 500 fincas, 2.000 lotes, 50 cultivos y 10.000 gastos, la consulta más lenta del backend tardó 393 ms (umbral 3 s) y la descarga completa para el modo offline 1,37 s.
+    - En el celular, analizar el mes con 10.000 gastos tarda 100 ms (umbral 5 s).
+  - **Cambios respecto a lo propuesto**:
+    - Los resúmenes se calculan en el celular, no con `SUM`/`GROUP BY` en el servidor: así funcionan sin señal.
+    - No hay paginación: el celular descarga los cambios incrementales una vez y consulta su SQLite.
+    - No hay caché de resúmenes. La caché del backend (Caffeine, 5 min) es solo para validar códigos del catálogo.
+  - **Pendiente**:
+    - Repetir la medición contra PostgreSQL 16 con Testcontainers.
+    - Paginar `GET /api/v1/registros/{tipo}` si un usuario supera 10.000 registros.

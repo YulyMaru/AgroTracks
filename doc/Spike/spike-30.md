@@ -10,7 +10,8 @@
 - **ADR relacionado:** ADR-030 — Gestionar secretos de forma segura en backend y CI/CD
 - **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-021 (Implementar monitoreo y observabilidad en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions), ADR-027 (Proteger el backend con WAF y defensas perimetrales), ADR-028 (Implementar notificaciones locales y push para eventos clave)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-27
 - **Prioridad:** Alta
 - **Timebox estimado:** 2 días hábiles 
 ## 1. Objetivo
@@ -164,7 +165,6 @@ El Spike no implementará:
 - Los secretos están cifrados.
 - Solo administradores pueden gestionarlos.
 
----
 
 ### 7.2 Prueba 2 — Referencia de secretos en workflows
 
@@ -183,7 +183,6 @@ El Spike no implementará:
 - El enmascaramiento funciona.
 - No hay errores de configuración.
 
----
 
 ### 7.3 Prueba 3 — Variables de entorno del servidor
 
@@ -204,7 +203,6 @@ El Spike no implementará:
 - Firma JWTs correctamente.
 - No expone secretos en logs.
 
----
 
 ### 7.4 Prueba 4 — Verificación de que no hay secretos en el código
 
@@ -228,7 +226,6 @@ El Spike no implementará:
 - `.env.example` no contiene valores reales.
 - El escaneo no encuentra secretos.
 
----
 
 ### 7.5 Prueba 5 — Rotación de secretos
 
@@ -250,7 +247,6 @@ El Spike no implementará:
 - Los tokens antiguos expiran correctamente.
 - Los tokens nuevos se firman con el nuevo secreto.
 
----
 
 ### 7.6 Prueba 6 — Trazabilidad de cambios
 
@@ -267,7 +263,6 @@ El Spike no implementará:
 - Hay historial de quién y cuándo.
 - El procedimiento de auditoría está documentado.
 
----
 
 ### 7.7 Prueba 7 — Recuperación ante fuga
 
@@ -362,33 +357,29 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas del procedimiento de rotación.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-27
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Los secretos se configuraron correctamente en GitHub Secrets?
-  - ✅ / ❌ ¿Los workflows referenciaron los secretos sin exponerlos?
-  - ✅ / ❌ ¿Los secretos se enmascararon en los logs?
-  - ✅ / ❌ ¿El backend leyó las variables de entorno?
-  - ✅ / ❌ ¿No hubo secretos en el código ni en archivos versionados?
-  - ✅ / ❌ ¿La rotación de un secreto no afectó el servicio?
-  - ✅ / ❌ ¿Hubo trazabilidad de cambios en secretos?
-  - ✅ / ❌ ¿El procedimiento de recuperación ante fuga funcionó?
+  - ✅ ¿Secretos configurados? El backend en producción arranca y responde, así que lee la clave de la base y el secreto JWT desde Secret Manager (`--set-secrets`).
+  - ✅ ¿Los workflows no exponen secretos? Sí: se usan con `${{ secrets.* }}` y Workload Identity Federation, sin llaves JSON.
+  - ⏳ ¿Se enmascaran en los logs? No verificado en una ejecución.
+  - ✅ ¿El backend lee las variables de entorno? Sí, y se niega a arrancar si el secreto JWT tiene menos de 32 caracteres.
+  - ✅ ¿Sin secretos en el código? Sí. La revisión de los archivos versionados no encontró claves, tokens ni archivos `.env`; el único archivo de llaves es `android/app/debug.keystore`, la llave pública de depuración que trae React Native. Trivy busca secretos en cada ejecución del pipeline.
+  - ⏳ Rotación, trazabilidad de cambios y recuperación ante fuga: no probados.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "GitHub Actions enmascara automáticamente los secretos en los logs.")
-  - (Ejemplo: "Incluir `.env` en `.gitignore` desde el día 1 previene fugas accidentales.")
-  - (Ejemplo: "Documentar el procedimiento de rotación facilita la respuesta ante incidentes.")
+- **Evidencia**:
+  - `backend/src/main/resources/application*.properties` — la clave de la base y el secreto JWT llegan por variables de entorno.
+  - `backend/despliegue/desplegar-cloud-run.sh` — `AGROTRACK_DB_CLAVE` y `AGROTRACK_JWT_SECRETO` desde Secret Manager.
+
+- **Cambios respecto a lo propuesto**:
+  - Secret Manager de Google Cloud para el backend (ADR-031); GitHub Secrets solo para el pipeline.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Nunca hardcodear secretos.")
-  - (Ejemplo: "Configurar GitHub Secrets desde el día 1.")
-  - (Ejemplo: "Separar secretos por entorno (dev, staging, prod).")
-  - (Ejemplo: "Documentar el procedimiento de rotación.")
-  - (Ejemplo: "Nunca imprimir secretos en logs.")
-  - (Ejemplo: "Migrar a un Key Vault si el proyecto crece mucho.")
+  - Quitar el valor por defecto del secreto JWT en el perfil `prod` (hoy `application.properties` trae uno de desarrollo si falta la variable), para que el backend no arranque nunca con él.
+  - Hacer una rotación del secreto JWT en staging y comprobar que el servicio sigue funcionando.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: no hay secretos en el código y el backend los lee bien; falta probar rotación y recuperación.

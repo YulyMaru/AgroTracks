@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-025 — Automatizar integración continua y despliegue con GitHub Actions
 - **ADR complementarios:** ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-031 (Desplegar el backend en un servidor propio con Docker y docker-compose)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-28
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles 
 
@@ -166,7 +167,7 @@ El Spike no implementará:
 - Los secretos están disponibles.
 - No hay errores de configuración.
 
----
+
 
 ### 7.2 Prueba 2 — Linting en el pipeline
 
@@ -183,7 +184,7 @@ El Spike no implementará:
 - Los errores bloquean el pipeline.
 - Los cambios sin errores pasan.
 
----
+
 
 ### 7.3 Prueba 3 — Pruebas unitarias en el pipeline
 
@@ -200,7 +201,6 @@ El Spike no implementará:
 - Las pruebas fallidas bloquean el pipeline.
 - Las pruebas exitosas permiten continuar.
 
----
 
 ### 7.4 Prueba 4 — Pruebas de integración en el pipeline
 
@@ -218,7 +218,6 @@ El Spike no implementará:
 - Las pruebas fallidas bloquean el pipeline.
 - El tiempo es razonable (≤ 5 minutos).
 
----
 
 ### 7.5 Prueba 5 — Cobertura y bloqueo de merge
 
@@ -237,7 +236,6 @@ El Spike no implementará:
 - El merge se bloquea si baja del 70 %.
 - El merge se permite si cumple el umbral.
 
----
 
 ### 7.6 Prueba 6 — Compilación del backend y frontend
 
@@ -254,8 +252,6 @@ El Spike no implementará:
 - El APK se compila correctamente.
 - Los artefactos se publican.
 - No hay errores de compilación.
-
----
 
 ### 7.7 Prueba 7 — Distribución de APK con Firebase App Distribution
 
@@ -274,7 +270,6 @@ El Spike no implementará:
 - El APK se instala y funciona en los tres dispositivos.
 - No hay errores de distribución.
 
----
 
 ### 7.8 Prueba 8 — Despliegue del backend a staging
 
@@ -293,7 +288,6 @@ El Spike no implementará:
 - Los endpoints responden en staging.
 - No hay errores de despliegue.
 
----
 
 ### 7.9 Prueba 9 — Gestión de secretos
 
@@ -311,7 +305,6 @@ El Spike no implementará:
 - La rotación funciona.
 - No hay fugas de secretos.
 
----
 
 ### 7.10 Prueba 10 — Trazabilidad
 
@@ -413,35 +406,33 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de la trazabilidad (commit, rama, autor).
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-28
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Los workflows se crearon y dispararon correctamente?
-  - ✅ / ❌ ¿El linting bloqueó el pipeline si había errores?
-  - ✅ / ❌ ¿Las pruebas unitarias se ejecutaron y bloquearon el pipeline?
-  - ✅ / ❌ ¿Las pruebas de integración se ejecutaron con Testcontainers?
-  - ✅ / ❌ ¿La cobertura se midió y bloqueó el merge si bajaba del umbral?
-  - ✅ / ❌ ¿El JAR y el APK se compilaron sin errores?
-  - ✅ / ❌ ¿El APK se distribuyó a los testers con Firebase App Distribution?
-  - ✅ / ❌ ¿El backend se desplegó a staging correctamente?
-  - ✅ / ❌ ¿Los secretos se gestionaron sin fugas?
-  - ✅ / ❌ ¿Cada build tuvo commit, rama y autor?
+  - ✅ ¿Workflows creados y disparados? Sí. `backend.yml` y `movil.yml` corren en cada PR y push a `main` que toque su carpeta; Dependabot abre PR semanales que pasan por el pipeline (varios ya se fusionaron).
+  - ✅ ¿El linting bloquea? En el móvil sí (ESLint y TypeScript). En el backend no hay Checkstyle; SonarCloud analiza la calidad.
+  - ✅ ¿Las pruebas bloquean? Sí: si fallan, el job falla.
+  - ⚠️ ¿Integración con Testcontainers en ≤ 5 min? Las de integración corren con H2; toda la suite del backend tarda alrededor de 1 minuto en el PC.
+  - ⚠️ ¿La cobertura bloquea el merge? Se mide (JaCoCo y Jest) y se sube a SonarCloud; el bloqueo depende de la regla de calidad de SonarCloud.
+  - ⚠️ ¿JAR y APK compilan? El JAR y la imagen del backend sí (y Trivy la escanea); el APK no se compila en el pipeline.
+  - ❌ ¿Firebase App Distribution? No implementado.
+  - ✅ ¿El backend se despliega a staging? El pipeline despliega `agrotrack-staging` en cada push a `main` y producción a mano con aprobación; el servicio `agrotrack-prod` responde en Cloud Run.
+  - ✅ ¿Secretos sin fugas? Sí. Workload Identity Federation (sin llaves JSON) y Trivy busca secretos en cada ejecución.
+  - ✅ ¿Trazabilidad? Sí. La imagen se etiqueta con el SHA del commit y producción despliega la imagen de un commit ya probado en staging.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "El caché de dependencias reduce el tiempo del pipeline significativamente.")
-  - (Ejemplo: "Ejecutar pruebas de integración solo en PRs a `main` ahorra minutos de CI.")
-  - (Ejemplo: "Firebase App Distribution es muy simple de integrar con GitHub Actions.")
+- **Evidencia**:
+  - `.github/workflows/backend.yml`, `.github/workflows/movil.yml`, `.github/dependabot.yml`, `backend/despliegue/desplegar-cloud-run.sh`.
+
+- **Cambios respecto a lo propuesto**:
+  - Distribución del APK manual (ver SPIKE-026).
+  - Controles DevSecOps añadidos (ADR-033): SonarCloud, Trivy y Dependabot.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir el pipeline desde el día 1.")
-  - (Ejemplo: "Usar GitHub Secrets desde el inicio.")
-  - (Ejemplo: "Ejecutar pruebas unitarias e integración en cada PR y E2E solo en releases.")
-  - (Ejemplo: "Bloquear el merge si las pruebas fallan.")
-  - (Ejemplo: "Distribuir APK a testers con Firebase App Distribution desde la primera versión.")
-  - (Ejemplo: "Añadir notificaciones a Slack o email para builds fallidos.")
+  - Agregar al pipeline del móvil la compilación del APK de release firmado y su publicación en GitHub Releases.
+  - Revisar en GitHub Actions el tiempo real de cada pipeline (objetivo ≤ 15 min).
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: CI y despliegue del backend funcionan; falta el APK en el pipeline.

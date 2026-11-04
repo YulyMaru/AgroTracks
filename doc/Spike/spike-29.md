@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-029 — Centralizar parámetros no sensibles en un catálogo compartido
 - **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-013 (Usar base de datos relacional SQL para backend y almacenamiento local), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado
+- **Fecha de ejecución:** 2026-10-28
 - **Prioridad:** Media-Alta
 - **Timebox estimado:** 3 días hábiles 
 
@@ -177,8 +178,6 @@ El Spike no implementará:
 - El tiempo de sincronización es < 3 s.
 - No hay errores.
 
----
-
 ### 7.2 Prueba 2 — Funcionamiento offline
 
 **Objetivo:** Validar que el frontend funciona sin conexión usando la caché local.
@@ -198,7 +197,6 @@ El Spike no implementará:
 - El registro offline funciona con los parámetros cacheados.
 - No hay errores.
 
----
 
 ### 7.3 Prueba 3 — Propagación de cambios
 
@@ -219,8 +217,6 @@ El Spike no implementará:
 - La desactivación se refleja (el parámetro no se muestra).
 - No hay errores.
 
----
-
 ### 7.4 Prueba 4 — Sincronización incremental con `?desde`
 
 **Objetivo:** Validar que la sincronización incremental funciona.
@@ -239,7 +235,6 @@ El Spike no implementará:
 - El tráfico se reduce significativamente.
 - No hay errores.
 
----
 
 ### 7.5 Prueba 5 — Desactivación sin romper datos históricos
 
@@ -259,7 +254,6 @@ El Spike no implementará:
 - Los análisis siguen funcionando.
 - No hay errores.
 
----
 
 ### 7.6 Prueba 6 — Consistencia entre backend y frontend
 
@@ -278,7 +272,6 @@ El Spike no implementará:
 - El orden se respeta.
 - No hay errores.
 
----
 
 ### 7.7 Prueba 7 — Rendimiento de la carga de parámetros
 
@@ -373,31 +366,30 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de la desactivación sin romper datos históricos.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-28
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El frontend obtuvo todos los parámetros del backend?
-  - ✅ / ❌ ¿El frontend funcionó offline con la caché local?
-  - ✅ / ❌ ¿Los cambios se propagaron al frontend?
-  - ✅ / ❌ ¿La sincronización incremental con `?desde` funcionó?
-  - ✅ / ❌ ¿Desactivar un parámetro no rompió datos históricos?
-  - ✅ / ❌ ¿Backend y frontend usaron los mismos códigos y etiquetas?
-  - ✅ / ❌ ¿La carga de parámetros no degradó el rendimiento?
+  - ✅ ¿El frontend obtiene todos los parámetros? Sí. `GET /api/v1/parametros` devuelve los activos (más de 20) y el móvil los guarda en SQLite.
+  - ✅ ¿Funciona offline? Sí. Sin catálogo descargado usa la copia que trae la app; después, el del servidor.
+  - ✅ ¿Los cambios se propagan? Sí. El motor descarga el catálogo en cada sincronización.
+  - ✅ ¿La consulta incremental `?desde` funciona? Sí. Con una fecha futura no devuelve nada; después de desactivar un parámetro devuelve solo ese, con `activo = false`.
+  - ✅ ¿Desactivar no rompe datos históricos? Sí. El gasto guardado con la categoría desactivada sigue en la lista con su categoría, y la categoría ya no aparece en el catálogo activo que descarga el celular.
+  - ✅ ¿Backend y frontend usan los mismos códigos? Sí; el backend rechaza códigos que no están en el catálogo.
+  - ✅ ¿Rendimiento? La carga del catálogo es parte de la sincronización (50 registros + catálogo en 9 ms con el servidor de prueba).
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "La sincronización incremental con `?desde` reduce el tráfico significativamente.")
-  - (Ejemplo: "Desactivar parámetros en lugar de eliminarlos evita romper datos históricos.")
-  - (Ejemplo: "Los códigos estables son clave para la consistencia entre backend y frontend.")
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/PlataformaIntegracionTest.java` — `catalogoCompletoIncrementalYDesactivacionSinRomperLoHistorico`.
+  - `agrotrack-movil/__tests__/sqliteLocal.test.ts`, `casosRegistros.test.ts` y `appCompleta.test.ts` — caché local, copia de respaldo y descarga.
+
+- **Cambios respecto a lo propuesto**:
+  - La app trae una copia de respaldo del catálogo (`catalogoRespaldo.ts`) para el primer uso sin señal.
+  - Tipos reales del catálogo (50 parámetros iniciales en 7 tipos, migración V4): `UNIDAD_AREA`, `UNIDAD`, `TIPO_CULTIVO`, `CATEGORIA_GASTO`, `TIPO_INGRESO`, `TIPO_LABOR` y `TIPO_INSUMO`.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir los tipos de parámetros desde el día 1.")
-  - (Ejemplo: "Usar códigos estables (ej. `CATEGORIA_GASTO_FERTILIZANTE`) en lugar de IDs numéricos.")
-  - (Ejemplo: "Incluir `actualizado_en` para sincronización incremental.")
-  - (Ejemplo: "Permitir desactivar parámetros sin eliminarlos.")
-  - (Ejemplo: "Cachear en SQLite desde la primera versión.")
+  - El backend guarda en caché (5 min) si un código existe: después de desactivar un parámetro, el backend puede aceptarlo hasta 5 minutos más. Si eso importa, vaciar la caché `parametros-existentes` al cambiar el catálogo.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado**.

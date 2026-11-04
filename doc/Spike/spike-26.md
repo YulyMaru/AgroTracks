@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-026 — Definir el canal de distribución de la aplicación móvil
 - **ADR complementarios:** ADR-012 (Validar el funcionamiento de la app en dispositivos Android soportados mediante pruebas manuales en dispositivos físicos propios), ADR-021 (Implementar monitoreo y observabilidad en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Pendiente — no ejecutado
+- **Fecha de revisión:** 2026-10-30
 - **Prioridad:** Media
 - **Timebox estimado:** 2 días hábiles
 
@@ -152,8 +153,6 @@ El Spike no implementará:
 - El enlace es accesible sin autenticación.
 - No hay errores de subida.
 
----
-
 ### 7.2 Prueba 2 — Configuración de Firebase App Distribution
 
 **Objetivo:** Validar que Firebase App Distribution distribuye el APK a los testers.
@@ -174,7 +173,6 @@ El Spike no implementará:
 - El enlace de instalación funciona.
 - No hay errores de configuración.
 
----
 
 ### 7.3 Prueba 3 — Pipeline de CI/CD integrado
 
@@ -198,7 +196,6 @@ El Spike no implementará:
 - El tiempo del pipeline es razonable (< 15 minutos).
 - No hay errores de autenticación.
 
----
 
 ### 7.4 Prueba 4 — Instalación en los 3 dispositivos
 
@@ -220,7 +217,6 @@ El Spike no implementará:
 - Las pantallas principales funcionan.
 - No hay errores de compatibilidad.
 
----
 
 ### 7.5 Prueba 5 — Instrucciones de instalación con usuarios no técnicos
 
@@ -243,8 +239,6 @@ El Spike no implementará:
 - No hay pasos confusos.
 - La guía se ajusta según el feedback.
 
----
-
 ### 7.6 Prueba 6 — Trazabilidad de versiones
 
 **Objetivo:** Validar que hay trazabilidad entre versión y tester.
@@ -262,8 +256,6 @@ El Spike no implementará:
 - El APK incluye la versión en el nombre.
 - La app muestra la versión.
 - Hay trazabilidad completa.
-
----
 
 ### 7.7 Prueba 7 — Canal de soporte
 
@@ -360,31 +352,21 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de la guía de instalación.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de revisión**: 2026-10-30
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El APK se publicó en GitHub Releases?
-  - ✅ / ❌ ¿Firebase App Distribution notificó a los testers?
-  - ✅ / ❌ ¿El pipeline de CI/CD subió el APK automáticamente?
-  - ✅ / ❌ ¿El APK se instaló en los 3 dispositivos?
-  - ✅ / ❌ ¿Los testers no técnicos pudieron instalar la app?
-  - ✅ / ❌ ¿Hubo trazabilidad entre versión y tester?
-  - ✅ / ❌ ¿El canal de soporte funcionó?
+  - ⏳ GitHub Releases: no se ha publicado ningún APK.
+  - ❌ Firebase App Distribution: no configurado.
+  - ❌ Subida automática desde el pipeline: no implementada.
+  - ⏳ Instalación en los 3 dispositivos, guía para testers y canal de soporte: pendientes.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "Los testers no técnicos necesitan capturas de pantalla para habilitar fuentes desconocidas.")
-  - (Ejemplo: "Firebase App Distribution es muy simple de configurar y notifica automáticamente.")
-  - (Ejemplo: "El APK debe firmarse con una clave de release, no con la clave de debug.")
+- **Cambios respecto a lo propuesto**:
+  - Durante el desarrollo el APK se instala por USB (`npm run android`).
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar GitHub Releases + Firebase App Distribution para el piloto.")
-  - (Ejemplo: "Preparar la app para Google Play desde el día 1.")
-  - (Ejemplo: "Documentar el proceso de instalación con capturas de pantalla.")
-  - (Ejemplo: "Configurar un canal de soporte para resolver dudas de instalación.")
-  - (Ejemplo: "Mantener un changelog de versiones.")
+  - Para el piloto basta con GitHub Releases y la guía de instalación; Firebase App Distribution puede esperar.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⏳ **Pendiente**.

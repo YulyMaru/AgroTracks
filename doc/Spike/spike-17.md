@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-017 — Usar React Native con TypeScript como stack del frontend móvil
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-002 (Validar formularios con reglas centralizadas), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-010 (Estandarizar táctil y valores con unidades), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-013 (Base de datos relacional SQL), ADR-014 (Aplicación móvil reactiva basada en componentes), ADR-015 (Usar REST como estilo de comunicación)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 4 días hábiles
 ## 1. Objetivo
@@ -163,7 +164,6 @@ El Spike no implementará:
 - El APK se genera correctamente.
 - No hay advertencias críticas de dependencias.
 
----
 
 ### 7.2 Prueba 2 — Navegación y middleware de autenticación
 
@@ -187,7 +187,7 @@ El Spike no implementará:
 - El logout redirige a login y elimina el token.
 - No hay pantallas en blanco ni errores de navegación.
 
----
+
 
 ### 7.3 Prueba 3 — Axios con interceptores y refresco de JWT
 
@@ -208,7 +208,6 @@ El Spike no implementará:
 - Si el refresco falla, se cierra sesión y se redirige a login.
 - No hay múltiples refrescos simultáneos.
 
----
 
 ### 7.4 Prueba 4 — SQLite local con transacciones mock
 
@@ -228,7 +227,6 @@ El Spike no implementará:
 - Las transacciones se eliminan correctamente.
 - No hay corrupción de la base.
 
----
 
 ### 7.5 Prueba 5 — NetInfo y detección de conectividad
 
@@ -249,8 +247,6 @@ El Spike no implementará:
 - El indicador visual refleja el estado real.
 - La app tolera cambios frecuentes de red sin errores.
 
----
-
 ### 7.6 Prueba 6 — SecureStore para almacenamiento seguro
 
 **Objetivo:** Validar que SecureStore almacena y recupera el token de forma segura.
@@ -269,8 +265,6 @@ El Spike no implementará:
 - El token se elimina correctamente.
 - SecureStore funciona en los tres dispositivos.
 
----
-
 ### 7.7 Prueba 7 — Generación de UUID
 
 **Objetivo:** Validar que `react-native-uuid` genera identificadores únicos sin colisiones.
@@ -286,8 +280,6 @@ El Spike no implementará:
 - El formato es UUID v4 válido.
 - El tiempo de generación es < 1 s para 10,000 UUID.
 
----
-
 ### 7.8 Prueba 8 — Iconos vectoriales y UI
 
 **Objetivo:** Validar que los iconos vectoriales se renderizan correctamente en los tres dispositivos.
@@ -302,8 +294,6 @@ El Spike no implementará:
 - Los iconos se renderizan correctamente en los tres dispositivos.
 - El tamaño y color son configurables.
 - No hay iconos rotos o faltantes.
-
----
 
 ### 7.9 Prueba 9 — Tamaño del bundle
 
@@ -411,34 +401,40 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de los iconos en los tres dispositivos.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El proyecto compiló sin errores con TypeScript estricto?
-  - ✅ / ❌ ¿Todas las librerías se instalaron sin conflictos?
-  - ✅ / ❌ ¿La navegación y el middleware funcionaron?
-  - ✅ / ❌ ¿Axios manejó el token y el refresco de JWT?
-  - ✅ / ❌ ¿SQLite almacenó y recuperó datos con persistencia?
-  - ✅ / ❌ ¿NetInfo detectó cambios de conectividad en < 5 s?
-  - ✅ / ❌ ¿SecureStore almacenó el token de forma segura?
-  - ✅ / ❌ ¿Se generaron 10,000 UUID sin colisiones?
-  - ✅ / ❌ ¿Los iconos se renderizaron correctamente?
-  - ✅ / ❌ ¿El APK tuvo un tamaño aceptable?
+  - ✅ ¿Compila con TypeScript estricto? Sí. `npx tsc --noEmit` sin errores (configuración `@react-native/typescript-config`).
+  - ✅ ¿Las librerías se instalan sin conflictos? Sí (`npm ci` en el pipeline; React Native 0.88, React 19.3).
+  - ✅ ¿La navegación bloquea rutas protegidas? Sí (ver SPIKE-011).
+  - ✅ ¿Axios inyecta el token y maneja el 401? Sí.
+  - ✅ ¿SQLite persiste? Sí.
+  - ⏳ ¿NetInfo detecta cambios en < 5 s? Se mide en el celular.
+  - ✅ ¿El almacenamiento seguro guarda y recupera el token? Sí (`react-native-keychain`).
+  - ✅ ¿10.000 UUID sin colisiones? Sí, todos UUID v4 válidos y distintos.
+  - ⏳ ¿Los iconos se ven en los 3 dispositivos? Pendiente (se usan emojis, ver cambios).
+  - ⏳ ¿APK ≤ 50 MB? Pendiente: solo existe el APK de depuración (150 MB, incluye todas las arquitecturas y el código sin optimizar); falta compilar el de release.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesInterfaz.test.ts` — 10.000 UUID.
+  - `agrotrack-movil/__tests__/arquitectura.test.js` — el dominio es TypeScript puro y la aplicación solo habla con puertos.
+  - Pipeline `.github/workflows/movil.yml`: lint, tipos, pruebas con cobertura, SonarCloud y Trivy.
+
+- **Cambios respecto a lo propuesto**:
+  - Navegación propia (`src/navegacion/Navegacion.tsx`) en lugar de React Navigation.
+  - `react-native-keychain` en lugar de `react-native-secure-storage`.
+  - `uuid` + `react-native-get-random-values` en lugar de `react-native-uuid`.
+  - Emojis en lugar de `react-native-vector-icons`, y la letra Inter incluida en la app.
+  - Sin `@notifee/react-native`, `@react-native-firebase/*`, `ajv` ni Detox.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "TypeScript estricto desde el inicio evita errores en tiempo de ejecución.")
-  - (Ejemplo: "Hermes reduce significativamente el tamaño del APK y mejora el rendimiento.")
-  - (Ejemplo: "NetInfo requiere configuración adicional para detectar cambios rápidos en redes rurales.")
+  - Menos librerías nativas significa menos problemas al actualizar React Native.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Mantener @op-engineering/op-sqlite por su compatibilidad con SQLCipher.")
-  - (Ejemplo: "Configurar ESLint y Prettier desde el día 1.")
-  - (Ejemplo: "Habilitar Hermes, ProGuard y R8 para reducir el tamaño del APK.")
-  - (Ejemplo: "Usar Firebase App Distribution para pruebas tempranas.")
-  - (Ejemplo: "Documentar las versiones de las librerías para evitar conflictos futuros.")
+  - Compilar el APK de release con `enableProguardInReleaseBuilds` y separado por ABI, y medir su tamaño.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (faltan las mediciones en los celulares).

@@ -2,7 +2,7 @@
 
 - **Título**: Estandarizar tamaños táctiles mínimos, contraste suficiente y respeto por el tamaño de fuente del sistema en toda la interfaz móvil.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -178,9 +178,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-023 — Validará que los componentes cumplen tamaños táctiles ≥ 48x48 dp, contraste ≥ 4.5:1 y respetan `fontScale` sin romper el layout — Propuesto.
-    - SPIKE-010 — Validará los tamaños táctiles del sistema de diseño — Propuesto.
-    - SPIKE-003 — Validará que las tarjetas de resultados económicos son comprendidas por los usuarios; su contraste se mide en SPIKE-023 — Propuesto.
+    - SPIKE-023 — Validará que los componentes cumplen tamaños táctiles ≥ 48x48 dp, contraste ≥ 4.5:1 y respetan `fontScale` sin romper el layout — Aprobado con cambios el 2026-10-30.
+    - SPIKE-010 — Validará los tamaños táctiles del sistema de diseño — Aprobado parcialmente el 2026-10-30.
+    - SPIKE-003 — Validará que las tarjetas de resultados económicos son comprendidas por los usuarios; su contraste se mide en SPIKE-023 — Aprobado parcialmente el 2026-10-29.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -261,3 +261,15 @@
       - Si el negocio lo requiere, se añadirá TalkBack y pruebas con daltonismo en un ADR separado.
 
     Se descarta el diseño sin estándares por inaccesible bajo el sol y difícil de presionar, y la accesibilidad completa por complejidad y tiempo desproporcionados para el timebox actual. Los estándares básicos son la opción que garantiza usabilidad y legibilidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-023: aprobado con cambios el 2026-10-30. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - 47 pares de letra y fondo cumplen WCAG 2.1 AA, 15 controles miden 48 dp o más, las separaciones son de 8 dp y ningún texto mide menos de 12 px; una prueba automática lo vigila.
+  - **Cambios respecto a lo propuesto**:
+    - La validación encontró y corrigió 7 contrastes (naranja, verde claro, rojo vivo, ámbar, ayuda con transparencia, rojo sobre rojo suave y gris del detalle) y 5 tamaños o separaciones.
+  - **Pendiente**:
+    - Prueba con `fontScale` al 200 % en el celular.

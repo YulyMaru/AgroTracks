@@ -180,8 +180,8 @@
     - Pruebas de la capa de aplicación del móvil (2026-11-03) — Con dobles en memoria de los puertos (sin celular ni SQLite): motor y cola de sincronización, casos de uso de registros, sesión y análisis. 85 pruebas; dominio y aplicación quedan cerca del 100 % y la cobertura que mide SonarCloud sube de 10,4 % a 53 %. La infraestructura (SQLite, HTTP, Keychain) se valida en el dispositivo (ADR-012) — Realizado.
     - Pruebas de integración de la infraestructura del móvil (2026-11-04) — Las consultas SQL reales de los adaptadores corren contra el SQLite de Node (`node:sqlite`), el cliente HTTP contra un servidor de prueba con los interceptores reales (renovación del token, clasificación de errores), y una prueba recorre la app completa desde `src/composicion.ts`: anotar sin señal, consultar el análisis y sincronizar al volver la conexión. 122 pruebas; la cobertura que mide SonarCloud sube a 96 %. Solo quedan fuera el cifrado con SQLCipher y la migración de la base sin cifrar, que se validan en el dispositivo (ADR-012, ADR-022) — Realizado.
     - `npm audit` (2026-11-01) — Encontró 3 vulnerabilidades HIGH en el móvil, que se corrigieron antes de activar el bloqueo de Trivy — Realizado.
-    - SPIKE-020 — Validará que las pruebas en capas se integran en el pipeline — Propuesto.
-    - SPIKE-025 — Validará el pipeline completo de CI/CD — Propuesto.
+    - SPIKE-020 — Validará que las pruebas en capas se integran en el pipeline — Aprobado parcialmente el 2026-10-26.
+    - SPIKE-025 — Validará el pipeline completo de CI/CD — Aprobado parcialmente el 2026-10-28.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 

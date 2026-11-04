@@ -2,7 +2,7 @@
 
 - **Título**: Usar PostgreSQL como base de datos relacional del backend y SQLite como almacenamiento local en el cliente móvil, descartando NoSQL para la primera versión.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -182,9 +182,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple ≤ 3 s y ≤ 5 s con 10,000 transacciones — Propuesto.
-    - SPIKE-013 — Validará que SQLite local replica fielmente el esquema remoto y soporta transacciones ACID — Propuesto.
-    - SPIKE-007 — Validará que la idempotencia con `idLocal` y la consistencia se mantienen ante reintentos e interrupciones — Propuesto.
+    - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple ≤ 3 s y ≤ 5 s con 10,000 transacciones — Aprobado con cambios el 2026-10-28.
+    - SPIKE-013 — Validará que SQLite local replica fielmente el esquema remoto y soporta transacciones ACID — Aprobado con cambios el 2026-10-28.
+    - SPIKE-007 — Validará que la idempotencia con `idLocal` y la consistencia se mantienen ante reintentos e interrupciones — Aprobado el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -262,3 +262,20 @@
       - Pruebas de transacciones ACID ante fallos.
       - Pruebas de rendimiento con volumen máximo (10,000 transacciones).
       - Pruebas de idempotencia con `idLocal`.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-009: aprobado con cambios el 2026-10-28; SPIKE-013: aprobado con cambios el 2026-10-28; SPIKE-007: aprobado el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - PostgreSQL 16 en Cloud SQL (producción) y SQLite cifrado en el celular.
+    - Transacciones ACID e integridad referencial en los dos lados; ninguna columna admite vacíos.
+    - Restricción única por `id_operacion` para la idempotencia.
+    - Volumen máximo (10.000) dentro de los umbrales.
+  - **Cambios respecto a lo propuesto**:
+    - Sin Redis: Caffeine en memoria (Memorystore queda como evolución, igual que en ADR-031).
+    - Índices por `(id_usuario, actualizado_en)` y por padre (finca, lote, cultivo, asignación), según el modelo de datos v2, en lugar de `(id_usuario, fecha, tipo)`.
+    - Las migraciones locales todavía no son incrementales (ver ADR-019).
+  - **Pendiente**:
+    - Prueba de integridad tras cierre abrupto en el celular.

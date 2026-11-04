@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-016 — Usar Spring Boot 4.1 con Java 27 como stack del backend
 - **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-013 (Base de datos relacional SQL), ADR-015 (Usar REST como estilo de comunicación), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-26
 - **Prioridad:** Alta
 - **Timebox estimado:** 4 días hábiles
 
@@ -155,7 +156,6 @@ El Spike no implementará:
 - Los datos previos se conservan tras la segunda migración.
 - La tabla `flyway_schema_history` refleja las versiones aplicadas.
 
----
 
 ### 7.2 Prueba 2 — Transacciones ACID
 
@@ -173,8 +173,6 @@ El Spike no implementará:
 - Sin fallo: commit exitoso, 4 registros insertados.
 - La integridad referencial se mantiene.
 - La concurrencia no genera condiciones de carrera.
-
----
 
 ### 7.3 Prueba 3 — Autenticación JWT y refresco silencioso
 
@@ -197,7 +195,6 @@ El Spike no implementará:
 - Refresh token inválido devuelve 401.
 - Los endpoints públicos (login, refresh) son accesibles sin token.
 
----
 
 ### 7.4 Prueba 4 — Sincronización idempotente con `idLocal`
 
@@ -215,8 +212,6 @@ El Spike no implementará:
 - Los reintentos devuelven la misma respuesta (mismo código HTTP, mismo cuerpo).
 - No hay duplicados.
 - La restricción única en `idLocal` se respeta.
-
----
 
 ### 7.5 Prueba 5 — Consultas productivas con paginación y filtros
 
@@ -236,8 +231,6 @@ El Spike no implementará:
 - Los filtros se aplican correctamente.
 - La respuesta incluye metadatos de paginación (`pagina`, `limite`, `total`).
 
----
-
 ### 7.6 Prueba 6 — Resumen económico agregado
 
 **Objetivo:** Medir el tiempo de respuesta del endpoint de resumen económico.
@@ -255,7 +248,6 @@ El Spike no implementará:
 - La respuesta incluye los datos necesarios para las tarjetas (ADR-003).
 - Los índices se utilizan correctamente (verificar con `EXPLAIN ANALYZE`).
 
----
 
 ### 7.7 Prueba 7 — Documentación OpenAPI con SpringDoc
 
@@ -356,30 +348,37 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de Postman o JMeter mostrando tiempos.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-26
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El proyecto arrancó y Flyway aplicó migraciones sin pérdida de datos?
-  - ✅ / ❌ ¿Las transacciones ACID se completaron o revirtieron correctamente?
-  - ✅ / ❌ ¿La autenticación JWT y el refresco funcionaron?
-  - ✅ / ❌ ¿La sincronización idempotente generó 1 solo registro tras 5 reintentos?
-  - ✅ / ❌ ¿Las consultas productivas cumplieron ≤ 3 s?
-  - ✅ / ❌ ¿El resumen económico cumplió ≤ 5 s?
-  - ✅ / ❌ ¿SpringDoc generó OpenAPI correcta?
+  - ✅ ¿El proyecto arranca y Flyway migra sin perder datos? Sí. Se aplicaron V1 a V5, no queda nada pendiente, volver a migrar no ejecuta nada y Hibernate valida el esquema (`ddl-auto=validate`).
+  - ✅ ¿Transacciones ACID? Sí.
+  - ✅ ¿JWT en login, uso y refresco? Sí (15 min / 30 días, rotación).
+  - ✅ ¿5 reintentos = 1 registro? Sí.
+  - ✅ ¿Consultas ≤ 3 s y resumen ≤ 5 s con el volumen máximo? Sí (393 ms y 113 ms).
+  - ✅ ¿OpenAPI se genera? Sí.
+  - ✅ Total del backend: 57 pruebas en 13 clases, todas pasan; cobertura de líneas 95,5 % (dominio 99,2 %, aplicación 95,2 %, infraestructura 94,4 %).
+
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/PlataformaIntegracionTest.java` — Flyway, OpenAPI, Actuator, métricas y catálogo.
+  - `backend/src/test/java/co/edu/uco/agrotrack/ArquitecturaHexagonalTest.java` — reglas de dependencias entre capas.
+  - Reporte de JaCoCo: `backend/target/site/jacoco/` (lo genera `./mvnw verify`).
+
+- **Cambios respecto a lo propuesto**:
+  - Arquitectura hexagonal dentro del monolito modular (ADR-032), con módulos `autenticacion`, `catalogo`, `registros` y `sincronizacion`.
+  - Validación con Jakarta Validation y reglas del dominio; no se usa `json-schema-validator` (ver SPIKE-002).
+  - Caché Caffeine en memoria; sin Redis.
+  - Las pruebas corren sobre H2 en modo PostgreSQL. `TestcontainersConfiguration` (PostgreSQL 16) está listo, pero en el PC de desarrollo no hay Docker.
+  - En el PC de desarrollo no hay JDK 27 y las pruebas se corrieron con JDK 26 (`-Djava.version=26`). El pipeline usa Java 27.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "Spring Security requiere configuración explícita para permitir endpoints públicos como login y refresh.")
-  - (Ejemplo: "Flyway con `baseline-on-migrate` es útil si la base ya tiene tablas.")
-  - (Ejemplo: "Las transacciones declarativas con `@Transactional` simplifican enormemente el manejo de ACID.")
+  - Flyway con `ddl-auto=validate` detecta en el arranque cualquier diferencia entre las entidades y el esquema.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir la estructura modular por dominio desde el día 1.")
-  - (Ejemplo: "Usar Testcontainers para validar PostgreSQL real en las pruebas.")
-  - (Ejemplo: "Configurar Spring Boot Actuator y Micrometer para monitoreo.")
-  - (Ejemplo: "Aprovechar SpringDoc para generar el cliente TypeScript del frontend.")
+  - Activar Testcontainers en el pipeline (GitHub Actions trae Docker) para correr la integración contra PostgreSQL 16.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios**.

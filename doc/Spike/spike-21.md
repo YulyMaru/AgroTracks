@@ -10,7 +10,8 @@
 - **ADR relacionado:** ADR-021 — Implementar monitoreo y observabilidad en backend y frontend
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas), ADR-020 (Definir la estrategia de pruebas en capas para backend y frontend)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-30
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles 
 
@@ -196,7 +197,6 @@ El Spike no implementará:
 - Las métricas se actualizan tras consumir los endpoints.
 - No hay errores de configuración.
 
----
 
 ### 7.2 Prueba 2 — Configuración de Prometheus y scraping
 
@@ -216,7 +216,6 @@ El Spike no implementará:
 - Las métricas se actualizan tras consumir los endpoints.
 - No hay errores de scraping.
 
----
 
 ### 7.3 Prueba 3 — Dashboards en Grafana
 
@@ -237,7 +236,6 @@ El Spike no implementará:
 - Los dashboards son legibles y útiles.
 - Los dashboards se exportan como JSON.
 
----
 
 ### 7.4 Prueba 4 — Alertas en Alertmanager
 
@@ -261,7 +259,6 @@ El Spike no implementará:
 - Las alertas se resuelven cuando el problema desaparece.
 - No hay falsos positivos/negativos.
 
----
 
 ### 7.5 Prueba 5 — Propagación de `idTraza`
 
@@ -281,8 +278,6 @@ El Spike no implementará:
 - Aparece en las respuestas de error.
 - Permite rastrear una operación de extremo a extremo.
 - No hay errores de propagación.
-
----
 
 ### 7.6 Prueba 6 — Firebase Crashlytics
 
@@ -304,7 +299,6 @@ El Spike no implementará:
 - La consola de Firebase muestra los errores.
 - No hay errores de integración.
 
----
 
 ### 7.7 Prueba 7 — Firebase Analytics
 
@@ -327,7 +321,6 @@ El Spike no implementará:
 - La consola de Firebase muestra los eventos.
 - No hay errores de integración.
 
----
 
 ### 7.8 Prueba 8 — Overhead del monitoreo
 
@@ -437,32 +430,32 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de logs con `idTraza`.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-30
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Actuator y Micrometer expusieron las métricas?
-  - ✅ / ❌ ¿Prometheus hizo scraping sin errores?
-  - ✅ / ❌ ¿Grafana mostró los 3 dashboards?
-  - ✅ / ❌ ¿Las 3 alertas se dispararon correctamente?
-  - ✅ / ❌ ¿El `idTraza` se propagó entre frontend y backend?
-  - ✅ / ❌ ¿Crashlytics registró crashes y errores?
-  - ✅ / ❌ ¿Analytics registró los eventos clave?
-  - ✅ / ❌ ¿El overhead del monitoreo fue < 5 %?
+  - ✅ ¿Actuator y Micrometer exponen las métricas? Sí. `/actuator/health` (también `liveness`) responde `UP` y la métrica `agrotrack.sincronizacion.operaciones` sube con cada operación; `/actuator/metrics` exige token. En producción, `/actuator/health` responde `UP`.
+  - ➖ Prometheus, Grafana y Alertmanager: no aplican; se reemplazaron por Cloud Monitoring y Cloud Logging (ADR-021, ADR-031).
+  - ⏳ ¿Las alertas se disparan? Pendiente: no se verificaron políticas de alerta en Cloud Monitoring.
+  - ✅ ¿El `idTraza` se propaga? Sí. El móvil envía `X-Trace-Id` en cada petición; el backend lo devuelve en el encabezado y en el cuerpo de cada error, y lo pone en los logs (JSON en producción).
+  - ❌ Crashlytics: no integrado.
+  - ❌ Analytics: no integrado.
+  - ⏳ Overhead < 5 %: no medido.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "El `idTraza` debe generarse en el frontend y propagarse en todas las solicitudes.")
-  - (Ejemplo: "Los umbrales de alertas deben ajustarse después de observar el comportamiento real.")
-  - (Ejemplo: "Grafana con dashboards predefinidos acelera la configuración.")
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/PlataformaIntegracionTest.java` — salud y métricas.
+  - `backend/src/test/java/co/edu/uco/agrotrack/compartido/infraestructura/web/ErroresYTrazaIntegracionTest.java` — `idTraza` del celular, generado si falta y en cada error.
+  - `agrotrack-movil/__tests__/clienteHttp.test.ts` — cada petición lleva token e `idTraza`.
+
+- **Cambios respecto a lo propuesto**:
+  - Observabilidad en Google Cloud (Cloud Monitoring con `micrometer-registry-stackdriver` y Cloud Logging con logs JSON), sin Prometheus ni Grafana.
+  - La app móvil no tiene Firebase: los fallos se registran en la consola (`registrarFallo`) y no se envían a ningún servicio.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Configurar Actuator y Micrometer desde el día 1.")
-  - (Ejemplo: "Inyectar `idTraza` en todas las solicitudes.")
-  - (Ejemplo: "Configurar alertas para errores críticos (fallos de sincronización, pérdida de datos, 500).")
-  - (Ejemplo: "Usar Crashlytics desde la primera versión.")
-  - (Ejemplo: "Migrar a Grafana Cloud o Loki si el volumen de logs crece.")
+  - Crear en Cloud Monitoring las alertas de errores 5xx, latencia y presupuesto.
+  - Decidir si se integra Crashlytics antes del piloto o se aplaza (ADR-021).
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: backend e `idTraza` pasan; faltan alertas y el monitoreo del móvil.

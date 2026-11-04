@@ -2,7 +2,7 @@
 
 - **Título**: Implementar una estrategia de monitoreo y observabilidad con Spring Boot Actuator + Micrometer + Cloud Monitoring y Cloud Logging de Google Cloud en el backend, y Firebase Crashlytics + Analytics + React Native DevTools en el frontend móvil, descartando monitoreo manual y herramientas propietarias costosas.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -192,10 +192,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-021 — Validará que Spring Boot Actuator + Micrometer + Cloud Monitoring + Cloud Logging y Firebase Crashlytics + Analytics cubren las necesidades de observabilidad — Propuesto.
-    - SPIKE-001 — Validará la sincronización offline que luego se instrumenta; su trazabilidad con `idTraza` se valida en SPIKE-021 — Propuesto.
-    - SPIKE-007 — Validará los estados de sincronización (`PENDIENTE`, `SINCRONIZADO`) que luego se exponen como métricas — Propuesto.
-    - SPIKE-016 — Validará el backend Spring Boot sobre el que se habilita Actuator; la integración de Actuator se valida en SPIKE-021 — Propuesto.
+    - SPIKE-021 — Validará que Spring Boot Actuator + Micrometer + Cloud Monitoring + Cloud Logging y Firebase Crashlytics + Analytics cubren las necesidades de observabilidad — Aprobado parcialmente el 2026-10-30.
+    - SPIKE-001 — Validará la sincronización offline que luego se instrumenta; su trazabilidad con `idTraza` se valida en SPIKE-021 — Aprobado con cambios el 2026-10-27.
+    - SPIKE-007 — Validará los estados de sincronización (`PENDIENTE`, `SINCRONIZADO`) que luego se exponen como métricas — Aprobado el 2026-10-27.
+    - SPIKE-016 — Validará el backend Spring Boot sobre el que se habilita Actuator; la integración de Actuator se valida en SPIKE-021 — Aprobado con cambios el 2026-10-26.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -293,3 +293,17 @@
       - Verificar que el `idTraza` se propaga correctamente.
 
     Se descarta el monitoreo manual por falta de visibilidad y Datadog/New Relic por costo y dependencia de proveedor. Actuator + Micrometer con Cloud Monitoring y Cloud Logging en el backend, más Firebase en el móvil, es la opción que garantiza observabilidad, detección temprana y trazabilidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios, con validaciones pendientes
+  - **Spikes**: SPIKE-021: aprobado parcialmente el 2026-10-30. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Actuator (`/actuator/health` UP en producción), métricas de Micrometer para Cloud Monitoring y logs JSON.
+    - `idTraza` del móvil al backend, en el encabezado y en cada respuesta de error.
+  - **Cambios respecto a lo propuesto**:
+    - Sin Firebase Crashlytics ni Analytics en el móvil por ahora.
+  - **Pendiente**:
+    - Políticas de alerta en Cloud Monitoring.
+    - Decidir si se integra Crashlytics antes del piloto.

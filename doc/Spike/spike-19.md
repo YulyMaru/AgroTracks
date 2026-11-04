@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-019 — Versionar el esquema de base de datos con migraciones automáticas
 - **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-26
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles
 
@@ -162,7 +163,6 @@ El Spike no implementará:
 - Las tablas, columnas e índices existen.
 - El arranque no supera los 10 s.
 
----
 
 ### 7.2 Prueba 2 — Migraciones con datos existentes (backend)
 
@@ -182,8 +182,6 @@ El Spike no implementará:
 - El índice se crea correctamente.
 - No hay pérdida de datos.
 
----
-
 ### 7.3 Prueba 3 — Migración fallida y rollback (backend)
 
 **Objetivo:** Validar que si una migración falla, se revierte completamente.
@@ -201,8 +199,6 @@ El Spike no implementará:
 - `V4` no se registra en el historial.
 - No hay estados intermedios inconsistentes.
 
----
-
 ### 7.4 Prueba 4 — Reproducibilidad entre entornos (backend)
 
 **Objetivo:** Validar que las migraciones son reproducibles entre entornos.
@@ -219,7 +215,6 @@ El Spike no implementará:
 - No hay diferencias entre entornos.
 - Las migraciones son reproducibles.
 
----
 
 ### 7.5 Prueba 5 — Migraciones en entorno limpio (frontend)
 
@@ -238,7 +233,6 @@ El Spike no implementará:
 - Las tablas, columnas e índices existen.
 - El arranque no supera los 2 s.
 
----
 
 ### 7.6 Prueba 6 — Migraciones con datos existentes (frontend)
 
@@ -258,8 +252,6 @@ El Spike no implementará:
 - El índice se crea correctamente.
 - `PRAGMA user_version` es 3.
 
----
-
 ### 7.7 Prueba 7 — Migración fallida y rollback (frontend)
 
 **Objetivo:** Validar que si una migración local falla, se revierte completamente.
@@ -276,8 +268,6 @@ El Spike no implementará:
 - La base queda en v3.
 - La app no se bloquea; muestra un mensaje de error.
 - Los datos existentes se conservan.
-
----
 
 ### 7.8 Prueba 8 — Persistencia tras cerrar y reabrir la app (frontend)
 
@@ -297,7 +287,6 @@ El Spike no implementará:
 - Los datos persisten.
 - El arranque es rápido (no re-ejecuta migraciones).
 
----
 
 ### 7.9 Prueba 9 — Consistencia entre esquema local y remoto
 
@@ -398,34 +387,33 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de la app tras migrar.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-26
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Flyway aplicó las 3 migraciones en entorno limpio?
-  - ✅ / ❌ ¿Las migraciones del backend no perdieron datos?
-  - ✅ / ❌ ¿El rollback del backend funcionó?
-  - ✅ / ❌ ¿Los esquemas del backend fueron reproducibles?
-  - ✅ / ❌ ¿Las 3 migraciones locales se aplicaron sin errores?
-  - ✅ / ❌ ¿Las migraciones locales no perdieron datos?
-  - ✅ / ❌ ¿El rollback local funcionó?
-  - ✅ / ❌ ¿Las migraciones locales no se re-aplicaron tras cerrar la app?
-  - ✅ / ❌ ¿Los esquemas local y remoto fueron consistentes?
+  - ✅ Entorno limpio (backend): Flyway aplica las migraciones sin errores (son 5: V1 a V5).
+  - ✅ Con datos (backend): las migraciones posteriores a V4 conservan los datos (V5 agrega el nombre de usuario).
+  - ⏳ Rollback (backend): no se probó. PostgreSQL revierte el DDL dentro de la transacción de Flyway, pero H2 no; queda para la prueba con Testcontainers.
+  - ✅ Reproducibilidad: `flyway.migrate()` sobre una base ya migrada no ejecuta nada y Hibernate valida el esquema al arrancar.
+  - ✅ Entorno limpio (frontend): el esquema local queda en `user_version = 5`.
+  - ⚠️ Con datos (frontend): la versión 5 recrea las tablas si la versión era menor (antes de tener usuarios reales); desde la 5 no se pierde nada al reabrir.
+  - ⏳ Rollback (frontend): no hay migraciones incrementales que revertir todavía.
+  - ✅ Persistencia (frontend): reabrir la app no vuelve a migrar ni borra datos.
+  - ✅ Consistencia local-remoto: el móvil envía exactamente los campos del modelo de datos v2 y el backend rechaza cualquier campo desconocido.
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "Flyway con `baseline-on-migrate=true` es útil si la base ya tiene tablas.")
-  - (Ejemplo: "Las migraciones locales en SQLite deben ejecutarse dentro de una transacción para evitar corrupción.")
-  - (Ejemplo: "Mantener las migraciones pequeñas y atómicas facilita el rollback y la depuración.")
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/PlataformaIntegracionTest.java` — `flywayAplicoLasCincoMigracionesEnOrdenYNoQuedaNadaPendiente`.
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — reabrir la app no vuelve a migrar; `sqliteLocal.test.ts` — versión 5.
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/SincronizacionIntegracionTest.java` — un campo que el modelo no define se rechaza.
+
+- **Cambios respecto a lo propuesto**:
+  - 5 migraciones en el backend (no 3). V4 rehízo las tablas para el modelo de datos v2 y borró los datos de prueba, antes del primer usuario real.
+  - En el móvil no hay todavía funciones de migración por versión; hay un salto único a la versión 5.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir la estrategia de migraciones desde el día 1.")
-  - (Ejemplo: "Planificar las migraciones locales y remotas en conjunto.")
-  - (Ejemplo: "Probar cada migración en un entorno limpio y en uno con datos.")
-  - (Ejemplo: "Documentar el changelog de migraciones.")
-  - (Ejemplo: "No usar `ddl-auto=update` en producción; usar `validate`.")
-  - (Ejemplo: "Mostrar pantalla de carga mientras se aplican migraciones locales.")
+  - Desde ahora, toda migración del backend y del móvil debe conservar datos y la cola pendiente, con una prueba "con datos".
+  - Probar el rollback de una migración fallida contra PostgreSQL 16 con Testcontainers.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios**.

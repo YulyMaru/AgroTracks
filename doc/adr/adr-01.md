@@ -2,7 +2,7 @@
 
 - **Título**: Implementar sincronización offline con retry y backoff para operaciones registradas sin conexión.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -209,10 +209,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-001 — Validará que la sincronización automática con retry, backoff e idempotencia no pierde ni duplica datos — Propuesto.
-    - SPIKE-005 — Validará que el registro offline se almacena, se encola y se sincroniza al reconectar — Propuesto.
-    - SPIKE-006 — Validará que la consulta offline, la persistencia y la detección de conectividad funcionan — Propuesto.
-    - SPIKE-007 — Validará que los reintentos no generan duplicados y que los registros no confirmados se conservan — Propuesto.
+    - SPIKE-001 — Validará que la sincronización automática con retry, backoff e idempotencia no pierde ni duplica datos — Aprobado con cambios el 2026-10-27.
+    - SPIKE-005 — Validará que el registro offline se almacena, se encola y se sincroniza al reconectar — Aprobado con cambios el 2026-10-29.
+    - SPIKE-006 — Validará que la consulta offline, la persistencia y la detección de conectividad funcionan — Aprobado con cambios el 2026-10-29.
+    - SPIKE-007 — Validará que los reintentos no generan duplicados y que los registros no confirmados se conservan — Aprobado el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -279,3 +279,22 @@
     La sincronización manual podrá mantenerse como mecanismo complementario de recuperación, pero no como estrategia principal.
 
     La sincronización híbrida y el uso de Message Brokers quedan como alternativas para evaluar mediante futuros ADR si AgroTrack aumenta su escala o requiere sincronización en tiempo real.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-001: aprobado con cambios el 2026-10-27; SPIKE-005: aprobado con cambios el 2026-10-29; SPIKE-006: aprobado con cambios el 2026-10-29; SPIKE-007: aprobado el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - La cola local se envía sola al reconectar, por lotes y en orden; 50 registros offline llegaron todos.
+    - Backoff exponencial con jitter: 6 intentos en el primer minuto con el servidor caído (límite: 10).
+    - Idempotencia por `idOperacion`: 5 envíos de la misma operación dejan 1 registro.
+    - Nada se marca `SINCRONIZADO` sin confirmación del servidor.
+  - **Cambios respecto a lo propuesto**:
+    - No hay Circuit Breaker aparte: al agotar 5 reintentos el motor detiene la cola y espera la siguiente reconexión.
+    - No se usa `Retry-After`; 408, 429, 5xx y falta de red se tratan igual.
+    - La cola cubre los 8 tipos de registro con crear, editar y eliminar.
+    - No se hicieron pruebas de carga con muchos celulares sincronizando a la vez.
+  - **Pendiente**:
+    - Medir en los celulares cuánto tarda NetInfo en avisar la reconexión (SPIKE-012).
+    - Cloud Run tardó 27 s en el arranque en frío, más que los 25 s del chequeo del móvil: subir el tiempo o dejar 1 instancia mínima.

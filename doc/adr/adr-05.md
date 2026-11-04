@@ -2,7 +2,7 @@
 
 - **Título**: Registrar información básica sin conexión con almacenamiento local persistente y cola de pendientes, para cumplir con el escenario de calidad ESC-CAL-DP-01.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -148,9 +148,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-005 — Validará que el registro offline persiste, se encola y muestra feedback claro — Propuesto.
-    - SPIKE-006 — Validará que los datos sobreviven al cierre y reapertura de la app — Propuesto.
-    - SPIKE-007 — Validará que los registros no confirmados se conservan ante interrupción — Propuesto.
+    - SPIKE-005 — Validará que el registro offline persiste, se encola y muestra feedback claro — Aprobado con cambios el 2026-10-29.
+    - SPIKE-006 — Validará que los datos sobreviven al cierre y reapertura de la app — Aprobado con cambios el 2026-10-29.
+    - SPIKE-007 — Validará que los registros no confirmados se conservan ante interrupción — Aprobado el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -216,3 +216,17 @@
 
     Se descarta bloquear el registro offline por su contradicción con el objetivo principal de AgroTrack, y el almacenamiento temporal por su falta de garantía de persistencia. El registro offline-first completo es la opción que convierte a AgroTrack en una herramienta verdaderamente útil en el contexto rural.
 
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-005: aprobado con cambios el 2026-10-29; SPIKE-006: aprobado con cambios el 2026-10-29; SPIKE-007: aprobado el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Registro offline en SQLite con `estado = PENDIENTE`: 0,50 ms en promedio por registro, 50 registros, sobreviven al cierre de la app.
+    - El registro y su operación se guardan en la misma transacción.
+    - Los registros pendientes muestran "⏱ Por enviar".
+  - **Cambios respecto a lo propuesto**:
+    - La tabla `operaciones_pendientes` guarda también `entidad`, `accion`, `id_registro` y `version_base`, para editar y eliminar sin conexión.
+    - El mensaje al guardar es "¡Guardado!"; el estado de envío se ve en cada registro y en la pestaña Envíos.
+  - **Pendiente**:
+    - Purga de operaciones ya sincronizadas.

@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-011 — Bloquear acceso no autenticado con middleware
 - **ADR complementarios:** ADR-001 (Implementar sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-27
 - **Prioridad:** Alta
 - **Timebox estimado:** 2 días hábiles 
 
@@ -118,7 +119,6 @@ El Spike no implementará:
 - No hay errores ni pantallas en blanco intermedios.
 - El usuario ve la pantalla de login lista para ingresar credenciales.
 
----
 
 ### 7.2 Prueba 2 — Acceso con token expirado (simulación de 401)
 
@@ -144,7 +144,6 @@ El Spike no implementará:
   - Se redirige al login.
   - Se muestra un mensaje: "Tu sesión ha expirado, inicia sesión nuevamente".
 
----
 
 ### 7.3 Prueba 3 — Acceso con token válido (autenticado)
 
@@ -160,7 +159,6 @@ El Spike no implementará:
 - Los datos se cargan correctamente desde el backend mock.
 - El usuario puede interactuar con la pantalla sin restricciones.
 
----
 
 ### 7.4 Prueba 4 — Persistencia de sesión al cerrar y abrir la app
 
@@ -177,8 +175,6 @@ El Spike no implementará:
 - Si el token existe y es válido (según la lógica local, ej. no ha expirado), la app navega directamente al resumen o al dashboard principal.
 - El usuario no ve la pantalla de login.
 - La experiencia es fluida y continua.
-
----
 
 ### 7.5 Prueba 5 — Protección de datos locales (SQLite)
 
@@ -263,25 +259,34 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Estrategia de autorización por roles (si se necesita en el futuro).
 5. **Este documento actualizado** con la sección de "Conclusión del Spike" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-27
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El middleware bloquea el 100 % de accesos sin token?
-  - ✅ / ❌ ¿El manejo de 401 y refresco funciona correctamente?
-  - ✅ / ❌ ¿El token se almacena de forma segura?
-  - ✅ / ❌ ¿La sesión persiste al cerrar y reabrir la app?
-  - ✅ / ❌ ¿El repositorio local está protegido?
-  - ✅ / ❌ ¿Se evitan múltiples refrescos simultáneos?
+  - ✅ ¿El middleware bloqueó el 100 % de accesos sin token? Sí. Sin sesión guardada la app solo muestra la pantalla de entrada; en el backend, 5 rutas protegidas responden 401 sin token, con token inválido y con un token firmado con otra clave.
+  - ✅ ¿Los 401 se manejaron? Sí. El cliente renueva una vez y repite la petición; si no puede renovar, borra la sesión y pide entrar de nuevo. Varias peticiones con 401 comparten una sola renovación.
+  - ✅ ¿El token se guarda de forma segura? Sí, en el Keystore de Android con `react-native-keychain`, no en SQLite ni en AsyncStorage.
+  - ✅ ¿La sesión persiste al cerrar y abrir la app? Sí; también sin internet.
+  - ✅ ¿El repositorio local protege los datos? Los datos locales se marcan con la cuenta: otra cuenta no puede entrar si quedan registros sin enviar de la anterior, y al cambiar de cuenta se limpia la copia local.
+  - ✅ ¿El refresco es silencioso? Sí. El access token dura 15 minutos y el refresh token 30 días, con rotación: un refresh token usado ya no sirve, y cerrar sesión lo revoca.
+
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/autenticacion/SesionJwtIntegracionTest.java` — rutas protegidas, duración del token, rotación y cierre de sesión.
+  - `agrotrack-movil/__tests__/clienteHttp.test.ts` — renovación ante 401, sin renovar en el inicio de sesión.
+  - `agrotrack-movil/__tests__/casosSesion.test.ts` y `App.test.tsx` — sesión guardada, cambio de cuenta y pantalla de entrada.
+
+- **Cambios respecto a lo propuesto**:
+  - Se usa `react-native-keychain` en lugar de `react-native-secure-storage`.
+  - No se usa React Navigation: `App.tsx` decide entre la pantalla de entrada y la navegación propia (`Navegacion.tsx`) según haya sesión, que cumple el papel del middleware.
+  - Las consultas al SQLite no revisan el token una por una: la app no llega a las pantallas sin sesión, y los datos quedan atados a la cuenta.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El interceptor de axios debe manejar el refresco de forma atómica para evitar múltiples solicitudes de refresco simultáneas.")
+  - Compartir una sola renovación entre peticiones evita que varios 401 seguidos gasten el refresh token rotado.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Implementar un sistema de cola de solicitudes durante el refresco para no perder peticiones.")
-  - (Ejemplo: "Agregar un temporizador para refrescar el token antes de que expire (refresco proactivo).")
+  - Revocar todos los refresh tokens del usuario si se detecta uno reutilizado (posible robo).
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios**.

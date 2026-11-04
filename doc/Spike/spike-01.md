@@ -6,7 +6,8 @@
 - **Nombre:** Validar sincronización offline automática
 - **ADR relacionado:** ADR-001 — Implementar sincronización offline con retry y backoff
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-27
 - **Prioridad:** Alta
 - **Timebox estimado:** 5 días hábiles.
 
@@ -114,7 +115,6 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 - El `idLocal` se conserva en la base local.
 - El usuario recibe un mensaje de confirmación ("Guardado localmente, se sincronizará automáticamente").
 
----
 
 ### 7.2 Prueba 2 — Sincronización automática al reconectar
 
@@ -135,7 +135,6 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 - El backend registra la operación con el mismo `idLocal`.
 - El estado local cambia a `SINCRONIZADO`.
 
----
 
 ### 7.3 Prueba 3 — Idempotencia ante reintentos
 
@@ -152,8 +151,6 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 - El backend crea **exactamente 1 registro** correspondiente al `idLocal`.
 - En los reintentos 2 a 5, el backend devuelve la misma respuesta (sin crear nuevos registros).
 - El estado local pasa a `SINCRONIZADO` una sola vez.
-
----
 
 ### 7.4 Prueba 4 — Backoff exponencial
 
@@ -172,7 +169,6 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 - Los intervalos crecen exponencialmente (ej. 1 s, 2 s, 4 s, 8 s, 16 s, 32 s...).
 - No hay ráfagas de solicitudes.
 
----
 
 ### 7.5 Prueba 5 — Simulación de errores del backend
 
@@ -194,7 +190,6 @@ Se utilizará una operación sencilla de AgroTrack para comprobar todo el ciclo 
 - Al desaparecer el error, la operación se sincroniza correctamente.
 - No hay pérdida ni duplicación.
 
----
 
 ### 7.6 Prueba 6 — Interrupción de conexión durante la sincronización
 
@@ -281,26 +276,36 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Logs del backend mostrando la verificación de `idLocal`.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 13. Conclusión del Spike (para llenar al finalizar)
+## 13. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-27
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El 100 % de las operaciones offline se sincronizó?
-  - ✅ / ❌ ¿Los reintentos generaron duplicados?
-  - ✅ / ❌ ¿El backoff mantuvo ≤ 10 intentos en el primer minuto?
-  - ✅ / ❌ ¿El monitor detectó la recuperación de red?
-  - ✅ / ❌ ¿Los registros no confirmados se conservaron?
+  - ✅ ¿El 100 % de las operaciones offline se sincronizó? Sí. 50 registros hechos sin señal llegaron todos al servidor al reconectar (9 ms en total) y quedaron en `SINCRONIZADO`.
+  - ✅ ¿Los reintentos generaron duplicados? No. La misma operación enviada 5 veces (4 respuestas perdidas + 1 confirmada) dejó 1 solo registro, en el móvil y en el backend.
+  - ✅ ¿El backoff mantuvo ≤ 10 intentos en el primer minuto? Sí. Con el servidor caído hubo 6 intentos; las esperas medidas fueron 0,9 s, 1,5 s, 3,4 s, 6,4 s y 9,9 s (1 s, 2 s, 4 s, 8 s, 16 s con jitter).
+  - ⚠️ ¿El monitor detectó la recuperación de red en < 5 s? La sincronización arranca sola en cuanto NetInfo avisa la reconexión (probado). El tiempo que tarda NetInfo en avisar depende del celular: se mide en las pruebas en dispositivos (SPIKE-012).
+  - ✅ ¿Los registros no confirmados se conservaron? Sí. Con la respuesta perdida o el servidor caído todo sigue en `PENDIENTE`; nada se marca `SINCRONIZADO` sin confirmación.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — 50 registros offline, reconexión, 5 envíos = 1 registro, backoff con reloj simulado.
+  - `agrotrack-movil/__tests__/motorSincronizacion.test.ts` — 21 pruebas del motor: lotes en orden, `YA_REGISTRADO` como éxito, reintentos agotados, sesión vencida, una sola sincronización a la vez.
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/IdempotenciaIntegracionTest.java` y `SincronizacionIntegracionTest.java` — el backend guarda cada `idOperacion` una sola vez.
+
+- **Cambios respecto a lo propuesto**:
+  - No se implementó un Circuit Breaker aparte: al agotar 5 reintentos el motor detiene la cola (`DETENIDA`) y espera la siguiente reconexión, que cumple la misma función para un solo celular.
+  - No se usa el encabezado `Retry-After`; los 429, 408, 5xx y la falta de red se tratan como fallo temporal con el mismo backoff.
+  - La cola se envía por lotes de 100 operaciones (`POST /api/v1/sincronizacion/operaciones`) e incluye crear, editar y eliminar de los 8 tipos de registro, no solo gastos e ingresos.
+  - Hallazgo en producción: Cloud Run con 0 instancias mínimas tardó 27 s en responder la primera petición (arranque en frío), más que los 25 s de `tiempoMaximoChequeoMs`. Esa primera sincronización se informa como "conexión inestable" y los datos siguen `PENDIENTE` hasta el siguiente intento.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El uso de SQLite requiere manejar migraciones desde el inicio.")
-  - (Ejemplo: "El backoff debe tener un límite máximo para evitar esperas excesivas.")
+  - La idempotencia por `idOperacion` es lo que permite reintentar sin miedo: el reintento después de una respuesta perdida es el caso normal en el campo, no la excepción.
+  - El jitter evita que muchos celulares reintenten al mismo tiempo.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar transacciones al insertar en SQLite para garantizar integridad.")
-  - (Ejemplo: "Añadir un índice en `estado` para consultas rápidas a la cola de pendientes.")
-  - (Ejemplo: "Implementar un límite de tamaño de la base local y un proceso de limpieza.")
+  - Subir `tiempoMaximoChequeoMs` a 35 s o dejar 1 instancia mínima en Cloud Run en producción.
+  - Medir en los 3 celulares cuánto tarda NetInfo en avisar la reconexión.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (pasa a desarrollo; la medición de NetInfo queda para SPIKE-012).

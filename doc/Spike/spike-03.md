@@ -6,7 +6,8 @@
 - **Nombre:** Validar comprensión y rendimiento del panel de resultados económicos
 - **ADR relacionado:** ADR-003 — Presentar resultados económicos en tarjetas
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles.
 
@@ -112,8 +113,6 @@ Se utilizará un conjunto de datos de ejemplo que represente un mes de actividad
 - Para el escenario $0: etiqueta "Punto de equilibrio" con color neutro.
 - Para el escenario negativo: etiqueta "Pérdida" con color rojo.
 
----
-
 ### 7.2 Prueba 2 — Comprensión visual (Usabilidad)
 
 **Objetivo:** Verificar que el usuario identifica correctamente Ingresos, Gastos y Resultado en el panel.
@@ -133,7 +132,6 @@ Se utilizará un conjunto de datos de ejemplo que represente un mes de actividad
 - Al menos el 90 % debe asociar el verde con "ganancia/bueno" y el rojo con "gasto/malo" (o si es resultado, "pérdida").
 - Ningún participante debe depender únicamente del color para diferenciar los conceptos (deben poder usar iconos o etiquetas).
 
----
 
 ### 7.3 Prueba 3 — Rendimiento (tiempo de cálculo y renderizado)
 
@@ -211,26 +209,32 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Video (máx 2 minutos) mostrando el panel en acción y las respuestas de los usuarios durante las pruebas.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada (recomendaciones finales sobre colores, iconos y etiquetas para la implementación definitiva).
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Los cálculos offline y online coincidieron con los datos fuente?
-  - ✅ / ❌ ¿El 100 % de los participantes identificó ingresos, gastos y resultado?
-  - ✅ / ❌ ¿El 100 % entendió las etiquetas "Ganancia" y "Pérdida"?
-  - ✅ / ❌ ¿El tiempo de renderizado para 500 registros fue < 300 ms?
-  - ✅ / ❌ ¿Los usuarios con daltonismo pudieron diferenciar los conceptos?
+  - ✅ ¿Los cálculos offline y online coincidieron con los datos fuente? Sí. Totales exactos con 500 movimientos; el análisis lee del SQLite del celular y coincide con lo guardado.
+  - ⏳ ¿El 100 % de los participantes identificó ingresos, gastos y resultado? Pendiente: falta la prueba con 3 campesinos.
+  - ⏳ ¿El 100 % entendió las etiquetas? Pendiente (prueba con usuarios).
+  - ✅ ¿El tiempo para 500 registros fue < 300 ms? Sí. El resumen completo (totales, categorías, cultivos y 6 meses) de 500 movimientos tarda 1,05 ms.
+  - ⏳ ¿Los usuarios con daltonismo pudieron diferenciar los conceptos? Pendiente (prueba con usuarios). Los conceptos no dependen solo del color: llevan icono y texto (💵 Entró, 💸 Salió, ✅ Le queda / ⚠ Le falta).
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesRendimiento.test.ts` — exactitud y tiempo con 500 y 10.000 movimientos.
+  - `agrotrack-movil/__tests__/analisis.test.ts` y `casosAnalisis.test.ts` — cálculos por mes, categoría, cultivo, lote y finca.
+
+- **Cambios respecto a lo propuesto**:
+  - Las etiquetas quedaron en lenguaje del campesino: "Entró", "Salió" y "Le queda" / "Le falta", en lugar de "Ingresos", "Gastos" y "Ganancia / Pérdida / Punto de equilibrio". Un resultado de $0 se muestra como "Le queda $0".
+  - Se agregó "por cada $1.000 que gastó, cuánto le entró" y en qué se va la plata por categoría.
+  - No hay vista "Ver detalle" en tabla: la profundización está en las pestañas de cosecha y de cada cultivo.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El color por sí solo no es suficiente; los iconos y las etiquetas son clave.")
-  - (Ejemplo: "El orden Ingresos → Gastos → Resultado cuenta una historia lógica.")
+  - Las cuentas se calculan en el celular, así que el panel funciona igual sin señal.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar iconos (↑, ↓, =) además del color para accesibilidad.")
-  - (Ejemplo: "Definir un color neutro para el punto de equilibrio.")
-  - (Ejemplo: "Ampliar las pruebas de usabilidad a al menos 10 participantes.")
+  - Hacer la prueba de usabilidad con 3 campesinos antes de cerrar este spike.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: la parte técnica pasa; falta la prueba de comprensión con usuarios.

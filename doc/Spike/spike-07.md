@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-007 — Garantizar idempotencia y consistencia en sync
 - **ADR complementarios:** ADR-001 (Implementar sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado
+- **Fecha de ejecución:** 2026-10-27
 - **Prioridad:** Alta
 - **Timebox estimado:** 4 días hábiles 
 
@@ -115,8 +116,6 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 - Con el ingreso: el primer cálculo muestra +$200.000, después +$150.000.
 - No hay valores obsoletos en caché.
 
----
-
 ### 7.2 Prueba 2 — Idempotencia ante reintentos
 
 **Objetivo:** Validar que los reintentos con el mismo `idLocal` no generan duplicados en el backend.
@@ -133,7 +132,6 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 - El estado local pasa a `SINCRONIZADO` una sola vez.
 - No hay duplicación en los cálculos económicos.
 
----
 
 ### 7.3 Prueba 3 — Conservación ante interrupción de conexión
 
@@ -153,7 +151,6 @@ Se utilizarán operaciones de gasto e ingreso para comprobar los tres comportami
 - Al reconectar, el sistema reintenta y sincroniza correctamente.
 - No hay pérdida ni duplicación.
 
----
 
 ### 7.4 Prueba 4 — Consistencia + Idempotencia + Interrupción combinadas
 
@@ -241,26 +238,32 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Logs de SQLite mostrando los cambios de estado.
 4. **Este documento actualizado** con la sección de "Conclusión del Spike" llenada, incluyendo recomendaciones para la implementación en producción.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-27
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Los cálculos se actualizaron tras modificar?
-  - ✅ / ❌ ¿Los 5 reintentos generaron 1 solo registro?
-  - ✅ / ❌ ¿Los registros no confirmados permanecieron en `PENDIENTE`?
-  - ✅ / ❌ ¿Los tres comportamientos funcionaron juntos?
-  - ✅ / ❌ ¿Se perdió algún registro?
+  - ✅ ¿Los cálculos se actualizaron tras modificar? Sí. Crear, editar (de $100.000 a $250.000) y eliminar un gasto cambia al instante el análisis del mes.
+  - ✅ ¿Los 5 reintentos generaron 1 solo registro? Sí, en el móvil (4 respuestas perdidas + 1 confirmada) y en el backend (la misma cola enviada 5 veces: 2 `SINCRONIZADO` y 8 `YA_REGISTRADO`, 1 fila por registro).
+  - ✅ ¿Los registros no confirmados permanecieron en `PENDIENTE`? Sí, con la respuesta perdida y con el servidor caído.
+  - ✅ ¿Los tres comportamientos funcionaron juntos? Sí, en la misma app y la misma base local.
+  - ✅ ¿Se perdió algún registro? No.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — bloque SPIKE-007.
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/IdempotenciaIntegracionTest.java` — 5 envíos de la misma operación y transacción que falla a mitad.
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/SincronizacionIntegracionTest.java` — edición con versión vieja (409) no pisa el cambio de otro celular.
+
+- **Cambios respecto a lo propuesto**:
+  - No hay caché de cálculos en el móvil que invalidar: el análisis se calcula cada vez desde SQLite, así que siempre usa el dato actualizado.
+  - Además de idempotencia, cada registro tiene versión: una edición con versión vieja se rechaza con `CONFLICTO` en lugar de pisar datos.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "La invalidación de caché debe ser parte del servicio centralizado, no de cada pantalla.")
-  - (Ejemplo: "La verificación de `idLocal` en el backend debe ser estricta y devolver la misma respuesta en reintentos.")
+  - Calcular desde la fuente cada vez es más simple que invalidar cachés, y con 10.000 gastos tarda 100 ms.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Implementar idempotencia desde el día 1.")
-  - (Ejemplo: "Usar transacciones en SQLite para evitar corrupción.")
-  - (Ejemplo: "Monitorear la cantidad de registros en `PENDIENTE` y el tiempo promedio de sincronización.")
+  - Vigilar en Cloud Monitoring la métrica `agrotrack.sincronizacion.operaciones` por estado.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado**.

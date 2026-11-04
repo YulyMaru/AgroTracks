@@ -2,7 +2,7 @@
 
 - **Título**: Usar REST con JSON sobre HTTPS como estilo principal de comunicación entre la aplicación móvil y el backend, descartando GraphQL, gRPC, WebSockets y SSE en la primera versión.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -268,9 +268,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-015 — Validará que REST con JSON es suficiente para sincronización, consultas y autenticación sin necesidad de otros estilos — Propuesto.
-    - SPIKE-001 — Validará que la sincronización offline funciona con POST idempotentes sobre REST — Propuesto.
-    - SPIKE-009 — Validará que las consultas REST con paginación cumplen los tiempos definidos — Propuesto.
+    - SPIKE-015 — Validará que REST con JSON es suficiente para sincronización, consultas y autenticación sin necesidad de otros estilos — Aprobado con cambios el 2026-10-26.
+    - SPIKE-001 — Validará que la sincronización offline funciona con POST idempotentes sobre REST — Aprobado con cambios el 2026-10-27.
+    - SPIKE-009 — Validará que las consultas REST con paginación cumplen los tiempos definidos — Aprobado con cambios el 2026-10-28.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -352,3 +352,16 @@
       - Spring Cache para resúmenes económicos: en memoria en el piloto, Memorystore (Redis) si crece (ADR-009, ADR-013, ADR-031).
     - **Pruebas**:
       - Pruebas de integración con Spring Boot Test.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-015: aprobado con cambios el 2026-10-26; SPIKE-001: aprobado con cambios el 2026-10-27; SPIKE-009: aprobado con cambios el 2026-10-28. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - REST con JSON sobre HTTPS (TLS 1.3 en producción), rutas `/api/v1`, JWT en `Authorization: Bearer`.
+    - Sincronización idempotente, errores con estructura única y OpenAPI generado por SpringDoc.
+    - Ningún caso de uso necesitó GraphQL, gRPC, WebSockets ni SSE.
+  - **Cambios respecto a lo propuesto**:
+    - Rutas genéricas `/api/v1/registros/{tipo}` y sincronización por lotes `/api/v1/sincronizacion/operaciones` (además de `/transacciones`).
+    - Sin paginación, filtros ni ETag / Cache-Control: el celular descarga los cambios incrementales con `?desde`.

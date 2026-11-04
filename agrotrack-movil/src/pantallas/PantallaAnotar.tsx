@@ -22,11 +22,11 @@ export function PantallaAnotar({ cantidades, alNuevo, alAbrirLista }: {
       </View>
 
       <View style={estilos.rejilla}>
-        <BotonColor icono="💸" titulo="Gasté dinero" detalle="Insumos, jornal, transporte" color={COLORES.errorVivo}
+        <BotonColor icono="💸" titulo="Gasté dinero" detalle="Insumos, jornal, transporte" color={COLORES.error}
           alPresionar={() => alNuevo('GASTO')} />
         <BotonColor icono="💰" titulo="Vendí cosecha" detalle="Lo que me pagaron" color={COLORES.primario}
           alPresionar={() => alNuevo('VENTA')} />
-        <BotonColor icono="🧺" titulo="Coseché" detalle="Cuánto saqué" color={COLORES.ambar}
+        <BotonColor icono="🧺" titulo="Coseché" detalle="Cuánto saqué" color={COLORES.pendiente}
           alPresionar={() => alNuevo('COSECHA')} />
         <BotonColor icono="🧑‍🌾" titulo="Hice una labor" detalle="Abonar, fumigar, desyerbar" color={COLORES.teal}
           alPresionar={() => alNuevo('LABOR')} />

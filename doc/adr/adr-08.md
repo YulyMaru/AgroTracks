@@ -2,7 +2,7 @@
 
 - **Título**: Advertir análisis incompletos con datos faltantes, cumpliendo con el escenario de calidad ESC-CAL-CF-08.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -137,7 +137,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-008 — Validará que el 100 % de los usuarios identifica análisis incompleto, sabe qué datos faltan y distingue el resultado parcial — Propuesto.
+    - SPIKE-008 — Validará que el 100 % de los usuarios identifica análisis incompleto, sabe qué datos faltan y distingue el resultado parcial — Aprobado parcialmente el 2026-10-29.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -198,3 +198,15 @@
     - Pruebas de usabilidad para validar que los usuarios entienden la advertencia y saben qué hacer.
 
     Se descarta mostrar el resultado sin advertencia (por su peligrosidad) y bloquear completamente el análisis (por su baja utilidad). La verificación con advertencia es la opción que empodera al usuario con información transparente y accionable.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios, con validaciones pendientes
+  - **Spikes**: SPIKE-008: aprobado parcialmente el 2026-10-29. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - La app detecta cuando falta información (sin gastos, sin cosechas, unidades mezcladas) y no inventa el resultado; revisar 500 registros toma 1,75 ms.
+  - **Cambios respecto a lo propuesto**:
+    - No hay banner "Análisis incompleto" ni archivo `reglas-integridad.json`: la app oculta el dato que no puede calcular y explica qué falta anotar.
+  - **Pendiente**:
+    - Prueba con usuarios.

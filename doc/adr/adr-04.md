@@ -2,7 +2,7 @@
 
 - **Título**: Comunicar ausencia de datos con estados vacíos contextuales para cumplir con el escenario de calidad ESC-CAL-US-13.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -142,8 +142,8 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-004 — Validará que el 100 % de los usuarios distingue "sin datos" de "error" — Propuesto.
-    - SPIKE-008 — Validará que la diferenciación entre vacío, incompleto y error es comprendida — Propuesto.
+    - SPIKE-004 — Validará que el 100 % de los usuarios distingue "sin datos" de "error" — Aprobado parcialmente el 2026-10-30.
+    - SPIKE-008 — Validará que la diferenciación entre vacío, incompleto y error es comprendida — Aprobado parcialmente el 2026-10-29.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -205,3 +205,16 @@
     - Pruebas de usabilidad para validar que el 100 % de los usuarios identifica correctamente que no hay datos y entiende la acción sugerida.
 
     Se descarta la pantalla en blanco por su nula comunicación y el mensaje genérico por su falta de contexto y orientación. El estado vacío contextual es la opción que convierte una experiencia potencialmente negativa en una oportunidad de engagement.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios, con validaciones pendientes
+  - **Spikes**: SPIKE-004: aprobado parcialmente el 2026-10-30; SPIKE-008: aprobado parcialmente el 2026-10-29. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Cada lista vacía dice qué falta y qué hacer ("Todavía no hay fincas. Toca "+ Nueva finca" para anotar el primero."), y los errores se muestran aparte, como aviso rojo.
+  - **Cambios respecto a lo propuesto**:
+    - No se crearon los componentes `EstadoVacio` y `EstadoError`: el mensaje vacío va en cada pantalla y los errores en `CajaAviso`.
+    - No hay botón "Reintentar" por consulta: las consultas leen del celular; los envíos fallidos se reintentan en Envíos.
+  - **Pendiente**:
+    - Prueba con usuarios (vacío vs. error y acción sugerida).

@@ -24,6 +24,7 @@ import {
   leerNumero,
   numeroATexto,
 } from '../compartido/dominio/formato';
+import { elegido, fecha, numero, pesos, texto } from '../compartido/dominio/validacion';
 import type {
   CosechaDatos,
   CultivoDatos,
@@ -154,28 +155,7 @@ function useGuardando(): [boolean, (trabajo: () => Promise<void>) => Promise<voi
   return [guardando, ejecutar];
 }
 
-// --- Reglas comunes -----------------------------------------------------------------------------
-function texto(v: string, mensaje: string, maximo: number) {
-  if (!v.trim()) {
-    return mensaje;
-  }
-  return v.trim().length > maximo ? `Escribe máximo ${maximo} letras.` : undefined;
-}
-const elegido = (v: string | undefined, mensaje: string) => (v ? undefined : mensaje);
-const fecha = (v: string) => (fechaValida(v) ? undefined : 'Elige la fecha. No puede ser una fecha futura.');
-function numero(v: string, mensaje: string, decimales: number, maximo?: number) {
-  const n = leerNumero(v);
-  if (n === null || (maximo !== undefined && n > maximo)) {
-    return mensaje;
-  }
-  const factor = 10 ** decimales;
-  if (Math.round(n * factor) / factor === n) {
-    return undefined;
-  }
-  return decimales === 0 ? 'Escribe solo números enteros, sin centavos ni decimales.' : `Usa máximo ${decimales} decimales.`;
-}
-const pesos = (v: string, mensaje: string) => numero(v, mensaje, 0, 999_999_999_999);
-
+// Las reglas comunes (texto, elegido, fecha, numero, pesos) viven en compartido/dominio/validacion.ts.
 const textoInicial = (n: number | undefined) => (n === undefined ? '' : numeroATexto(n));
 const pesosIniciales = (n: number | undefined) => (n === undefined ? '' : escribirPesos(String(n)));
 

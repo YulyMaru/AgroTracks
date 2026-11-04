@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-008 — Advertir análisis incompletos con datos faltantes
 - **ADR complementarios:** ADR-003 (Presentar resultados económicos en tarjetas), ADR-004 (Comunicar ausencia de datos con estados vacíos)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 2 días hábiles 
 
@@ -108,7 +109,6 @@ El Spike no implementará:
 - No se muestra el resultado neto (o se muestra con un mensaje de "No disponible").
 - El usuario tiene un botón para "Registrar gastos".
 
----
 
 ### 7.2 Prueba 2 — Detección de datos faltantes (ingresos)
 
@@ -126,8 +126,6 @@ El Spike no implementará:
 - Resultado parcial: "Gastos totales: $60,000" con indicador "Parcial".
 - Botón para "Registrar ingresos".
 
----
-
 ### 7.3 Prueba 3 — Análisis completo (sin advertencia)
 
 **Objetivo:** Validar que el sistema NO muestra advertencia cuando todos los datos están completos.
@@ -142,7 +140,6 @@ El Spike no implementará:
 - Se muestran: Ingresos totales ($150,000), Gastos totales ($60,000), Resultado neto ($90,000 - Ganancia).
 - No hay indicador de "Parcial".
 
----
 
 ### 7.4 Prueba 4 — Diferenciación entre "datos insuficientes" y "sin datos"
 
@@ -157,8 +154,6 @@ El Spike no implementará:
 - El 100 % de los participantes diferencia "sin datos" de "datos insuficientes".
 - El 100 % identifica que en el estado vacío no hay información, y en el incompleto hay información parcial.
 - El 100 % menciona la advertencia como elemento diferenciador.
-
----
 
 ### 7.5 Prueba 5 — Comprensión de usuarios (usabilidad)
 
@@ -240,26 +235,31 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de la diferenciación visual.
 4. **Este documento actualizado** con la sección de "Conclusión del Spike" llenada, incluyendo recomendaciones para la implementación en producción (ej. reglas de integridad para otros análisis).
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El sistema detectó la ausencia de ingresos y gastos en el 100 % de los casos?
-  - ✅ / ❌ ¿El 100 % de los participantes identificó el análisis como incompleto?
-  - ✅ / ❌ ¿Al menos el 90 % supo qué datos faltaban?
-  - ✅ / ❌ ¿El 100 % distinguió "datos insuficientes" de "sin datos"?
-  - ✅ / ❌ ¿La validación se ejecutó en < 100 ms para 500 registros?
+  - ✅ ¿El sistema detectó la ausencia de ingresos y gastos en el 100 % de los casos? Sí. Sin gastos no calcula "por cada $1.000"; sin cosechas, sin gastos o con unidades mezcladas no calcula el costo por kilo.
+  - ⏳ ¿El 100 % identificó el análisis como incompleto? Pendiente (prueba con usuarios).
+  - ⏳ ¿Al menos el 90 % supo qué datos faltaban? Pendiente (prueba con usuarios).
+  - ⏳ ¿El 100 % distinguió "datos insuficientes" de "sin datos"? Pendiente (prueba con usuarios).
+  - ✅ ¿La validación se ejecutó en < 100 ms para 500 registros? Sí. 1,75 ms.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesRendimiento.test.ts` — bloque SPIKE-008.
+  - `agrotrack-movil/__tests__/casosAnalisis.test.ts` — "un cultivo sin gastos ni labores no inventa costo ni trabajo".
+
+- **Cambios respecto a lo propuesto**:
+  - No hay banner "Análisis incompleto". La app no muestra el dato que no puede calcular y explica qué falta ("Todavía no has anotado cosechas. Cuando las anotes, aquí verás cuánto produce cada cultivo.").
+  - No hay archivo `reglas-integridad.json`: las condiciones están en las funciones del análisis (`porCadaMil`, `costoPorUnidad`).
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "La advertencia naranja es más visible que el texto en negrita solo.")
-  - (Ejemplo: "El usuario necesita ver la lista de datos faltantes, no solo un mensaje genérico.")
+  - No mostrar un número dudoso es más seguro que mostrarlo con advertencia para un usuario con poca experiencia digital.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir las reglas de integridad para todos los análisis desde el inicio.")
-  - (Ejemplo: "Ampliar las pruebas de usabilidad a al menos 10 participantes.")
-  - (Ejemplo: "Incluir un enlace directo al formulario de los datos faltantes.")
+  - En la prueba con usuarios, revisar si entienden por qué falta un dato; si no, agregar un enlace directo al formulario que falta.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: la detección pasa con cambios; falta la prueba con usuarios.

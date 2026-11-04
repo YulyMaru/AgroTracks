@@ -2,7 +2,7 @@
 
 - **Título**: Usar React Native con reactividad basada en componentes (hooks y estado local), descartando programación reactiva pura (RxJS/RxJava) y enfoques imperativos.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -173,9 +173,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-014 — Validará que la reactividad basada en componentes es suficiente para una UI fluida y mantenible en dispositivos de gama baja — Propuesto.
-    - SPIKE-003 — Validará que el panel de resultados económicos se renderiza en < 300 ms con 500 movimientos usando componentes reactivos — Propuesto.
-    - SPIKE-010 — Validará que los controles táctiles y la presentación de valores funcionan correctamente con el paradigma de componentes — Propuesto.
+    - SPIKE-014 — Validará que la reactividad basada en componentes es suficiente para una UI fluida y mantenible en dispositivos de gama baja — Aprobado parcialmente el 2026-10-29.
+    - SPIKE-003 — Validará que el panel de resultados económicos se renderiza en < 300 ms con 500 movimientos usando componentes reactivos — Aprobado parcialmente el 2026-10-29.
+    - SPIKE-010 — Validará que los controles táctiles y la presentación de valores funcionan correctamente con el paradigma de componentes — Aprobado parcialmente el 2026-10-30.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -238,3 +238,18 @@
     - **Operaciones asíncronas** con async/await para consultas a SQLite y llamadas HTTP.
     - **Pruebas** con Jest y React Native Testing Library.
     - **Monitoreo** de rendimiento con React DevTools Profiler y React Native DevTools.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado, con validaciones pendientes
+  - **Spikes**: SPIKE-014: aprobado parcialmente el 2026-10-29; SPIKE-003: aprobado parcialmente el 2026-10-29; SPIKE-010: aprobado parcialmente el 2026-10-30. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Componentes funcionales con hooks; la UI se actualiza al guardar y al sincronizar (suscripción al motor).
+    - Cálculos y validaciones muy por debajo de sus umbrales.
+  - **Cambios respecto a lo propuesto**:
+    - Las listas usan `ScrollView`, no `FlatList` con `memo`.
+    - No se necesitó `useReducer` ni `Context` global.
+  - **Pendiente**:
+    - Medir FPS y tiempos de renderizado en los celulares.
+    - Pasar las listas a `FlatList` antes del piloto.

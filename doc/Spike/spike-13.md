@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-013 — Usar base de datos relacional SQL para backend y almacenamiento local
 - **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-28
 - **Prioridad:** Alta
 - **Timebox estimado:** 4 días hábiles 
 
@@ -136,8 +137,6 @@ El Spike no implementará:
 - No hay corrupción de la base.
 - La versión del esquema refleja el estado correcto.
 
----
-
 ### 7.2 Prueba 2 — Transacciones ACID
 
 **Objetivo:** Validar que las transacciones ACID se completan o revierten correctamente.
@@ -152,8 +151,6 @@ El Spike no implementará:
 - Ante fallo: rollback completo, 0 registros insertados.
 - Sin fallo: confirmación exitosa, 4 registros insertados.
 - La integridad referencial se mantiene.
-
----
 
 ### 7.3 Prueba 3 — Integridad referencial
 
@@ -172,7 +169,6 @@ El Spike no implementará:
 - Las eliminaciones en cascada funcionan según la política definida.
 - La restricción única sobre el identificador local impide duplicados.
 
----
 
 ### 7.4 Prueba 4 — Consultas de listado con paginación
 
@@ -193,8 +189,6 @@ El Spike no implementará:
 - Listados de 10,000 registros con paginación: ≤ 2 s.
 - La interfaz no se congela durante la consulta.
 
----
-
 ### 7.5 Prueba 5 — Consultas agregadas
 
 **Objetivo:** Medir el tiempo de consultas agregadas (resúmenes económicos).
@@ -213,7 +207,6 @@ El Spike no implementará:
 - Agregaciones sobre 100 registros: ≤ 2 s.
 - Los índices se utilizan correctamente (verificar con el plan de ejecución de la base).
 
----
 
 ### 7.6 Prueba 6 — Corrupción ante cierre abrupto
 
@@ -229,8 +222,6 @@ El Spike no implementará:
 - La base no se corrompe.
 - Las transacciones no confirmadas se revierten.
 - La verificación de integridad devuelve un resultado exitoso.
-
----
 
 ### 7.7 Prueba 7 — Idempotencia con identificador único local
 
@@ -321,30 +312,33 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas del plan de ejecución antes y después de índices.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-28
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El esquema se creó y las migraciones funcionaron?
-  - ✅ / ❌ ¿Las transacciones ACID se completaron o revirtieron correctamente?
-  - ✅ / ❌ ¿La integridad referencial se mantuvo?
-  - ✅ / ❌ ¿Los listados cumplieron ≤ 2 s para 100 registros?
-  - ✅ / ❌ ¿Las agregaciones cumplieron ≤ 5 s para 10,000 registros?
-  - ✅ / ❌ ¿La base sobrevivió al cierre abrupto sin corromperse?
-  - ✅ / ❌ ¿La idempotencia con identificador único local impidió duplicados?
+  - ✅ ¿El esquema y las migraciones se aplicaron? Sí. Backend: 5 migraciones de Flyway. Móvil: esquema versión 5 que no se vuelve a aplicar al reabrir.
+  - ✅ ¿Las transacciones ACID se completan o revierten? Sí, en los dos lados: una transacción que falla a mitad no deja nada guardado.
+  - ✅ ¿La integridad referencial funciona? Sí. No se puede eliminar una finca con lotes, ni asignar un gasto a un lugar que no existe; ninguna columna admite vacíos.
+  - ✅ ¿Listados ≤ 2 s? Sí. En el celular, 100 fincas en 2 ms y 10.000 gastos en 344 ms (sin paginar).
+  - ✅ ¿Agregaciones ≤ 5 s con 10.000? Sí. Analizar el mes con 10.000 gastos: 100 ms en el celular; suma por mes en SQL en el backend: 113 ms.
+  - ⏳ ¿La integridad tras cierre abrupto? Pendiente en el celular (forzar el cierre en Android). La transacción que falla a mitad ya se probó.
+  - ✅ ¿La restricción única impide duplicados? Sí. `id_operacion` es la llave primaria de `operaciones_sincronizadas` y la cola local usa `id_operacion` como llave.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/sqliteLocal.test.ts`, `spikesOffline.test.ts` y `spikesRendimiento.test.ts`.
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/sincronizacion/IdempotenciaIntegracionTest.java` y `PlataformaIntegracionTest.java`.
+
+- **Cambios respecto a lo propuesto**:
+  - No se usa Redis: la caché del backend es Caffeine en memoria (ver SPIKE-009).
+  - Las migraciones locales no son incrementales todavía: si la versión es menor que 5, la app recrea las tablas una sola vez. Se aceptó porque aún no hay usuarios con datos reales; desde la versión 5 cada cambio debe ser una migración que conserve los datos.
+  - La base local está cifrada con SQLCipher (ADR-022) y se llama `agrotrack-cifrada.sqlite`.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El modo de journaling WAL es más resistente a cierres abruptos que el modo por defecto.")
-  - (Ejemplo: "Los índices compuestos en usuario, fecha y tipo son esenciales para las agregaciones.")
-  - (Ejemplo: "Las migraciones deben ejecutarse dentro de una transacción para evitar estados inconsistentes.")
+  - El SQLite real de Node permite probar las mismas tablas y consultas de la app sin celular.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar una librería de SQLite optimizada para React Native.")
-  - (Ejemplo: "Definir el esquema completo y las migraciones desde el día 1.")
-  - (Ejemplo: "Añadir índices en estado y fecha de creación para la cola de pendientes.")
-  - (Ejemplo: "Implementar un proceso de archivado de transacciones antiguas (> 2 años).")
+  - Escribir la primera migración incremental (v6) con una prueba que conserve datos y cola pendiente.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios**.

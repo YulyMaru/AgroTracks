@@ -2,7 +2,7 @@
 
 - **Título**: Usar React Native con TypeScript y un conjunto de librerías específicas (React Navigation, Axios, SQLite, NetInfo, SecureStore) como stack del frontend móvil, descartando Flutter y Android nativo (Kotlin).
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -206,12 +206,12 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-017 — Validará que React Native + TypeScript con las librerías seleccionadas cubre todos los requisitos funcionales y no funcionales del frontend móvil — Propuesto.
-    - SPIKE-013 — Validará que SQLite local funciona correctamente en React Native — Propuesto.
-    - SPIKE-006 — Validará que NetInfo detecta la conectividad correctamente — Propuesto.
-    - SPIKE-011 — Validará que SecureStore protege el token — Propuesto.
-    - SPIKE-014 — Validará que la reactividad basada en componentes es suficiente — Propuesto.
-    - SPIKE-010 — Validará que los controles táctiles y la presentación de valores funcionan correctamente — Propuesto.
+    - SPIKE-017 — Validará que React Native + TypeScript con las librerías seleccionadas cubre todos los requisitos funcionales y no funcionales del frontend móvil — Aprobado con cambios el 2026-10-29.
+    - SPIKE-013 — Validará que SQLite local funciona correctamente en React Native — Aprobado con cambios el 2026-10-28.
+    - SPIKE-006 — Validará que NetInfo detecta la conectividad correctamente — Aprobado con cambios el 2026-10-29.
+    - SPIKE-011 — Validará que SecureStore protege el token — Aprobado con cambios el 2026-10-27.
+    - SPIKE-014 — Validará que la reactividad basada en componentes es suficiente — Aprobado parcialmente el 2026-10-29.
+    - SPIKE-010 — Validará que los controles táctiles y la presentación de valores funcionan correctamente — Aprobado parcialmente el 2026-10-30.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -286,3 +286,15 @@
     - **Estructura**: carpetas por dominio (fincas, cultivos, transacciones, sincronización, autenticación) y por capa (componentes, hooks, servicios, repositorios).
 
     Se descarta Flutter por cambio de stack y menor madurez del ecosistema offline-first en el contexto del equipo, y Android nativo por falta de portabilidad a iOS y mayor curva de aprendizaje. React Native + TypeScript es la opción que garantiza portabilidad, usabilidad y velocidad de desarrollo en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-017: aprobado con cambios el 2026-10-29. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - React Native 0.88 con TypeScript estricto: compila sin errores; Axios con interceptores; op-sqlite con SQLCipher; NetInfo; Keystore; 10.000 UUID sin repetidos.
+  - **Cambios respecto a lo propuesto**:
+    - Sin React Navigation (navegación propia), sin `react-native-secure-storage` (`react-native-keychain`), sin `react-native-uuid` (`uuid`), sin `react-native-vector-icons` (emojis), sin `ajv`, sin Firebase, sin Notifee y sin Detox.
+  - **Pendiente**:
+    - Tamaño del APK de release y prueba en los 3 dispositivos.

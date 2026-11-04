@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-020 — Definir la estrategia de pruebas en capas para backend y frontend
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-009 (Optimizar consultas con índices y caché), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-012 (Validar app en dispositivos Android soportados), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil), ADR-018 (Usar monolito modular por capas con arquitectura offline-first y patrón Repository), ADR-019 (Versionar el esquema de base de datos con migraciones automáticas)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-26
 - **Prioridad:** Alta
 - **Timebox estimado:** 4 días hábiles
 
@@ -158,7 +159,6 @@ El Spike no implementará:
 - Las pruebas no dependen de Spring ni PostgreSQL.
 - Los casos límite están cubiertos (valores negativos, cero, nulos).
 
----
 
 ### 7.2 Prueba 2 — Pruebas unitarias de servicios de aplicación (backend)
 
@@ -176,7 +176,6 @@ El Spike no implementará:
 - Los repositorios están mockeados (no se usa PostgreSQL).
 - Los errores se manejan correctamente.
 
----
 
 ### 7.3 Prueba 3 — Pruebas de integración de repositorios (backend)
 
@@ -196,8 +195,6 @@ El Spike no implementará:
 - Las consultas paginadas y agregadas devuelven resultados correctos.
 - Las restricciones únicas impiden duplicados.
 
----
-
 ### 7.4 Prueba 4 — Pruebas de integración de controladores (backend)
 
 **Objetivo:** Validar que los controladores REST funcionan correctamente.
@@ -215,7 +212,6 @@ El Spike no implementará:
 - La autenticación JWT bloquea accesos no autorizados.
 - Los errores se manejan con códigos HTTP correctos.
 
----
 
 ### 7.5 Prueba 5 — Pruebas de idempotencia (backend)
 
@@ -233,7 +229,6 @@ El Spike no implementará:
 - La restricción única funciona.
 - La prueba se ejecuta en < 30 s.
 
----
 
 ### 7.6 Prueba 6 — Pruebas unitarias de dominio y hooks (frontend)
 
@@ -251,7 +246,6 @@ El Spike no implementará:
 - Los hooks se prueban con mocks de repositorios.
 - Los casos límite están cubiertos.
 
----
 
 ### 7.7 Prueba 7 — Pruebas de componentes (frontend)
 
@@ -273,7 +267,6 @@ El Spike no implementará:
 - Las interacciones funcionan.
 - Los mensajes de error se muestran.
 
----
 
 ### 7.8 Prueba 8 — Pruebas E2E de flujos críticos (frontend)
 
@@ -296,7 +289,6 @@ El Spike no implementará:
 - Los flujos críticos funcionan de extremo a extremo.
 - No hay falsos positivos/negativos.
 
----
 
 ### 7.9 Prueba 9 — Pruebas de rendimiento (backend y frontend)
 
@@ -315,7 +307,6 @@ El Spike no implementará:
 - El renderizado del frontend cumple el umbral.
 - No hay degradación con la concurrencia.
 
----
 
 ### 7.10 Prueba 10 — Pruebas de seguridad (backend)
 
@@ -334,7 +325,6 @@ El Spike no implementará:
 - Los endpoints protegidos rechazan tokens inválidos.
 - Los endpoints públicos (login, refresh) son accesibles.
 
----
 
 ### 7.11 Prueba 11 — Integración en CI/CD
 
@@ -446,34 +436,37 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de pruebas E2E en los 3 dispositivos.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-26
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿La cobertura del dominio backend fue ≥ 80 %?
-  - ✅ / ❌ ¿La cobertura de servicios backend fue ≥ 70 %?
-  - ✅ / ❌ ¿Las pruebas de integración backend pasaron?
-  - ✅ / ❌ ¿La idempotencia se cumplió (5 reintentos → 1 registro)?
-  - ✅ / ❌ ¿La cobertura del dominio frontend fue ≥ 70 %?
-  - ✅ / ❌ ¿Los componentes frontend se cubrieron?
-  - ✅ / ❌ ¿Las E2E pasaron en los 3 dispositivos?
-  - ✅ / ❌ ¿Los umbrales de rendimiento se cumplieron?
-  - ✅ / ❌ ¿No hubo vulnerabilidades críticas en JWT?
-  - ✅ / ❌ ¿El pipeline de CI/CD bloqueó merge ante fallos?
+  - ✅ Unitarias backend: dominio 99,2 % y aplicación 95,2 % de líneas (umbral 80 % / 70 %).
+  - ✅ Integración backend: controladores y repositorios con MockMvc y la base real del perfil de pruebas (H2 en modo PostgreSQL).
+  - ✅ Idempotencia: 5 reintentos = 1 registro.
+  - ✅ Unitarias frontend: dominio 97,4 % y aplicación 100 % (umbral 70 %).
+  - ⚠️ Componentes frontend: solo `App.test.tsx`; las pantallas tienen 8,5 % y se excluyen de la cobertura en SonarCloud.
+  - ⏳ E2E en los 3 dispositivos: no hay Detox ni Maestro todavía.
+  - ✅ Rendimiento: umbrales cumplidos (≤ 3 s, ≤ 5 s, ≤ 300 ms) en las pruebas de los spikes 003, 009 y 013.
+  - ⚠️ Seguridad JWT: probado sin token, con token inválido y con firma ajena; no se corrió OWASP ZAP.
+  - ✅ CI/CD: los pipelines corren lint, tipos, pruebas y cobertura en cada PR y push a `main`; si una prueba falla, el job falla. El bloqueo por cobertura depende de la regla de calidad de SonarCloud (no hay umbral en JaCoCo).
+  - Totales: móvil 209 pruebas en 17 archivos; backend 57 pruebas en 13 clases. Todas pasan.
+
+- **Evidencia**:
+  - `.github/workflows/backend.yml` y `.github/workflows/movil.yml`.
+  - Cobertura: `backend/target/site/jacoco/` y `agrotrack-movil/coverage/lcov.info`.
+
+- **Cambios respecto a lo propuesto**:
+  - Integración del backend con H2 en modo PostgreSQL en lugar de Testcontainers.
+  - Sin k6 ni OWASP ZAP; las pruebas de rendimiento son pruebas de JUnit y Jest con el volumen máximo.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "Usar `testID` en lugar de texto en E2E reduce la fragilidad.")
-  - (Ejemplo: "Testcontainers es lento pero indispensable para validar PostgreSQL real.")
-  - (Ejemplo: "La cobertura del dominio es más importante que la cobertura total.")
+  - Las pruebas que recorren el día completo del campesino (`appCompleta.test.ts`) encontraron más errores de integración que las unitarias.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Escribir pruebas desde el día 1, no al final.")
-  - (Ejemplo: "Mantener la pirámide: muchas unitarias, algunas integración, pocas E2E.")
-  - (Ejemplo: "Medir cobertura pero no obsesionarse con el 100 %.")
-  - (Ejemplo: "Probar la sincronización offline con escenarios realistas.")
-  - (Ejemplo: "Incluir pruebas de usabilidad con usuarios reales desde las primeras iteraciones.")
+  - Agregar Maestro para 3 flujos (entrar, anotar sin señal, sincronizar) y correrlo en el celular de gama baja.
+  - Activar la regla de calidad de SonarCloud como verificación obligatoria del PR en GitHub.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: unitarias, integración y CI pasan; faltan E2E y pruebas de seguridad con ZAP.

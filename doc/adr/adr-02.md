@@ -2,7 +2,7 @@
 
 - **Título**: Validar formularios en cliente y servidor con reglas centralizadas para garantizar consistencia y buena experiencia de corrección de errores.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -148,9 +148,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-002 — Validará que las reglas centralizadas son idénticas en cliente y servidor — Propuesto.
-    - SPIKE-005 — Validará que la validación offline funciona con reglas empaquetadas — Propuesto.
-    - SPIKE-008 — Validará que la detección de datos insuficientes se apoya en las reglas — Propuesto.
+    - SPIKE-002 — Validará que las reglas centralizadas son idénticas en cliente y servidor — Aprobado con cambios el 2026-10-29.
+    - SPIKE-005 — Validará que la validación offline funciona con reglas empaquetadas — Aprobado con cambios el 2026-10-29.
+    - SPIKE-008 — Validará que la detección de datos insuficientes se apoya en las reglas — Aprobado parcialmente el 2026-10-29.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -215,3 +215,16 @@
     - Registro de errores de validación para monitorear problemas comunes y mejorar los mensajes.
 
     Se descarta la validación únicamente en el servidor por su mala usabilidad y dependencia de la red, y la validación con reglas duplicadas por su alto riesgo de divergencia y mantenimiento. La centralización es la que mejor se adapta a las necesidades de AgroTrack y su contexto de conectividad intermitente.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-002: aprobado con cambios el 2026-10-29; SPIKE-005: aprobado con cambios el 2026-10-29; SPIKE-008: aprobado parcialmente el 2026-10-29. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Validación en el móvil sin conexión, con mensajes por campo, en 0,005 ms para 3 campos.
+    - El backend valida las mismas restricciones (vacíos, largos, decimales, fechas futuras, catálogo, campos desconocidos).
+  - **Cambios respecto a lo propuesto**:
+    - Se reemplazó el esquema JSON compartido (`ajv` / `json-schema-validator`) por reglas en cada lado: TypeScript en `src/compartido/dominio/validacion.ts` y Jakarta Validation en `RegistrosDatos.java`.
+    - Una prueba de contrato (`spikesValidacion.test.ts`) lee el código Java y falla si los largos máximos o los decimales del móvil no coinciden con los del backend. Cubre el riesgo de divergencia que hizo descartar las reglas duplicadas.
+    - Los mensajes del móvil y del backend no son idénticos: el móvil usa mensajes para el campesino y el backend devuelve campo y regla en `detalles`.

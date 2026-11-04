@@ -1,6 +1,6 @@
 /**
  * Componentes visuales de AgroTrack, pensados para campesinos (ADR-010, ADR-023):
- * letra propia y clara (Inter), tamanos grandes, botones de minimo 56dp y avisos dentro
+ * letra propia y clara (Inter), tamanos grandes, controles de minimo 48dp y avisos dentro
  * de la pantalla en lugar de ventanas del sistema.
  */
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -29,20 +29,26 @@ export const COLORES = {
   primarioSuave: '#ECFDF5',
   primarioBorde: '#D1FAE5',
   verdeVivo: '#4ADE80',
-  verdeClaro: '#A7F3D0',
+  // SPIKE-023: antes #A7F3D0 (4,3:1 sobre el verde); ahora 4,8:1.
+  verdeClaro: '#D1FAE5',
   teal: '#0F766E',
-  naranja: '#F97316',
+  // SPIKE-023: antes #F97316 (2,8:1 con letra blanca); ahora 5,2:1.
+  naranja: '#C2410C',
   ambar: '#F59E0B',
   ambarSuave: '#FEF3C7',
   fondo: '#F8FAFC',
   tarjeta: '#FFFFFF',
   texto: '#1E293B',
   suave: '#64748B',
+  /** Gris para letra pequena sobre fondos de color suave (SPIKE-023: 7,2:1 sobre errorSuave). */
+  suaveOscuro: '#475569',
   borde: '#E2E8F0',
   bordeSuave: '#F1F5F9',
   pendiente: '#B45309',
   pendienteSuave: '#FEF3C7',
   error: '#DC2626',
+  /** Rojo para letra normal sobre errorSuave (SPIKE-023: 5,9:1; error da 4,4:1). */
+  errorOscuro: '#B91C1C',
   errorVivo: '#EF4444',
   errorSuave: '#FEF2F2',
   errorBorde: '#FEE2E2',
@@ -568,7 +574,7 @@ export function TarjetaMovimiento({ icono, titulo, detalle, valor, entro }: {
         <Text style={estilos.movimientoTitulo} numberOfLines={1}>{titulo}</Text>
         <Text style={estilos.movimientoDetalle} numberOfLines={1}>{detalle}</Text>
       </View>
-      <Text style={[estilos.movimientoValor, { color: entro ? COLORES.primario : COLORES.error }]}>
+      <Text style={[estilos.movimientoValor, { color: entro ? COLORES.primario : COLORES.errorOscuro }]}>
         {entro ? '+ ' : '- '}{valor}
       </Text>
     </View>
@@ -620,7 +626,7 @@ export const estilos = StyleSheet.create({
   avisoIconoTexto: { fontFamily: FUENTES.negrita, color: COLORES.blanco, fontSize: 17 },
   avisoCuerpo: { flex: 1, gap: 2 },
   avisoMensaje: { fontSize: 16 },
-  avisoCerrar: { minWidth: 40, minHeight: 40, alignItems: 'center', justifyContent: 'center' },
+  avisoCerrar: { minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   avisoCerrarTexto: { fontFamily: FUENTES.negrita, fontSize: 18, color: COLORES.suave },
 
   encabezado: {
@@ -685,7 +691,7 @@ export const estilos = StyleSheet.create({
   botonNumeroTexto: { fontFamily: FUENTES.negrita, fontSize: 28, color: COLORES.primarioOscuro, lineHeight: 32 },
   entradaNumero: { flex: 1, textAlign: 'center', fontSize: 22 },
   chipSugerencia: {
-    minHeight: 44, paddingHorizontal: 14, justifyContent: 'center', borderRadius: 22,
+    minHeight: 48, paddingHorizontal: 14, justifyContent: 'center', borderRadius: 24,
     borderWidth: 1, borderStyle: 'dashed', borderColor: COLORES.primario, backgroundColor: COLORES.tarjeta,
   },
   barraFila: { gap: 6 },
@@ -710,7 +716,7 @@ export const estilos = StyleSheet.create({
   entradaFecha: { justifyContent: 'center' },
   entradaConBoton: { paddingRight: 60 },
   botonOjo: {
-    position: 'absolute', right: 6, top: 6, bottom: 6, width: 48, borderRadius: 12,
+    position: 'absolute', right: 4, top: 4, bottom: 4, width: 48, borderRadius: 12,
     backgroundColor: COLORES.bordeSuave, alignItems: 'center', justifyContent: 'center',
   },
   botonOjoTexto: { fontSize: 20 },
@@ -760,7 +766,7 @@ export const estilos = StyleSheet.create({
     paddingVertical: 5, marginTop: 4,
   },
   bienvenidaChipTexto: { fontFamily: FUENTES.negrita, fontSize: 13, color: COLORES.primarioSuave },
-  salir: { position: 'absolute', top: 10, right: 12, minHeight: 40, minWidth: 56, justifyContent: 'center', alignItems: 'center' },
+  salir: { position: 'absolute', top: 6, right: 8, minHeight: 48, minWidth: 56, justifyContent: 'center', alignItems: 'center' },
   salirTexto: { fontFamily: FUENTES.negrita, fontSize: 15, color: COLORES.blanco },
   etiquetaPequena: { fontFamily: FUENTES.negrita, fontSize: 12, color: COLORES.primario, backgroundColor: COLORES.primarioSuave,
     paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, overflow: 'hidden' },
@@ -781,7 +787,7 @@ export const estilos = StyleSheet.create({
   movimientoIcono: { fontSize: 22, paddingHorizontal: 8, paddingVertical: 6, borderRadius: 14, overflow: 'hidden' },
   movimientoCuerpo: { flex: 1, gap: 2 },
   movimientoTitulo: { fontFamily: FUENTES.negrita, fontSize: 16, color: COLORES.texto },
-  movimientoDetalle: { fontFamily: FUENTES.normal, fontSize: 13, color: COLORES.suave },
+  movimientoDetalle: { fontFamily: FUENTES.normal, fontSize: 13, color: COLORES.suaveOscuro },
   movimientoValor: { fontFamily: FUENTES.negrita, fontSize: 16 },
   botonColor: {
     flexBasis: '47%', flexGrow: 1, minHeight: 128, borderRadius: 24, alignItems: 'center', justifyContent: 'center',
@@ -789,7 +795,7 @@ export const estilos = StyleSheet.create({
   },
   botonColorIcono: { fontSize: 30, backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: 16, paddingHorizontal: 8, paddingVertical: 4, overflow: 'hidden' },
   botonColorTitulo: { fontFamily: FUENTES.negrita, fontSize: 17, color: COLORES.blanco, textAlign: 'center' },
-  botonColorDetalle: { fontFamily: FUENTES.normal, fontSize: 13, color: COLORES.blanco, opacity: 0.85, textAlign: 'center' },
+  botonColorDetalle: { fontFamily: FUENTES.normal, fontSize: 13, color: COLORES.blanco, textAlign: 'center' },
   tituloPantalla: { fontFamily: FUENTES.negrita, fontSize: 22, color: COLORES.texto, textAlign: 'center' },
   fondoVentana: { flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.55)', justifyContent: 'center', padding: 20 },
   ventana: { backgroundColor: COLORES.tarjeta, borderRadius: 24, padding: 22, gap: 12 },
@@ -801,7 +807,7 @@ export const estilos = StyleSheet.create({
   // --- Entrar / crear cuenta ------------------------------------------------------------------
   cabeceraSesion: { backgroundColor: COLORES.primarioOscuro, paddingHorizontal: 18, paddingTop: 16, paddingBottom: 16, gap: 14, elevation: 4 },
   selectorSesion: {
-    flexDirection: 'row', gap: 6, backgroundColor: 'rgba(2,44,34,0.6)', padding: 5, borderRadius: 18,
+    flexDirection: 'row', gap: 8, backgroundColor: 'rgba(2,44,34,0.6)', padding: 5, borderRadius: 18,
     borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)',
   },
   opcionSesion: { flex: 1, minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },

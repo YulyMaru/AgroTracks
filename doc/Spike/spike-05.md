@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-005 — Registrar offline con SQLite y cola de pendientes
 - **ADR complementarios:** ADR-001 (Implementar sincronización offline con retry y backoff), ADR-002 (Validar formularios con reglas centralizadas)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 5 días hábiles.
 
@@ -127,7 +128,6 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 - El registro existe en SQLite con todos los datos correctos.
 - El registro aparece en la lista de gastos con el estado "Pendiente".
 
----
 
 ### 7.2 Prueba 2 — Persistencia al cerrar la aplicación
 
@@ -146,7 +146,7 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 - La base de datos mantiene el registro intacto.
 - El estado sigue siendo "PENDIENTE".
 
----
+
 
 ### 7.3 Prueba 3 — Múltiples registros offline y cola de pendientes
 
@@ -166,7 +166,7 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 - El estado de los registros se actualiza a "SINCRONIZADO" (o desaparecen de la cola de pendientes).
 - No hay pérdida ni duplicación.
 
----
+
 
 ### 7.4 Prueba 4 — Validación offline con reglas centralizadas
 
@@ -187,7 +187,6 @@ Se utilizará el formulario de registro de **Gasto** (similar al de AgroTrack) p
 - Al presionar "Guardar" con fecha vacía, el sistema resalta el campo de fecha y no guarda el registro.
 - Todas las validaciones funcionan sin conexión, usando las reglas centralizadas empaquetadas en la app.
 
----
 
 ### 7.5 Prueba 5 — Rendimiento de almacenamiento
 
@@ -276,27 +275,35 @@ Al finalizar el timebox, el equipo deberá entregar:
    - ¿Los mensajes de confirmación fueron claros para los usuarios en pruebas?
    - Recomendaciones para la implementación en producción (ej. uso de transacciones, manejo de errores, migraciones).
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
 
-*(Esta sección se llena al completar el spike)*
+## 12. Conclusión del Spike
+
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Se logró el registro offline persistente?
-  - ✅ / ❌ ¿El feedback al usuario fue claro?
-  - ✅ / ❌ ¿Los registros sobreviven al cierre de la app?
-  - ✅ / ❌ ¿La validación offline funciona correctamente?
-  - ✅ / ❌ ¿La cola de pendientes se integra con el motor de sincronización?
-  - ✅ / ❌ ¿El tiempo de almacenamiento fue < 200 ms por registro?
+  - ✅ ¿Se logró el registro offline persistente? Sí. 50 registros sin señal quedaron en `PENDIENTE` en la tabla `operaciones_pendientes`.
+  - ✅ ¿El feedback al usuario fue claro? Al guardar se muestra "¡Guardado!" y el registro aparece con "⏱ Por enviar" hasta que llega al servidor. Falta confirmarlo con usuarios.
+  - ✅ ¿Los registros sobreviven al cierre de la app? Sí. Al cerrar y volver a abrir la app, la cola y la sesión siguen iguales.
+  - ✅ ¿La validación offline funciona correctamente? Sí (ver SPIKE-002).
+  - ✅ ¿La cola de pendientes se integra con el motor de sincronización? Sí. Al volver la señal se envió sola y todo quedó `SINCRONIZADO`.
+  - ✅ ¿El tiempo de almacenamiento fue < 200 ms por registro? Sí. 0,50 ms en promedio y 11 ms el más lento (50 registros); 0,20 ms en promedio con 10.000.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — 50 registros, cierre y reapertura, reconexión.
+  - `agrotrack-movil/__tests__/sqliteLocal.test.ts` — la transacción que falla no deja nada a medias, ninguna columna admite vacíos, la cola en orden.
+  - `agrotrack-movil/__tests__/casosRegistros.test.ts` — el registro y su operación se guardan en la misma transacción.
+
+- **Cambios respecto a lo propuesto**:
+  - La cola guarda los 8 tipos de registro (finca, lote, cultivo, cosecha, venta, gasto, otro ingreso, labor) con crear, editar y eliminar, y `versionBase` para detectar conflictos.
+  - Las ediciones de un registro que aún no se envía se juntan en la misma operación (no se encolan varias).
+  - Todavía no hay purga de operaciones ya sincronizadas.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El uso de SQLite requiere manejar migraciones; es mejor definirlas desde el principio.")
-  - (Ejemplo: "Los mensajes de confirmación deben ser más cortos en dispositivos con pantalla pequeña.")
+  - Guardar el registro y su operación en una sola transacción evita registros sin operación (o al revés) si la app se cierra a mitad.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar transacciones al insertar en SQLite para garantizar integridad.")
-  - (Ejemplo: "Añadir un índice en `estado` para consultas rápidas a la cola de pendientes.")
-  - (Ejemplo: "Implementar un límite de tamaño de la base de datos local y un proceso de limpieza.")
+  - Agregar una limpieza de operaciones `SINCRONIZADO` antiguas (por ejemplo, más de 30 días).
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios**.

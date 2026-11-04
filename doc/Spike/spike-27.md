@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-027 — Proteger el backend con WAF y defensas perimetrales
 - **ADR complementarios:** ADR-011 (Bloquear acceso no autenticado con middleware), ADR-015 (Usar REST como estilo de comunicación), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-024 (Estandarizar manejo de errores y recuperación en backend y frontend), ADR-025 (Automatizar integración continua y despliegue con GitHub Actions)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Pendiente — no ejecutado
+- **Fecha de revisión:** 2026-10-30
 - **Prioridad:** Alta
 - **Timebox estimado:** 2 días hábiles
 
@@ -168,7 +169,6 @@ El Spike no implementará:
 - El certificado SSL es válido.
 - No hay errores de configuración.
 
----
 
 ### 7.2 Prueba 2 — Protección contra SQL Injection
 
@@ -188,7 +188,6 @@ El Spike no implementará:
 - Se registra el intento en el panel de Cloudflare.
 - No hay impacto en el rendimiento del backend.
 
----
 
 ### 7.3 Prueba 3 — Protección contra XSS
 
@@ -206,7 +205,6 @@ El Spike no implementará:
 - El backend no recibe el payload malicioso.
 - Se registra el intento en el panel de Cloudflare.
 
----
 
 ### 7.4 Prueba 4 — Mitigación DDoS básico
 
@@ -225,7 +223,6 @@ El Spike no implementará:
 - El tiempo de respuesta no se degrada significativamente.
 - Se registra el ataque en el panel de Cloudflare.
 
----
 
 ### 7.5 Prueba 5 — Rate limiting
 
@@ -243,7 +240,6 @@ El Spike no implementará:
 - Las solicitudes legítimas no se ven afectadas.
 - Se registra el abuso en el panel de Cloudflare.
 
----
 
 ### 7.6 Prueba 6 — Rendimiento con y sin Cloudflare
 
@@ -262,7 +258,6 @@ El Spike no implementará:
 - No hay errores de conexión.
 - El tiempo de respuesta es consistente.
 
----
 
 ### 7.7 Prueba 7 — Integración con Spring Security
 
@@ -283,8 +278,6 @@ El Spike no implementará:
 - Los errores 401/403 se manejan correctamente.
 - No hay errores de integración.
 
----
-
 ### 7.8 Prueba 8 — Integración con CI/CD
 
 **Objetivo:** Validar que Cloudflare se integra con el pipeline de CI/CD.
@@ -302,7 +295,6 @@ El Spike no implementará:
 - No hay errores de autenticación.
 - La integración es automática.
 
----
 
 ### 7.9 Prueba 9 — Monitoreo y alertas
 
@@ -407,34 +399,20 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de las alertas configuradas.
 5. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de revisión**: 2026-10-30
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Cloudflare resolvió el dominio y TLS estricto funcionó?
-  - ✅ / ❌ ¿Cloudflare bloqueó los intentos de SQL injection?
-  - ✅ / ❌ ¿Cloudflare bloqueó o sanitizó los intentos de XSS?
-  - ✅ / ❌ ¿Cloudflare mitigó el ataque DDoS básico?
-  - ✅ / ❌ ¿El rate limiting funcionó?
-  - ✅ / ❌ ¿El rendimiento no se degradó más del 10 %?
-  - ✅ / ❌ ¿La integración con Spring Security funcionó?
-  - ✅ / ❌ ¿El pipeline de CI/CD invalidó la caché?
-  - ✅ / ❌ ¿El panel de Cloudflare mostró métricas y alertas?
+  - ⏳ DNS, TLS estricto, WAF, DDoS y rate limiting en Cloudflare: pendientes. Todavía no hay dominio propio; la app usa la dirección `*.run.app` de Cloud Run.
+  - ✅ Integración con Spring Security (preparada): el filtro de origen exige el encabezado secreto de Cloudflare cuando `AGROTRACK_ORIGEN_SECRETO` está configurado y no lo exige cuando está vacío (desarrollo).
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "Cloudflare plan gratuito bloquea la mayoría de payloads de SQL injection y XSS.")
-  - (Ejemplo: "La CDN de Cloudflare mejora la latencia para usuarios rurales.")
-  - (Ejemplo: "El rate limiting del plan gratuito es suficiente para el volumen de AgroTrack en piloto.")
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/compartido/infraestructura/seguridad/FiltroOrigenTest.java` — 4 casos del encabezado secreto.
+  - `backend/despliegue/desplegar-cloud-run.sh` — solo pasa el secreto de origen si existe en Secret Manager.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Configurar Cloudflare desde el día 1.")
-  - (Ejemplo: "No exponer la IP del backend directamente.")
-  - (Ejemplo: "Usar TLS estricto.")
-  - (Ejemplo: "Configurar reglas WAF básicas.")
-  - (Ejemplo: "Monitorear el panel de Cloudflare semanalmente.")
-  - (Ejemplo: "Considerar un plan de pago si el tráfico crece mucho.")
+  - Registrar el dominio y activar Cloudflare antes de dar el APK a campesinos fuera del equipo; luego cambiar `URL_PRODUCCION` en la app.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⏳ **Pendiente**: requiere el dominio.

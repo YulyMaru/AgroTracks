@@ -2,7 +2,7 @@
 
 - **Título**: Usar Spring Boot 4.1 con Java 27, PostgreSQL, Flyway, Spring Security, JWT y Spring Data JPA como stack tecnológico del backend, descartando Node.js/NestJS, Django y .NET Core.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -233,10 +233,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-016 — Validará que Spring Boot 4.1 con PostgreSQL, Flyway, Spring Security y JWT cubre todos los requisitos del backend — Propuesto.
-    - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple los tiempos definidos — Propuesto.
-    - SPIKE-011 — Validará en la app móvil el manejo de sesión con JWT (401, refresco y redirección) contra un backend simulado; la protección de endpoints con Spring Security se valida en SPIKE-016 — Propuesto.
-    - SPIKE-015 — Validará que los endpoints REST se documentan con OpenAPI — Propuesto.
+    - SPIKE-016 — Validará que Spring Boot 4.1 con PostgreSQL, Flyway, Spring Security y JWT cubre todos los requisitos del backend — Aprobado con cambios el 2026-10-26.
+    - SPIKE-009 — Validará que PostgreSQL con índices y agregaciones cumple los tiempos definidos — Aprobado con cambios el 2026-10-28.
+    - SPIKE-011 — Validará en la app móvil el manejo de sesión con JWT (401, refresco y redirección) contra un backend simulado; la protección de endpoints con Spring Security se valida en SPIKE-016 — Aprobado con cambios el 2026-10-27.
+    - SPIKE-015 — Validará que los endpoints REST se documentan con OpenAPI — Aprobado con cambios el 2026-10-26.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -309,3 +309,18 @@
     - **Estructura modular**: paquetes por dominio (fincas, cultivos, transacciones, sincronización, usuarios) dentro de un monolito modular (ADR-018).
 
     Se descarta Node.js/NestJS por menor robustez transaccional y tipificación débil en runtime, Django por rendimiento inferior y tipificación dinámica, y .NET Core por menor ecosistema open source y disponibilidad de talento. Spring Boot 4.1 es la opción que garantiza robustez, seguridad y mantenibilidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-016: aprobado con cambios el 2026-10-26. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Spring Boot 4.1 con Flyway (5 migraciones), Spring Data JPA, Spring Security + JWT, SpringDoc, Actuator y Micrometer.
+    - 57 pruebas del backend pasan; cobertura de líneas 95,5 %.
+  - **Cambios respecto a lo propuesto**:
+    - Arquitectura hexagonal dentro del monolito (ADR-032).
+    - Sin `json-schema-validator` (ver ADR-002) y sin Redis (Caffeine).
+    - Las pruebas de integración corren en H2 modo PostgreSQL; Testcontainers está configurado pero requiere Docker.
+  - **Pendiente**:
+    - Correr la integración contra PostgreSQL 16 (Testcontainers) en el pipeline.

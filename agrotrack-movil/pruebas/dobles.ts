@@ -14,7 +14,15 @@ import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import { AxiosError, type AxiosAdapter, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 
 // --- op-sqlite --------------------------------------------------------------------------------
-const bases = new Map<string, DatabaseSync>();
+/**
+ * Las bases y el Keystore viven en globalThis para sobrevivir a jest.isolateModules: asi una prueba
+ * puede "cerrar y volver a abrir la app" (modulos nuevos) sobre el mismo almacenamiento del celular.
+ */
+const almacen = globalThis as unknown as {
+  basesSqlite?: Map<string, DatabaseSync>;
+  llaveroFalso?: Map<string, { username: string; password: string }>;
+};
+const bases = (almacen.basesSqlite ??= new Map<string, DatabaseSync>());
 
 export const opSqlite = {
   open({ name }: { name: string; encryptionKey?: string }) {
@@ -38,7 +46,7 @@ export const opSqlite = {
 };
 
 // --- react-native-keychain --------------------------------------------------------------------
-const llavero = new Map<string, { username: string; password: string }>();
+const llavero = (almacen.llaveroFalso ??= new Map<string, { username: string; password: string }>());
 
 export const keychain = {
   llavero,
@@ -74,7 +82,8 @@ export function crearNetInfo() {
 }
 
 /** Red compartida para jest.mock: la prueba la apaga y la prende con redFalsa.cambiar(...). */
-export const redFalsa = crearNetInfo();
+export const redFalsa = ((globalThis as unknown as { redFalsa?: ReturnType<typeof crearNetInfo> }).redFalsa ??=
+  crearNetInfo());
 
 // --- Servidor HTTP falso ----------------------------------------------------------------------
 export type Respuesta = { status: number; data?: unknown } | 'SIN_RED';

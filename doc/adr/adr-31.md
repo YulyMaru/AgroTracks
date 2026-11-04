@@ -2,7 +2,7 @@
 
 - **Título**: Desplegar el backend de AgroTrack en Google Cloud usando servicios gestionados: Cloud Run para ejecutar el contenedor del backend, Cloud SQL para PostgreSQL, Secret Manager para los secretos y Cloud Monitoring y Cloud Logging para la observabilidad. Las versiones se publican desde GitHub Actions y el tráfico llega a través de Cloudflare. Se descartan el despliegue manual, un servidor Linux propio (máquina virtual con docker-compose) y Kubernetes.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Historial**: La primera versión de este ADR proponía un servidor Linux propio con Docker y docker-compose, publicado por SSH. Se reemplazó por esta versión porque el equipo decidió no administrar un servidor Linux (sistema operativo, parches, copias de seguridad y monitoreo a cargo del equipo) y usar los servicios gestionados de Google Cloud, que además cobran por uso, como pide la restricción de presupuesto.
 
@@ -178,9 +178,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-025 — Validará que GitHub Actions construye la imagen, la publica en Artifact Registry y la despliega en Cloud Run (staging) — Propuesto.
-    - SPIKE-021 — Validará que las métricas y alertas del backend se ven en Cloud Monitoring — Propuesto.
-    - SPIKE-030 — Validará que el backend lee sus secretos desde Secret Manager — Propuesto.
+    - SPIKE-025 — Validará que GitHub Actions construye la imagen, la publica en Artifact Registry y la despliega en Cloud Run (staging) — Aprobado parcialmente el 2026-10-28.
+    - SPIKE-021 — Validará que las métricas y alertas del backend se ven en Cloud Monitoring — Aprobado parcialmente el 2026-10-30.
+    - SPIKE-030 — Validará que el backend lee sus secretos desde Secret Manager — Aprobado parcialmente el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -277,3 +277,16 @@
       - Diagrama de despliegue junto al modelo C4.
 
     Se descarta el despliegue manual por no ser reproducible, la máquina virtual Linux con docker-compose porque obliga a administrar un servidor y a pagarlo aunque no haya tráfico, y Kubernetes por complejidad y costo. Cloud Run + Cloud SQL es la opción que permite a un equipo pequeño publicar AgroTrack sin administrar servidores y con un costo proporcional al uso.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado
+  - **Qué se validó**:
+    - El servicio `agrotrack-prod` (us-east1) responde por HTTPS: `/api/v1/sincronizacion/estado` devuelve `disponible: true` y `/actuator/health` devuelve `UP`; las rutas protegidas responden 401 sin token.
+    - Cloud Run con 0 instancias mínimas: la primera petición tras estar inactivo tardó 27 s (arranque en frío) y las siguientes 0,35 s.
+    - Secretos desde Secret Manager (`--set-secrets`) y despliegue desde GitHub Actions con Workload Identity Federation.
+  - **Cambios respecto a lo propuesto**:
+    - Cloudflare todavía no está delante del servicio (ADR-027): la app usa la dirección `*.run.app`.
+  - **Pendiente**:
+    - Por el arranque en frío, subir el tiempo de chequeo del móvil a 35 s o usar 1 instancia mínima en producción.

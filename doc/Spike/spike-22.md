@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-022 — Garantizar seguridad en tránsito y en reposo
 - **ADR complementarios:** ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-011 (Bloquear acceso no autenticado con middleware), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-28
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles
 
@@ -155,8 +156,6 @@ El Spike no implementará:
 - Headers de seguridad presentes.
 - No hay errores de configuración.
 
----
-
 ### 7.2 Prueba 2 — SecureStore para token JWT
 
 **Objetivo:** Validar que SecureStore almacena y recupera el token de forma segura.
@@ -176,7 +175,6 @@ El Spike no implementará:
 - Se elimina correctamente.
 - SecureStore funciona en los tres dispositivos.
 
----
 
 ### 7.3 Prueba 3 — SQLCipher para base de datos local
 
@@ -199,7 +197,6 @@ El Spike no implementará:
 - El archivo está cifrado (no legible en hexadecimal).
 - No hay corrupción de datos.
 
----
 
 ### 7.4 Prueba 4 — Overhead de SQLCipher
 
@@ -219,7 +216,6 @@ El Spike no implementará:
 - Los tiempos se mantienen dentro de los umbrales (≤ 2 s para 100 registros).
 - SQLCipher no degrada la experiencia del usuario.
 
----
 
 ### 7.5 Prueba 5 — Persistencia y recuperación con SQLCipher
 
@@ -239,7 +235,6 @@ El Spike no implementará:
 - No hay corrupción.
 - La app funciona sin intervención del usuario.
 
----
 
 ### 7.6 Prueba 6 — Pérdida de clave de cifrado
 
@@ -259,7 +254,6 @@ El Spike no implementará:
 - La app no se bloquea.
 - El usuario puede reiniciar la app (perdiendo datos locales, pero sin crash).
 
----
 
 ### 7.7 Prueba 7 — Tamaño del APK con SQLCipher
 
@@ -276,7 +270,6 @@ El Spike no implementará:
 - El incremento de tamaño es < 5 MB.
 - El APK sigue siendo viable para dispositivos con almacenamiento limitado.
 
----
 
 ### 7.8 Prueba 8 — Cumplimiento de Ley 1581 de 2012
 
@@ -369,32 +362,35 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de la app manejando la pérdida de clave.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-28
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿TLS 1.2+ se configuró correctamente?
-  - ✅ / ❌ ¿SecureStore almacenó y recuperó el token?
-  - ✅ / ❌ ¿SQLCipher cifró la base correctamente?
-  - ✅ / ❌ ¿El overhead de SQLCipher fue < 10 %?
-  - ✅ / ❌ ¿Los datos persistieron tras cerrar la app?
-  - ✅ / ❌ ¿La app manejó la pérdida de clave sin bloquearse?
-  - ✅ / ❌ ¿El APK incrementó < 5 MB?
-  - ✅ / ❌ ¿Se cumplió con la Ley 1581 de 2012?
+  - ✅ ¿TLS configurado? Sí. El backend en Cloud Run negoció TLS 1.3 (`TLS_AES_256_GCM_SHA384`) y una petición HTTP se redirige a HTTPS (302). La app de release solo usa `https://`; el tráfico sin cifrar está permitido solo hacia `localhost` (desarrollo).
+  - ✅ ¿El almacenamiento seguro guarda y recupera el token? Sí (Keystore con `react-native-keychain`). Falta confirmarlo en los 3 dispositivos.
+  - ✅ ¿SQLCipher cifra la base? Está activo (`"op-sqlite": { "sqlcipher": true }`) con una clave aleatoria de 64 caracteres hexadecimales guardada en el Keystore; la base sin cifrar de versiones anteriores se copia a la cifrada. Falta comprobar en el celular que el archivo no se abre sin la clave.
+  - ⏳ ¿Overhead de SQLCipher < 10 %? Pendiente (celular).
+  - ✅ ¿Los datos persisten al reabrir? Sí.
+  - ✅ ¿La app maneja la pérdida de clave sin bloquearse? Sí: si el Keystore pierde la clave, la app abre con una base nueva vacía y genera otra clave. Los datos locales que no se habían enviado se pierden.
+  - ⏳ ¿Incremento del APK < 5 MB? Pendiente (APK de release).
+  - ❌ ¿Cumplimiento de la Ley 1581 de 2012? Falta: no hay pantalla de consentimiento ni política de privacidad.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — pérdida de la clave del Keystore.
+  - `agrotrack-movil/__tests__/sqliteLocal.test.ts` — la clave de cifrado se genera en el primer arranque y se guarda en el Keystore.
+  - Verificación del servicio en producción (`agrotrack-prod`, us-east1): HTTPS 200, redirección de HTTP a HTTPS y TLS 1.3.
+
+- **Cambios respecto a lo propuesto**:
+  - TLS lo da Cloud Run directamente; Cloudflare todavía no está delante (SPIKE-027).
+  - Sin certificate pinning (era opcional).
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "SQLCipher añade un overhead aceptable en gama baja.")
-  - (Ejemplo: "La clave de SQLCipher debe almacenarse en SecureStore, nunca en el código.")
-  - (Ejemplo: "TLS con certificado autofirmado requiere configuración adicional en Axios.")
+  - Perder la clave del Keystore equivale a perder los datos locales no enviados: sincronizar seguido reduce ese riesgo.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Configurar TLS desde el día 1.")
-  - (Ejemplo: "Nunca almacenar tokens en AsyncStorage.")
-  - (Ejemplo: "Usar SQLCipher desde el inicio; migrar después es costoso.")
-  - (Ejemplo: "Gestionar la clave de SQLCipher en SecureStore.")
-  - (Ejemplo: "Considerar certificate pinning si el presupuesto lo permite.")
+  - Agregar la aceptación de la política de tratamiento de datos al crear la cuenta antes del piloto.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: cifrado en tránsito y en reposo funcionan; faltan las pruebas en celulares y el consentimiento de la Ley 1581.

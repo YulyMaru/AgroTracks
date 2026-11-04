@@ -2,7 +2,7 @@
 
 - **Título**: Bloquear acceso no autenticado a pantallas, funciones e información protegida con middleware de navegación, almacenamiento seguro y manejo de expiración, cumpliendo con el escenario ESC-CAL-SEG-01.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -160,7 +160,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-011 — Validará que el middleware bloquea el 100 % de accesos sin token, que el token se guarda en SecureStore y que la sesión persiste — Propuesto.
+    - SPIKE-011 — Validará que el middleware bloquea el 100 % de accesos sin token, que el token se guarda en SecureStore y que la sesión persiste — Aprobado con cambios el 2026-10-27.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -241,3 +241,18 @@
       - Pruebas de UI: navegación bloqueada sin token, redirección a login, persistencia de sesión al cerrar y abrir la app.
 
     Se descarta la validación solo en servidor (por su pobre UX y exposición de UI) y la validación descentralizada en componentes (por su alto riesgo de errores y duplicación). El middleware centralizado con almacenamiento seguro es la opción más robusta y profesional para AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios
+  - **Spikes**: SPIKE-011: aprobado con cambios el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Sin sesión la app solo muestra la pantalla de entrada; el backend responde 401 sin token, con token inválido o con firma ajena.
+    - Access token de 15 minutos y refresh token de 30 días con rotación; cerrar sesión lo revoca.
+    - Renovación silenciosa ante un 401, compartida entre peticiones; si falla, se pide entrar de nuevo.
+    - La sesión se guarda en el Keystore y persiste al cerrar la app.
+  - **Cambios respecto a lo propuesto**:
+    - `react-native-keychain` en lugar de `react-native-secure-storage`.
+    - Sin React Navigation: `App.tsx` elige entre la pantalla de entrada y la navegación propia según haya sesión.
+    - Las consultas al SQLite no revisan el token una por una; los datos locales quedan atados a la cuenta y se limpian al cambiar de cuenta.

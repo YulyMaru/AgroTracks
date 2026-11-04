@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-010 — Estandarizar táctil y valores con unidades
 - **ADR complementarios:** ADR-003 (Presentar resultados económicos en tarjetas), ADR-006 (Consultar datos offline y detectar conectividad)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-30
 - **Prioridad:** Media
 - **Timebox estimado:** 2 días hábiles 
 
@@ -117,7 +118,6 @@ El Spike no implementará:
 - La separación entre controles es ≥ 8 dp en todos los casos.
 - No hay controles que se superpongan o estén demasiado cerca.
 
----
 
 ### 7.2 Prueba 2 — Tasa de errores de pulsación (usabilidad)
 
@@ -135,8 +135,6 @@ El Spike no implementará:
 - Versión A (control): tasa de error > 10 %.
 - Versión B (spike): tasa de error < 5 %.
 - La mejora debe ser significativa, validando la necesidad de los estándares táctiles.
-
----
 
 ### 7.3 Prueba 3 — Comprensión de valores (concepto y unidad)
 
@@ -224,23 +222,30 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Guía de estilo para el sistema de diseño (tamaños mínimos de controles).
    - Mejoras de accesibilidad (contraste, iconos complementarios).
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-30
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Se cumplieron las dimensiones táctiles en el 100 % de los controles?
-  - ✅ / ❌ ¿La tasa de errores de pulsación fue < 5 %?
-  - ✅ / ❌ ¿El 100 % de los participantes identificó correctamente concepto y unidad?
-  - ✅ / ❌ ¿Los componentes son reutilizables?
+  - ✅ ¿Se cumplieron las dimensiones táctiles en el 100 % de los controles? Sí, después de corregir 4 controles que medían 40-44 dp (ver SPIKE-023). Los 15 estilos de controles miden 48 dp o más.
+  - ⏳ ¿La tasa de errores de pulsación fue < 5 %? Pendiente (prueba con usuarios).
+  - ⏳ ¿El 100 % identificó concepto y unidad? Pendiente (prueba con usuarios).
+  - ✅ ¿Los componentes son reutilizables? Sí. `Boton`, `Campo`, `CampoNumero`, `Selector` y `TarjetaMovimiento` se usan en todas las pantallas.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesInterfaz.test.ts` — tamaños táctiles y formato de valores ("$1.200.000", "120 kilogramos", "2,5 hectáreas").
+  - `agrotrack-movil/__tests__/formato.test.ts` — pesos con puntos de miles y lectura de decimales con coma.
+
+- **Cambios respecto a lo propuesto**:
+  - No se creó el componente `ValorConUnidad`: el formato está en funciones (`formatoPesos`, `cantidadConUnidad`) y el concepto va en el texto de la fila ("💸 Salió  $300.000").
+  - Las unidades se escriben en palabras ("kilogramos", "arrobas", "hectáreas") y no abreviadas (`kg`, `ha`, `COP`).
+  - Se diseñó solo para Android (48 dp); iOS no está en el alcance del piloto.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "Las unidades abreviadas como 'COP' no eran claras para algunos usuarios; usaremos 'pesos colombianos' o '$' + 'COP'.")
+  - Escribir la unidad completa evita la duda de si "@" o "bto" se entienden.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Añadir un sistema de configuración de unidades para poder cambiarlas fácilmente si el negocio se expande a otros países.")
-  - (Ejemplo: "Incluir iconos de ingresos (↑) y gastos (↓) junto al concepto para reforzar la diferenciación.")
+  - Hacer la prueba de pulsaciones con usuarios en el celular de gama baja.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: la parte técnica pasa; faltan las pruebas con usuarios.

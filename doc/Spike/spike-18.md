@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-018 — Usar monolito modular por capas con arquitectura offline-first y patrón Repository
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-007 (Garantizar idempotencia y consistencia en sync), ADR-013 (Base de datos relacional SQL), ADR-016 (Usar Spring Boot 4.1 con Java 27 como stack del backend), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-26
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles
 ## 1. Objetivo
@@ -167,7 +168,6 @@ El Spike no implementará:
 - No hay dependencias cíclicas.
 - La estructura es consistente entre backend y frontend.
 
----
 
 ### 7.2 Prueba 2 — Testabilidad por capa y por módulo
 
@@ -188,7 +188,6 @@ El Spike no implementará:
 - Las pruebas de integración validan la persistencia real.
 - El tiempo de ejecución de las pruebas es razonable (< 2 minutos por suite).
 
----
 
 ### 7.3 Prueba 3 — Patrón Repository en backend
 
@@ -210,7 +209,6 @@ El Spike no implementará:
 - Cambiar la implementación no afecta al dominio.
 - El dominio no tiene dependencias de JPA ni Spring.
 
----
 
 ### 7.4 Prueba 4 — Patrón Repository en frontend
 
@@ -232,7 +230,6 @@ El Spike no implementará:
 - Cambiar la implementación no afecta al dominio.
 - El dominio no tiene dependencias de SQLite ni Axios.
 
----
 
 ### 7.5 Prueba 5 — Integración backend-frontend mediante contratos
 
@@ -253,7 +250,6 @@ El Spike no implementará:
 - Los errores se manejan correctamente.
 - La autenticación JWT funciona.
 
----
 
 ### 7.6 Prueba 6 — Facilidad de añadir un nuevo módulo
 
@@ -273,7 +269,6 @@ El Spike no implementará:
 - El tiempo de implementación es razonable (< 4 horas para un CRUD básico).
 - La estructura es consistente con los módulos existentes.
 
----
 
 ### 7.7 Prueba 7 — Facilidad de cambiar la implementación de un repositorio
 
@@ -293,7 +288,6 @@ El Spike no implementará:
 - El cambio es localizado en infraestructura.
 - El principio de inversión de dependencias se respeta.
 
----
 
 ### 7.8 Prueba 8 — Rendimiento del backend con capas
 
@@ -312,7 +306,6 @@ El Spike no implementará:
 - La diferencia con el endpoint sin capas es mínima (< 10 %).
 - Las capas no degradan el rendimiento significativamente.
 
----
 
 ### 7.9 Prueba 9 — Facilidad de extraer un módulo a microservicio
 
@@ -418,33 +411,34 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas de los endpoints respondiendo.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-26
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿La estructura de capas y módulos se respetó?
-  - ✅ / ❌ ¿Cada capa y módulo tuvo pruebas unitarias e integración?
-  - ✅ / ❌ ¿El patrón Repository en backend abstrajo correctamente el acceso a datos?
-  - ✅ / ❌ ¿El patrón Repository en frontend combinó SQLite y Axios correctamente?
-  - ✅ / ❌ ¿El frontend consumió los endpoints mediante contratos OpenAPI?
-  - ✅ / ❌ ¿Añadir un nuevo módulo no afectó a los existentes?
-  - ✅ / ❌ ¿Cambiar la implementación de un repositorio no afectó al dominio?
-  - ✅ / ❌ ¿Las capas no degradaron el rendimiento significativamente?
-  - ✅ / ❌ ¿Un módulo podría extraerse a microservicio sin reescribir todo?
+  - ✅ ¿Se respeta la estructura de capas y módulos? Sí. Las pruebas de arquitectura fallan si el dominio depende de Spring/JPA (backend) o de React Native (móvil), o si un módulo usa clases internas de otro.
+  - ✅ ¿Cada capa tiene pruebas? Sí. Móvil: dominio 97,4 %, aplicación 100 %, infraestructura 97,6 % de líneas cubiertas. Backend: dominio 99,2 %, aplicación 95,2 %, infraestructura 94,4 %.
+  - ✅ ¿Repository en el backend? Sí: puertos de salida en `aplicacion/puerto/salida` y adaptadores JPA en `infraestructura/salida/persistencia`.
+  - ✅ ¿Repository en el frontend? Sí: puertos en `aplicacion/puertos.ts`, adaptadores SQLite y HTTP en `infraestructura`.
+  - ✅ ¿El frontend consume la API? Sí; el adaptador HTTP envía exactamente los campos que espera el backend.
+  - ⏳ ¿Añadir un módulo es rápido? No se midió con un módulo nuevo; `analisis` (móvil) se añadió leyendo `registros` solo por su API pública.
+  - ✅ ¿Cambiar un repositorio no afecta al dominio? Sí. Las pruebas de aplicación usan dobles en memoria de los mismos puertos que en producción implementan SQLite y JPA.
+  - ➖ ¿Las capas degradan el rendimiento < 10 %? No se comparó contra una versión sin capas; los tiempos absolutos están muy por debajo de los umbrales.
+  - ➖ ¿Un módulo puede extraerse a microservicio? No se probó.
+
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/ArquitecturaHexagonalTest.java` y `agrotrack-movil/__tests__/arquitectura.test.js`.
+  - `agrotrack-movil/__tests__/motorSincronizacion.test.ts` y `casosRegistros.test.ts` — casos de uso probados con dobles de sus puertos.
+
+- **Cambios respecto a lo propuesto**:
+  - Arquitectura hexagonal (puertos y adaptadores, ADR-032) dentro de cada módulo, en lugar de capas clásicas.
+  - Módulos reales: backend `autenticacion`, `catalogo`, `registros`, `sincronizacion`; móvil `autenticacion`, `registros`, `sincronizacion`, `analisis`. Fincas, lotes, cultivos y transacciones viven dentro de `registros`.
+  - El repositorio del móvil siempre lee de SQLite; la red solo la usa el motor de sincronización (no hay decisión local/remoto por cada consulta).
+  - `src/composicion.ts` es el único lugar que conecta los adaptadores con los casos de uso.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "Definir las interfaces de repositorio en el dominio es clave para la inversión de dependencias.")
-  - (Ejemplo: "La estructura de carpetas consistente entre backend y frontend facilita la navegación del código.")
-  - (Ejemplo: "Usar H2 en memoria para pruebas rápidas y Testcontainers para integración real es un buen equilibrio.")
+  - Las pruebas de arquitectura evitan que el diseño se degrade con el tiempo.
 
-- **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Documentar la arquitectura con un diagrama de capas y módulos.")
-  - (Ejemplo: "Definir una plantilla para crear nuevos módulos.")
-  - (Ejemplo: "Mantener las interfaces de repositorio en el dominio y las implementaciones en infraestructura.")
-  - (Ejemplo: "No caer en la tentación de microservicios prematuros.")
-  - (Ejemplo: "Revisar periódicamente que las dependencias entre capas se respeten.")
-
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (hexagonal según ADR-032).

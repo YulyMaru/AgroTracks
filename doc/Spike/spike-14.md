@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-014 — Aplicación móvil reactiva basada en componentes
 - **ADR complementarios:** ADR-001 (Sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes), ADR-006 (Consultar datos offline y detectar conectividad), ADR-010 (Estandarizar táctil y valores con unidades), ADR-013 (Base de datos relacional SQL), ADR-017 (Stack frontend móvil)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado parcialmente — parte técnica aprobada, faltan pruebas con usuarios o dispositivos
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles
 
@@ -128,8 +129,6 @@ El Spike no implementará:
 - Sin bloqueos perceptibles ni frames congelados.
 - La lista no se re-renderiza completa al cambiar un solo ítem.
 
----
-
 ### 7.2 Prueba 2 — Re-renderizados innecesarios
 
 **Objetivo:** Validar que los componentes no se re-renderizan sin necesidad.
@@ -145,8 +144,6 @@ El Spike no implementará:
 - Al cambiar el filtro, solo se re-renderiza la lista y los ítems visibles, no todos los 500.
 - Al seleccionar un ítem, solo se re-renderiza ese ítem.
 - El uso de `React.memo`, `useMemo` y `useCallback` reduce los re-renderizados a lo mínimo.
-
----
 
 ### 7.3 Prueba 3 — Integración con SQLite y sincronización
 
@@ -166,8 +163,6 @@ El Spike no implementará:
 - El estado del gasto cambia de pendiente a sincronizado sin intervención manual.
 - No hay condiciones de carrera ni estados inconsistentes.
 
----
-
 ### 7.4 Prueba 4 — Renderizado del resumen económico
 
 **Objetivo:** Validar que el panel de resultados económicos se renderiza en el tiempo definido (ADR-003).
@@ -184,7 +179,6 @@ El Spike no implementará:
 - Las tarjetas se muestran correctamente diferenciadas.
 - La UI no se congela durante el cálculo.
 
----
 
 ### 7.5 Prueba 5 — Validación offline en formulario
 
@@ -205,7 +199,6 @@ El Spike no implementará:
 - El formulario se guarda correctamente sin conexión.
 - La UI no se bloquea durante la validación.
 
----
 
 ### 7.6 Prueba 6 — Comparación cualitativa con RxJS (opcional)
 
@@ -295,31 +288,30 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Comparación cualitativa con RxJS (si se ejecutó la prueba 6).
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
 
-## 12. Conclusión del Spike (para llenar al finalizar)
+## 12. Conclusión del Spike
 
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El renderizado de listas cumplió ≤ 300 ms para 100 ítems?
-  - ✅ / ❌ ¿El renderizado de listas cumplió ≤ 500 ms para 500 ítems?
-  - ✅ / ❌ ¿La fluidez se mantuvo ≥ 55 FPS durante el scroll?
-  - ✅ / ❌ ¿Los re-renderizados fueron mínimos y controlados?
-  - ✅ / ❌ ¿La UI se actualizó automáticamente al guardar y sincronizar?
-  - ✅ / ❌ ¿El resumen económico se renderizó en ≤ 300 ms para 500 movimientos?
-  - ✅ / ❌ ¿La validación offline respondió en ≤ 50 ms?
-  - ✅ / ❌ ¿La comparación con RxJS confirmó menor complejidad (si se ejecutó)?
+  - ⏳ ¿Renderizado de listas ≤ 300 ms / 500 ms? Pendiente: se mide en el celular.
+  - ⏳ ¿≥ 55 FPS durante el scroll? Pendiente: se mide en el celular.
+  - ⏳ ¿Re-renderizados mínimos? Pendiente (React DevTools Profiler en el celular).
+  - ✅ ¿La UI se actualiza al guardar y al sincronizar? Sí. Las pantallas se suscriben al motor (`suscribirse`) y recargan cuando cambia la versión de los datos.
+  - ✅ ¿Resumen económico ≤ 300 ms para 500 movimientos? Sí. 1,05 ms de cálculo.
+  - ✅ ¿Validación offline ≤ 50 ms? Sí. 0,005 ms.
+  - ➖ Comparación con RxJS: no se hizo (era opcional).
 
-- **Lecciones aprendidas**:
-  - (Ejemplo: "`FlatList` con `getItemLayout` mejora significativamente el rendimiento en listas largas.")
-  - (Ejemplo: "Dividir el Context en varios providers evita re-renderizados masivos.")
-  - (Ejemplo: "`useCallback` es esencial en callbacks pasados a `FlatList` para evitar re-renderizados.")
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesRendimiento.test.ts` y `spikesValidacion.test.ts`.
+  - `agrotrack-movil/__tests__/motorSincronizacion.test.ts` — "avisa a los suscritos cuando empieza y cuando termina".
+
+- **Cambios respecto a lo propuesto**:
+  - Las listas usan `ScrollView` con `map`, no `FlatList` con `memo`.
+  - El estado es `useState` y `useCallback` en cada pantalla; no se necesitó `useReducer` ni `Context` global.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar `FlashList` si el volumen de datos crece más allá de 500 ítems.")
-  - (Ejemplo: "Instrumentar el número de re-renderizados desde el día 1 para detectar regresiones.")
-  - (Ejemplo: "Evitar RxJS a menos que aparezcan flujos en tiempo real.")
-  - (Ejemplo: "Definir una guía de estilo para el manejo de estado (local vs global).")
+  - Cambiar las listas a `FlatList` antes del piloto: con 10.000 gastos, `ScrollView` dibuja todos a la vez y puede ir lento en un celular de gama baja.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ⚠️ **Aprobado parcialmente**: el paradigma funciona; faltan las mediciones en celulares.

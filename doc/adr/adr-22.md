@@ -2,7 +2,7 @@
 
 - **Título**: Implementar TLS obligatorio para todas las comunicaciones, almacenamiento seguro de tokens con SecureStore, y cifrado de la base de datos local SQLite con SQLCipher, descartando almacenamiento en texto plano y comunicaciones sin cifrar.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -173,10 +173,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-022 — Validará que TLS, SecureStore y SQLCipher protegen los datos sin degradar el rendimiento — Propuesto.
-    - SPIKE-011 — Validará que el token se almacena de forma segura en SecureStore — Propuesto.
-    - SPIKE-013 — Validará el esquema SQLite local sobre el que se aplica el cifrado; el cifrado con SQLCipher se valida en SPIKE-022 — Propuesto.
-    - SPIKE-016 — Validará el backend Spring Boot que se publica por HTTPS; la configuración de TLS se valida en SPIKE-022 — Propuesto.
+    - SPIKE-022 — Validará que TLS, SecureStore y SQLCipher protegen los datos sin degradar el rendimiento — Aprobado parcialmente el 2026-10-28.
+    - SPIKE-011 — Validará que el token se almacena de forma segura en SecureStore — Aprobado con cambios el 2026-10-27.
+    - SPIKE-013 — Validará el esquema SQLite local sobre el que se aplica el cifrado; el cifrado con SQLCipher se valida en SPIKE-022 — Aprobado con cambios el 2026-10-28.
+    - SPIKE-016 — Validará el backend Spring Boot que se publica por HTTPS; la configuración de TLS se valida en SPIKE-022 — Aprobado con cambios el 2026-10-26.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -260,3 +260,18 @@
       - Verificar que los datos no son legibles sin la clave.
 
     Se descarta el cifrado en texto plano por inseguro e ilegal, y el cifrado estándar sin SQLCipher por dejar datos locales expuestos. El cifrado completo es la opción que garantiza seguridad y cumplimiento en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado, con validaciones pendientes
+  - **Spikes**: SPIKE-022: aprobado parcialmente el 2026-10-28. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - HTTPS obligatorio: TLS 1.3 en Cloud Run y HTTP redirigido a HTTPS; tráfico sin cifrar solo hacia `localhost` en desarrollo.
+    - Token en el Keystore; base local cifrada con SQLCipher y clave aleatoria en el Keystore.
+    - Si se pierde la clave, la app abre con una base nueva sin bloquearse.
+  - **Cambios respecto a lo propuesto**:
+    - Sin certificate pinning (opcional).
+  - **Pendiente**:
+    - Consentimiento y política de tratamiento de datos (Ley 1581 de 2012).
+    - En el celular: que la base no abra sin la clave, overhead de SQLCipher y tamaño del APK.

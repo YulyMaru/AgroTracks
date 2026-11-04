@@ -2,7 +2,7 @@
 
 - **Título**: Presentar resultados económicos en tarjetas diferenciadas para la comprensión del usuario.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -145,9 +145,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-003 — Validará que las 3 tarjetas (Ingresos, Gastos, Resultado) son comprendidas por el 100 % de los usuarios — Propuesto.
-    - SPIKE-008 — Validará que la advertencia de análisis incompleto se distingue del resultado completo — Propuesto.
-    - SPIKE-010 — Validará que los valores con concepto y unidad eliminan ambigüedad — Propuesto.
+    - SPIKE-003 — Validará que las 3 tarjetas (Ingresos, Gastos, Resultado) son comprendidas por el 100 % de los usuarios — Aprobado parcialmente el 2026-10-29.
+    - SPIKE-008 — Validará que la advertencia de análisis incompleto se distingue del resultado completo — Aprobado parcialmente el 2026-10-29.
+    - SPIKE-010 — Validará que los valores con concepto y unidad eliminan ambigüedad — Aprobado parcialmente el 2026-10-30.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -211,3 +211,16 @@
     - Pruebas de usabilidad con usuarios reales para validar la comprensión (criterio de éxito: 100 % de identificación correcta).
 
     Se descarta la vista numérica única por su pobreza informativa, y la tabla detallada como vista principal por su sobrecarga cognitiva. El panel de control es la opción que empodera al campesino con información clara y accionable.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios, con validaciones pendientes
+  - **Spikes**: SPIKE-003: aprobado parcialmente el 2026-10-29; SPIKE-008: aprobado parcialmente el 2026-10-29; SPIKE-010: aprobado parcialmente el 2026-10-30. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Cálculo exacto de lo que entró, lo que salió y lo que queda, en 1,05 ms con 500 movimientos y sin conexión.
+  - **Cambios respecto a lo propuesto**:
+    - Etiquetas en lenguaje del campesino: "Entró", "Salió", "Le queda" / "Le falta", con icono y color.
+    - Se agregó "por cada $1.000" y los gastos por categoría; no hay vista de tabla "Ver detalle".
+  - **Pendiente**:
+    - Prueba de comprensión con 3 campesinos, incluida la diferenciación sin depender del color.

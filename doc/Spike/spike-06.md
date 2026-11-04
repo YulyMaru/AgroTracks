@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-006 — Consultar datos offline y detectar conectividad
 - **ADR complementarios:** ADR-001 (Implementar sincronización offline con retry y backoff), ADR-005 (Registrar offline con SQLite y cola de pendientes)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-29
 - **Prioridad:** Alta
 - **Timebox estimado:** 3 días hábiles.
 
@@ -103,7 +104,6 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 - El tiempo de carga es < 1 s para 50 registros y < 2 s para 100 registros.
 - La UI no se congela durante la consulta.
 
----
 
 ### 7.2 Prueba 2 — Persistencia al cerrar la app
 
@@ -121,7 +121,6 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 - Los registros `PENDIENTE` siguen marcados como pendientes.
 - La base de datos mantiene la integridad.
 
----
 
 ### 7.3 Prueba 3 — Detección de conectividad y activación de sincronización
 
@@ -141,7 +140,6 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 - Los 3 registros pendientes se sincronizan correctamente.
 - El estado local cambia a `SINCRONIZADO`.
 
----
 
 ### 7.4 Prueba 4 — Indicador visual de conectividad
 
@@ -162,7 +160,6 @@ Se utilizará la lista de gastos y el resumen económico para comprobar el ciclo
 - La fecha de última sincronización es visible y actualizada.
 - La transición entre estados es inmediata (< 2 s).
 
----
 
 ### 7.5 Prueba 5 — Tolerancia a red intermitente
 
@@ -245,27 +242,31 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Video demostrando los 3 flujos principales (consulta, persistencia, sincronización).
 4. **Este documento actualizado** con la sección de "Conclusión del Spike" llenada, incluyendo recomendaciones para la implementación en producción.
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-29
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿La consulta offline se completó en < 2 s para 100 registros?
-  - ✅ / ❌ ¿Los datos persistieron al cerrar y reabrir la app?
-  - ✅ / ❌ ¿El monitor detectó la recuperación de red en < 5 s?
-  - ✅ / ❌ ¿La sincronización se activó automáticamente?
-  - ✅ / ❌ ¿El indicador visual fue claro para el usuario?
-  - ✅ / ❌ ¿El sistema toleró la red intermitente sin disparar sync innecesarias?
+  - ✅ ¿La consulta offline se completó en < 2 s para 100 registros? Sí. 2 ms para listar 100 fincas sin conexión; 344 ms para 10.000 gastos.
+  - ✅ ¿Los datos persistieron al cerrar y reabrir la app? Sí.
+  - ⚠️ ¿El monitor detectó la recuperación de red en < 5 s? La sincronización arranca en cuanto NetInfo avisa (probado); falta medir en celulares cuánto tarda NetInfo en avisar.
+  - ✅ ¿La sincronización se activó automáticamente? Sí.
+  - ⚠️ ¿El indicador visual fue claro? Hay píldora "En línea" / "Sin internet" y cada registro dice si está por enviar. No se muestra la fecha de la última sincronización. Falta prueba con usuarios.
+  - ✅ ¿El sistema toleró la red intermitente? Sí. Con 11 reconexiones seguidas hubo 1 sola sincronización y 1 solo envío al servidor, sin duplicados.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesOffline.test.ts` — consulta de 100 fincas sin red y 11 reconexiones seguidas.
+  - `agrotrack-movil/__tests__/motorSincronizacion.test.ts` — "al volver la conexión sincroniza sola, una vez por reconexión".
+
+- **Cambios respecto a lo propuesto**:
+  - No hay debounce de 5-10 s: el motor no inicia una sincronización si ya hay otra en curso, y solo arranca cuando la red pasa de "sin red" a "con red".
+  - La fecha de la última sincronización se guarda (`ultima_sincronizacion`) pero no se muestra en pantalla.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "El debounce de 5 s es suficiente para evitar sincronizaciones duplicadas.")
-  - (Ejemplo: "Los mensajes técnicos como 'Sin conexión' no son claros para el usuario; usar 'Mostrando datos guardados'.")
+  - Un solo candado de "sincronización en curso" fue suficiente para que la red intermitente no duplique envíos.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Añadir índices en `estado` y `creado_en` para consultas rápidas.")
-  - (Ejemplo: "Implementar un límite de antigüedad de la fecha de última sincronización.")
-  - (Ejemplo: "Considerar un mecanismo de sincronización manual como respaldo.")
+  - Mostrar "Última sincronización: hoy 10:42" en la pestaña Envíos.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (falta medir NetInfo en celulares y mostrar la fecha de la última sincronización).

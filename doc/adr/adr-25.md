@@ -2,7 +2,7 @@
 
 - **Título**: Implementar un pipeline de CI/CD con GitHub Actions para backend (Spring Boot) y frontend (React Native), usando Firebase App Distribution para distribución de pruebas y despliegue automatizado del backend, descartando builds y despliegues manuales.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado con cambios, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -186,9 +186,9 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-025 — Validará que GitHub Actions ejecuta pruebas, compila backend y frontend, distribuye APK con Firebase App Distribution y despliega el backend a staging — Propuesto.
-    - SPIKE-020 — Validará que las pruebas en capas se integran en el pipeline — Propuesto.
-    - SPIKE-012 — Validará que los APK distribuidos se instalan y ejecutan en los 3 dispositivos de prueba — Propuesto.
+    - SPIKE-025 — Validará que GitHub Actions ejecuta pruebas, compila backend y frontend, distribuye APK con Firebase App Distribution y despliega el backend a staging — Aprobado parcialmente el 2026-10-28.
+    - SPIKE-020 — Validará que las pruebas en capas se integran en el pipeline — Aprobado parcialmente el 2026-10-26.
+    - SPIKE-012 — Validará que los APK distribuidos se instalan y ejecutan en los 3 dispositivos de prueba — Pendiente (revisado el 2026-10-30).
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -282,3 +282,18 @@
       - Guía de resolución de problemas comunes.
 
     Se descartan los builds y despliegues manuales por propensos a errores y sin trazabilidad, y Jenkins o GitLab CI por costo y mantenimiento. GitHub Actions + Firebase App Distribution es la opción que garantiza automatización, velocidad y confiabilidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios, con validaciones pendientes
+  - **Spikes**: SPIKE-025: aprobado parcialmente el 2026-10-28. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - GitHub Actions con lint, tipos, pruebas, cobertura, SonarCloud y Trivy en backend y móvil; Dependabot semanal.
+    - Despliegue del backend a staging en cada push a `main` y a producción con aprobación manual, con Workload Identity Federation.
+  - **Cambios respecto a lo propuesto**:
+    - Sin Checkstyle; SonarCloud analiza la calidad del backend.
+    - Controles DevSecOps de ADR-033.
+  - **Pendiente**:
+    - APK de release en el pipeline y GitHub Releases.
+    - Firebase App Distribution.

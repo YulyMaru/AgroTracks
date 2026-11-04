@@ -2,7 +2,7 @@
 
 - **Título**: Estandarizar la interacción táctil y la presentación de valores con unidades, cumpliendo con los escenarios ESC-CAL-ACC-02 y ESC-CAL-ACC-06.
 
-- **Estado**: Propuesto
+- **Estado**: Aceptado con cambios, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -240,7 +240,7 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-010 — Validará que los controles de 48x48 dp reducen errores a < 5 % y que el formato "Concepto: $Valor Unidad" elimina ambigüedad — Propuesto.
+    - SPIKE-010 — Validará que los controles de 48x48 dp reducen errores a < 5 % y que el formato "Concepto: $Valor Unidad" elimina ambigüedad — Aprobado parcialmente el 2026-10-30.
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -311,3 +311,17 @@
       - Ajustar el diseño según el feedback (ej. aumentar el tamaño de algunos botones críticos).
 
     Se descartan los controles pequeños por su mala usabilidad, y los valores sin unidad o con unidad abreviada por su ambigüedad. La combinación de controles adaptativos y valores con concepto y unidad es la opción que garantiza una interacción precisa y una comprensión clara de la información en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado con cambios, con validaciones pendientes
+  - **Spikes**: SPIKE-010: aprobado parcialmente el 2026-10-30. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Todos los controles miden al menos 48 dp, después de corregir 4 que medían 40-44 dp.
+    - Los valores se muestran con su unidad en palabras: "$1.200.000", "120 kilogramos", "2,5 hectáreas".
+  - **Cambios respecto a lo propuesto**:
+    - Sin componente `ValorConUnidad`: funciones `formatoPesos` y `cantidadConUnidad`.
+    - Unidades en palabras, no abreviadas (`kg`, `ha`, `COP`).
+  - **Pendiente**:
+    - Prueba de pulsaciones y de comprensión con usuarios.

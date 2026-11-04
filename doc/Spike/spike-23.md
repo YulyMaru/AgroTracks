@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-023 — Garantizar tamaños táctiles, contraste y legibilidad en la interfaz móvil
 - **ADR complementarios:** ADR-003 (Presentar resultados económicos en tarjetas), ADR-010 (Estandarizar táctil y valores con unidades), ADR-017 (Usar React Native con TypeScript como stack del frontend móvil)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-30
 - **Prioridad:** Media
 - **Timebox estimado:** 2 días hábiles
 
@@ -130,7 +131,6 @@ El Spike no implementará:
 - No hay controles superpuestos o demasiado cerca.
 - La medición es consistente en los tres dispositivos.
 
----
 
 ### 7.2 Prueba 2 — Contraste de colores
 
@@ -149,8 +149,6 @@ El Spike no implementará:
 - No hay texto ilegible.
 - No hay iconos con bajo contraste.
 - Los ratios están documentados.
-
----
 
 ### 7.3 Prueba 3 — Fuente grande del sistema
 
@@ -172,7 +170,6 @@ El Spike no implementará:
 - No hay texto cortado o superpuesto.
 - Funciona en los tres dispositivos.
 
----
 
 ### 7.4 Prueba 4 — Consistencia del sistema de diseño
 
@@ -257,28 +254,35 @@ Al finalizar el timebox, el equipo deberá entregar:
    - Capturas del sistema de diseño.
 4. **Este documento actualizado** con la sección de "Conclusión" llenada.
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-30
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿El 100 % de los controles cumplió 48x48 dp?
-  - ✅ / ❌ ¿La separación fue ≥ 8 dp entre controles?
-  - ✅ / ❌ ¿El 100 % de los pares cumplió contraste WCAG 2.1 AA?
-  - ✅ / ❌ ¿El layout no se rompió con `fontScale` al 200 %?
-  - ✅ / ❌ ¿Todos los componentes usaron el sistema de diseño?
+  - ✅ ¿Tamaños táctiles 48x48 dp? Sí, después de corregir: el botón de cerrar aviso (40 → 48), "Salir" (40 → 48), las sugerencias (44 → 48) y el botón del ojo de la clave (44 → 48).
+  - ✅ ¿Separación ≥ 8 dp? Sí, después de subir de 6 a 8 dp la separación del selector Entrar / Crear cuenta.
+  - ✅ ¿Contraste WCAG 2.1 AA? Sí, en los 47 pares de letra y fondo revisados, después de corregir 7 que no cumplían (ver cambios).
+  - ⏳ ¿El layout aguanta `fontScale` al 200 %? Pendiente (celular). Los textos permiten escalar (valor por defecto de React Native) y las pantallas usan `ScrollView`.
+  - ✅ ¿Todos los componentes usan el sistema de diseño? Sí. Los colores salen de `COLORES` y los tamaños de `estilos`; ningún texto mide menos de 12 px.
+
+- **Evidencia**:
+  - `agrotrack-movil/__tests__/spikesInterfaz.test.ts` — 47 pares de contraste, 15 controles táctiles, botón del ojo, separaciones y tamaño mínimo de letra.
+
+- **Cambios respecto a lo propuesto**:
+  - Hallazgos corregidos en `src/pantallas/componentes.tsx` y `PantallaAnotar.tsx`:
+    - Naranja de "Anotar rápido" y de la insignia de Envíos: `#F97316` (2,8:1 con letra blanca) → `#C2410C` (5,2:1).
+    - Verde claro de los subtítulos sobre verde: `#A7F3D0` (4,3:1) → `#D1FAE5` (4,8:1).
+    - Botón "Gasté dinero": rojo vivo `#EF4444` (3,8:1) → `#DC2626` (4,8:1).
+    - Botón "Coseché": ámbar `#F59E0B` (2,2:1) → `#B45309` (5,0:1).
+    - Ayuda de los botones de color: se quitó la transparencia del 85 % (bajaba a 3,8-4,4:1).
+    - Valor de un gasto sobre fondo rojo suave: `#DC2626` (4,4:1) → `#B91C1C` (5,9:1).
+    - Detalle de los movimientos: gris `#64748B` (4,35:1) → `#475569` (7,2:1).
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "Definir la paleta antes de implementar componentes ahorra retrabajo.")
-  - (Ejemplo: "`fontScale` al 200 % es el caso más exigente.")
-  - (Ejemplo: "Usar `dp` en lugar de píxeles garantiza consistencia entre dispositivos.")
+  - Una prueba que calcula el contraste de cada par evita que un color nuevo rompa la accesibilidad sin que nadie lo note.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Definir el sistema de diseño desde el día 1.")
-  - (Ejemplo: "Verificar contraste antes de aprobar nuevos colores.")
-  - (Ejemplo: "Probar con `fontScale` al 200 % en cada release.")
-  - (Ejemplo: "Evaluar TalkBack en una futura iteración si el negocio lo requiere.")
+  - Probar con `fontScale` al 200 % en el celular de gama baja.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (se corrigieron 7 contrastes y 5 tamaños o separaciones).

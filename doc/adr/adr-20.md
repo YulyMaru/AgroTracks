@@ -2,7 +2,7 @@
 
 - **Título**: Adoptar una estrategia de pruebas en capas (unitarias, integración, E2E, usabilidad, compatibilidad, rendimiento) con herramientas específicas para backend y frontend, descartando pruebas manuales exclusivas y cobertura no medible.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -186,11 +186,11 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-020 — Validará que la estrategia de pruebas en capas es viable con el stack de AgroTrack y que se integra en CI/CD — Propuesto.
-    - SPIKE-001 — Validará pruebas de sincronización offline con retry y backoff — Propuesto.
-    - SPIKE-007 — Validará pruebas de idempotencia y consistencia — Propuesto.
-    - SPIKE-009 — Validará pruebas de rendimiento con 10,000 transacciones — Propuesto.
-    - SPIKE-012 — Validará pruebas de compatibilidad en 3 dispositivos Android físicos — Propuesto.
+    - SPIKE-020 — Validará que la estrategia de pruebas en capas es viable con el stack de AgroTrack y que se integra en CI/CD — Aprobado parcialmente el 2026-10-26.
+    - SPIKE-001 — Validará pruebas de sincronización offline con retry y backoff — Aprobado con cambios el 2026-10-27.
+    - SPIKE-007 — Validará pruebas de idempotencia y consistencia — Aprobado el 2026-10-27.
+    - SPIKE-009 — Validará pruebas de rendimiento con 10,000 transacciones — Aprobado con cambios el 2026-10-28.
+    - SPIKE-012 — Validará pruebas de compatibilidad en 3 dispositivos Android físicos — Pendiente (revisado el 2026-10-30).
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -276,3 +276,19 @@
       - Estrategia de mocks y datos de prueba.
 
     Se descartan las pruebas manuales exclusivas por no escalables y la automatización total sin capas por lentitud y fragilidad. La estrategia de pruebas en capas es la opción que garantiza calidad, confiabilidad y velocidad en AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado, con validaciones pendientes
+  - **Spikes**: SPIKE-020: aprobado parcialmente el 2026-10-26. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Pirámide de pruebas funcionando: móvil 209 pruebas (dominio 97,4 %, aplicación 100 %, infraestructura 97,6 %), backend 57 pruebas (dominio 99,2 %, aplicación 95,2 %, infraestructura 94,4 %).
+    - Pruebas de integración de la app completa (SQLite real + servidor de prueba) y del backend (MockMvc).
+    - Los pipelines corren las pruebas en cada PR y push a `main`.
+  - **Cambios respecto a lo propuesto**:
+    - Integración del backend con H2 en vez de Testcontainers; rendimiento con JUnit/Jest en vez de k6.
+  - **Pendiente**:
+    - E2E con Detox o Maestro.
+    - OWASP ZAP.
+    - Regla de calidad de SonarCloud obligatoria en el PR.

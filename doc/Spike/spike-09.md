@@ -7,7 +7,8 @@
 - **ADR relacionado:** ADR-009 — Optimizar consultas con índices y caché
 - **ADR complementarios:** ADR-001 (Implementar sincronización offline con retry y backoff), ADR-006 (Consultar datos offline y detectar conectividad)
 - **Tipo:** Spike / Proof of Concept (PoC)
-- **Estado:** Propuesto
+- **Estado:** Completado — Aprobado con cambios
+- **Fecha de ejecución:** 2026-10-28
 - **Prioridad:** Alta
 - **Timebox estimado:** 4 días hábiles 
 
@@ -108,7 +109,6 @@ Entonces:
 - Confirmar que la estrategia sin optimización **no cumple** con los umbrales (consultas > 5 s, resúmenes > 8 s).
 - Documentar los cuellos de botella identificados.
 
----
 
 ### 7.2 Prueba 2 — Medición con índices y paginación
 
@@ -125,7 +125,6 @@ Entonces:
 - Resúmenes ≤ 5 s.
 - Mejora significativa vs baseline (documentar porcentaje de mejora).
 
----
 
 ### 7.3 Prueba 3 — Medición con agregaciones en servidor
 
@@ -141,7 +140,6 @@ Entonces:
 - Transferencia de datos reducida drásticamente.
 - Documentar el volumen de datos transferidos antes y después.
 
----
 
 ### 7.4 Prueba 4 — Medición con caché
 
@@ -159,8 +157,6 @@ Entonces:
 - Consultas siguientes: ≤ 200 ms (desde caché).
 - Hit ratio > 80 % para períodos recurrentes.
 - Documentar el porcentaje de mejora con caché.
-
----
 
 ### 7.5 Prueba 5 — Invalidación de caché
 
@@ -240,26 +236,35 @@ El Spike se considerará **RECHAZADO** si:
    - Gráfico comparativo de tiempos por escenario.
 5. **Este documento actualizado** con la sección de "Conclusión del Spike" llenada.
 
----
+## 12. Conclusión del Spike
 
-## 12. Conclusión del Spike (para llenar al finalizar)
-
-*(Esta sección se llena al completar el spike)*
+- **Fecha de ejecución**: 2026-10-28
+- **Cómo se validó**: Se validó sobre el código real de AgroTrack (backend y app móvil), no sobre un PoC aparte. Mediciones en el PC de desarrollo (Windows 11): backend con JDK 26 y base H2 en modo PostgreSQL; app móvil con Jest 29, Node 24 y el SQLite real de Node. Los tiempos de un celular de gama baja pueden ser mayores y se confirman en las pruebas en dispositivos (ADR-012).
 
 - **Resumen de resultados**:
-  - ✅ / ❌ ¿Se cumplieron los tiempos ≤ 3 s y ≤ 5 s?
-  - ✅ / ❌ ¿La caché redujo los tiempos a ≤ 200 ms?
-  - ✅ / ❌ ¿La invalidación funcionó correctamente?
-  - ✅ / ❌ ¿El hit ratio superó el 80 %?
-  - ✅ / ❌ ¿Los índices ralentizaron significativamente las escrituras?
+  - ✅ ¿Se cumplieron los tiempos ≤ 3 s y ≤ 5 s? Sí. Con 500 fincas, 2.000 lotes, 50 cultivos y 10.000 gastos de un usuario: listar gastos 393 ms (primera petición) y 212 ms (segunda); lotes 66 ms; fincas 40 ms; descargar todo para el modo offline (12.550 registros) 1,37 s; suma por mes en SQL 113 ms.
+  - ✅ En el celular, analizar el mes con 10.000 gastos guardados tarda 100 ms y el resumen puro de 10.000 movimientos 20,6 ms.
+  - ➖ ¿La caché redujo los tiempos a ≤ 200 ms? No aplica: no hay caché de resúmenes (ver cambios).
+  - ➖ ¿La invalidación funcionó? No aplica.
+  - ➖ ¿El hit ratio superó el 80 %? No aplica.
+  - ✅ ¿Los índices ralentizaron las escrituras? No se observó: guardar 10.000 gastos en el celular tomó 0,20 ms por gasto. En el backend no se midió por separado.
+
+- **Evidencia**:
+  - `backend/src/test/java/co/edu/uco/agrotrack/modulos/registros/RendimientoConsultasIntegracionTest.java` — carga el volumen máximo y mide cada consulta HTTP completa (seguridad, consulta y JSON).
+  - `agrotrack-movil/__tests__/spikesRendimiento.test.ts` — 10.000 gastos en el SQLite del celular.
+  - `backend/src/main/resources/db/migration/V4__modelo_de_datos_v2.sql` — índices por usuario y fecha de actualización, por finca, lote, cultivo y asignación.
+
+- **Cambios respecto a lo propuesto**:
+  - Los resúmenes económicos se calculan en el celular, no en el servidor: la app descarga sus datos una vez (`GET /api/v1/sincronizacion/cambios`, incremental con `?desde`) y calcula todo sin señal. Por eso no hay `SUM`/`GROUP BY` en la API ni caché de resúmenes.
+  - No hay paginación en los listados: el celular lee de su SQLite. Los listados del backend tampoco paginan; con 10.000 gastos responden en < 0,4 s.
+  - La única caché del backend es Caffeine en memoria (5 minutos) para validar códigos del catálogo, no Redis.
+  - Se midió con H2 en modo PostgreSQL porque el PC no tiene Docker; `TestcontainersConfiguration` (PostgreSQL 16) ya existe para repetirlo.
 
 - **Lecciones aprendidas**:
-  - (Ejemplo: "Los índices compuestos mejoraron las agregaciones de 8 s a 1.5 s.")
-  - (Ejemplo: "La caché redujo la carga del servidor en un 70 %.")
+  - Con datos de un solo campesino (miles, no millones) calcular en el celular es rápido y además funciona sin señal.
 
 - **Recomendaciones para implementación en producción**:
-  - (Ejemplo: "Usar Redis para caché distribuida.")
-  - (Ejemplo: "Monitorear tiempos de respuesta desde el día 1.")
-  - (Ejemplo: "Considerar archivado de datos > 2 años.")
+  - Repetir `RendimientoConsultasIntegracionTest` con PostgreSQL 16 (Testcontainers) en el pipeline.
+  - Paginar `GET /api/v1/registros/{tipo}` si algún usuario pasa de 10.000 registros.
 
-- **Decisión final**: ✅ **Aprobado** / ❌ **Rechazado** (para pasar a desarrollo completo)
+- **Decisión final**: ✅ **Aprobado con cambios** (cálculo en el celular en lugar de agregaciones y caché en el servidor).

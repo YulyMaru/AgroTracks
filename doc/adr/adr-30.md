@@ -4,7 +4,7 @@
 
 - **Historial**: La primera versión de este ADR guardaba los secretos del backend en un archivo `.env` del servidor propio. Al desplegar el backend en Cloud Run (ADR-031) ya no hay servidor, por lo que los secretos del backend pasan a Secret Manager.
 
-- **Estado**: Propuesto.
+- **Estado**: Aceptado, con validaciones pendientes (2026-10-30). Ver "Resultado de la validación" al final.
 
 - **Criterios de evaluación**:
 
@@ -176,10 +176,10 @@
 
   - **¿Quién da la opinión?**:
 
-    - SPIKE-030 — Validará que el backend en Cloud Run lee sus secretos desde Secret Manager y que el pipeline usa GitHub Secrets sin exponerlos — Propuesto.
-    - SPIKE-025 — Validará que el pipeline lee los secretos de GitHub Secrets sin exponerlos en logs — Propuesto.
-    - SPIKE-011 — Validará la autenticación con JWT cuya clave de firma se gestiona como secreto; la gestión de la clave se valida en SPIKE-030 — Propuesto.
-    - SPIKE-027 — Validará que el API Token de Cloudflare se gestiona en GitHub Secrets — Propuesto.
+    - SPIKE-030 — Validará que el backend en Cloud Run lee sus secretos desde Secret Manager y que el pipeline usa GitHub Secrets sin exponerlos — Aprobado parcialmente el 2026-10-27.
+    - SPIKE-025 — Validará que el pipeline lee los secretos de GitHub Secrets sin exponerlos en logs — Aprobado parcialmente el 2026-10-28.
+    - SPIKE-011 — Validará la autenticación con JWT cuya clave de firma se gestiona como secreto; la gestión de la clave se valida en SPIKE-030 — Aprobado con cambios el 2026-10-27.
+    - SPIKE-027 — Validará que el API Token de Cloudflare se gestiona en GitHub Secrets — Pendiente (revisado el 2026-10-30).
 
   - **¿Cuáles son otros candidatos que consideró?**:
 
@@ -280,3 +280,15 @@
       - Procedimiento de recuperación ante fuga.
 
     Se descartan los secretos hardcodeados o en archivos `.env` versionados por inseguros, y los gestores de secretos de otros proveedores o autoalojados por costo y complejidad. GitHub Secrets + Secret Manager es la opción que garantiza seguridad, simplicidad y un costo casi nulo para AgroTrack.
+
+- **Resultado de la validación**:
+
+  - **Fecha**: 2026-10-30
+  - **Estado final**: Aceptado, con validaciones pendientes
+  - **Spikes**: SPIKE-030: aprobado parcialmente el 2026-10-27. El detalle de cada prueba, con sus mediciones, está en la conclusión de cada spike (`doc/Spike/`).
+  - **Qué se validó**:
+    - Sin secretos en archivos versionados (Trivy en cada ejecución); el backend en producción lee sus secretos de Secret Manager.
+    - Workload Identity Federation: GitHub no guarda llaves de Google Cloud.
+  - **Pendiente**:
+    - Quitar el secreto JWT por defecto del perfil `prod`.
+    - Probar rotación, enmascaramiento en logs y recuperación ante fuga.
