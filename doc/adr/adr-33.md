@@ -239,6 +239,7 @@
     - **Cobertura**:
       - Backend: plugin `jacoco-maven-plugin` 0.8.16 (primera versión con soporte oficial de Java 27); `./mvnw verify` genera `target/site/jacoco/`.
       - Móvil: `npm run test:cobertura` genera `coverage/lcov.info`.
+      - Las pantallas y la navegación del móvil (`src/pantallas`, `src/navegacion`, `App.tsx`) no cuentan para la cobertura (`sonar.coverage.exclusions`): según ADR-020 se validan con E2E, usabilidad y pruebas en dispositivos (ADR-012), no con pruebas unitarias. Siguen analizándose por bugs, seguridad y duplicación.
       - Publicar ambos reportes como artefactos del workflow y enviarlos a SonarCloud.
     - **SonarCloud**:
       - Dos proyectos (backend y móvil) en la misma organización, porque ambos viven en el mismo repositorio.

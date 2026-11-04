@@ -3,6 +3,7 @@ import { Image, Pressable, Text, View } from 'react-native';
 
 import { app } from '../composicion';
 import {
+  correoValido,
   limpiarNombreUsuario,
   nombreUsuarioValido,
   type Tokens,
@@ -150,7 +151,7 @@ function FormularioCrear({ alIniciar, mostrarAviso, alEntrar }: {
       nombre: nombre.trim() ? undefined : 'Escriba su nombre.',
       nombreUsuario: nombreUsuarioValido(nombreUsuario) ? undefined
         : 'De 3 a 30 letras o números, sin espacios ni tildes. Puede usar punto o guion bajo.',
-      correo: /^\S+@\S+\.\S+$/.test(correo.trim()) ? undefined : 'Escriba un correo válido.',
+      correo: correoValido(correo) ? undefined : 'Escriba un correo válido.',
       clave: clave.length >= 8 ? undefined : 'La clave debe tener al menos 8 caracteres.',
     };
     setErrores(nuevos);

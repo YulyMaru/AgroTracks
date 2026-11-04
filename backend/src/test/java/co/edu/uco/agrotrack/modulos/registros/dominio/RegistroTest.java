@@ -1,6 +1,7 @@
 package co.edu.uco.agrotrack.modulos.registros.dominio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ class RegistroTest {
 	void seAceptaElCambioSiElCelularTieneLaMismaVersion() {
 		Finca finca = nueva();
 		finca.restaurar(4, false, Instant.now());
-		finca.verificarCambio(4);
+		assertThatCode(() -> finca.verificarCambio(4)).doesNotThrowAnyException();
 	}
 
 	@Test

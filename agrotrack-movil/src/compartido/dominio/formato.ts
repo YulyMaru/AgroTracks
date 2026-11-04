@@ -21,7 +21,15 @@ export function leerNumero(texto: string): number | null {
  */
 export function escribirPesos(texto: string): string {
   const digitos = texto.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
-  return digitos.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  // Un punto cada tres digitos contando desde la derecha (sin expresion regular: SonarCloud typescript:S8786)
+  let resultado = '';
+  for (let i = 0; i < digitos.length; i++) {
+    if (i > 0 && (digitos.length - i) % 3 === 0) {
+      resultado += '.';
+    }
+    resultado += digitos[i];
+  }
+  return resultado;
 }
 
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre',
