@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.2</version>
+		<version>4.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>co.edu.uco</groupId>
@@ -30,7 +30,7 @@
 		<java.version>27</java.version>
 		<!-- DevSecOps (ADR-033). JaCoCo 0.8.16 es la primera version con soporte oficial de Java 27 -->
 		<jacoco.version>0.8.16</jacoco.version>
-		<sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
+		<sonar-maven-plugin.version>5.9.0.7382</sonar-maven-plugin.version>
 		<!-- SonarCloud: organizacion y clave del proyecto llegan desde el pipeline (variables de GitHub) -->
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>com.google.cloud.sql</groupId>
 			<artifactId>postgres-socket-factory</artifactId>
-			<version>1.30.2</version>
+			<version>1.31.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
